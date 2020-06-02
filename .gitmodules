@@ -1,9 +1,6 @@
 [submodule "retroarch_orig"]
 	path = retroarch_orig
 	url = https://github.com/libretro/RetroArch.git
-[submodule "retroarch"]
-	path = retroarch
-	url = https://github.com/libretro/RetroArch.git
 [submodule "libretro-super"]
 	path = libretro-super
 	url = https://github.com/libretro/libretro-super.git

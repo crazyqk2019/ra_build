@@ -21,6 +21,8 @@ pacman -S --needed --noconfirm \
     mingw-w64-x86_64-SDL_image \
     mingw-w64-x86_64-SDL2 \
     mingw-w64-x86_64-SDL2_image \
+    mingw-w64-x86_64-python2 \
+    mingw-w64-x86_64-nasm \
     mingw-w64-x86_64-qt5 \
     mingw-w64-x86_64-qt-creator
     

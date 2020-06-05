@@ -4,6 +4,11 @@ make HAVE_PARALLEL=1 HAVE_PARALLEL_RSP=1 WITH_DYNAREC=x86_64
 libretro-mednafen_psx_hw:
 make HAVE_HW=1
 
+libretro-bsnes_mercury
+make profile=accuracy
+make profile=balanced
+make profile=performance
+
 libretro-ppsspp:
 Install VC2019 Community
 Install Python through Windows  Store

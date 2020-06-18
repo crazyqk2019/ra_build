@@ -9,6 +9,10 @@ make profile=accuracy
 make profile=balanced
 make profile=performance
 
+libretro-dosbox_core
+make BUNDLED_AUDIO_CODECS=0 BUNDLED_LIBSNDFILE=0 WITH_DYNAREC=x86_64
+run dist_cores.sh to copy dependencies
+
 libretro-ppsspp:
 Install VC2019 Community
 Install Python through Windows  Store

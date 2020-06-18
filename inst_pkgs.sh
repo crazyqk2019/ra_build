@@ -18,11 +18,18 @@ pacman -S --needed --noconfirm \
     mingw-w64-x86_64-spirv-tools \
     mingw-w64-x86_64-libusb \
     mingw-w64-x86_64-miniupnpc \
-    mingw-w64-x86_64-SDL_image \
+    mingw-w64-x86_64-SDL \
+	mingw-w64-x86_64-SDL_image \
+	mingw-w64-x86_64-SDL_net \
     mingw-w64-x86_64-SDL2 \
     mingw-w64-x86_64-SDL2_image \
     mingw-w64-x86_64-python2 \
     mingw-w64-x86_64-nasm \
+	mingw-w64-x86_64-ninja \
+	mingw-w64-x86_64-dlfcn \
+	mingw-w64-x86_64-libsndfile \
+	mingw-w64-x86_64-fluidsynth \
+	mingw-w64-x86_64-fmt \
     mingw-w64-x86_64-qt5 \
     mingw-w64-x86_64-qt-creator
     

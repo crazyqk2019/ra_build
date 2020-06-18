@@ -3,6 +3,7 @@
 pacman -S --needed --noconfirm \
     git \
     make \
+    patch \
     mingw-w64-x86_64-toolchain \
     mingw-w64-x86_64-libc++ \
     mingw-w64-x86_64-clang \

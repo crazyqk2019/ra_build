@@ -2,6 +2,7 @@
 
 
 ## 目录说明
+- pkgs -- 第三方lib库包
 - retroarch_dist -- RetroArch编译输出目录
 - retrorach_font -- RetroArch包含中文字体
 - cores -- 内核source目录
@@ -30,6 +31,10 @@
 
 5. 安装必要包
 运行inst_pkgs.sh
+
+6. 安装pkgs目录中的包，可直接解压安装，无须用pacman命令安装
+
+
 
 
 

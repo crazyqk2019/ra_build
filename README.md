@@ -10,10 +10,15 @@
 
 ## 文件说明
 - inst_pkgs.sh -- 安装必需的msys和mingw包
+- clone_retro.sh -- 拉取RetroArch源代码
+- build_retro.sh -- 编译RetroArch
 - dist_retro.sh -- 提取RetorArch.exe依赖的dll库
 - dist_retro_noqt.sh -- 提取RetorArch.exe依赖的dll库，不包括Qt
-- dist_cores.sh -- 提取内核依赖的dll库
-- build_core_cmds.txt 部分内核特殊编译命令
+- clone_cores.sh -- 拉取内核源代码
+- build_core_xxx.sh -- 编译各个内核
+- build_all_cores.sh -- 编译所有内核
+- dist_core.sh -- 提取内核依赖的dll库
+- vc_build_ppsspp.bat -- 调用VC2019编译PPSSPP的特殊命令，由build_core_ppsspp.sh调用
 
 ## msys2/mingw64编译环境安装步骤
 1. 从 https://www.msys2.org/ 下载msys2安装器进行安装
@@ -179,7 +184,7 @@ make HAVE_HW=1
 
 ### libretro-bsnes_mercury
 
-三个不同的profile编译命令
+三个不同的profile编译命令，默认编译accurary。
 ```bash
 make profile=accuracy
 make profile=balanced
@@ -204,9 +209,9 @@ cd cores_dist
 
 必要软件和编译步骤：
 
-1. 安装 VC2019 Community
+1. 下载安装 [VC2019 Community](https://visualstudio.microsoft.com/zh-hans/vs/)
 
-2. 通过 Windows  Store 安装 Python
+2. 通过 Windows  Store 安装 Python3
 
 3. 生成 `.vcproject` 文件
 

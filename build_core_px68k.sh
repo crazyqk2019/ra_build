@@ -11,7 +11,7 @@ $SETCOLOR_GREEN && echo "Building px68k..." && $SETCOLOR_NORMAL
 make -f Makefile.libretro -j`nproc` &>/dev/null
 
 strip -s px68k_libretro.dll
-cp px68k_libretro.dll ../../cores_dist/
+cp px68k_libretro.dll ../../retroarch_dist/cores/
 cd ../..
 
 $SETCOLOR_GREEN && echo "Done." && $SETCOLOR_NORMAL

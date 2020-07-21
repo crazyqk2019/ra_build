@@ -10,7 +10,7 @@ make clean &>/dev/null
 $SETCOLOR_GREEN && echo "Building mednafen_psx_hw..." && $SETCOLOR_NORMAL
 make HAVE_HW=1 -j`nproc` &>/dev/null
 strip -s mednafen_psx_hw_libretro.dll
-cp mednafen_psx_hw_libretro.dll ../../cores_dist/
+cp mednafen_psx_hw_libretro.dll ../../retroarch_dist/cores/
 cd ../..
 
 $SETCOLOR_GREEN && echo "Done." && $SETCOLOR_NORMAL

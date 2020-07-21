@@ -11,7 +11,7 @@ $SETCOLOR_GREEN && echo "Building flycast..." && $SETCOLOR_NORMAL
 make -f Makefile -j`nproc` &>/dev/null
 
 strip -s flycast_libretro.dll
-cp flycast_libretro.dll ../../cores_dist/
+cp flycast_libretro.dll ../../retroarch_dist/cores/
 cd ../..
 
 $SETCOLOR_GREEN && echo "Done." && $SETCOLOR_NORMAL

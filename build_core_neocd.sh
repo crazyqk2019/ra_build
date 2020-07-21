@@ -11,7 +11,7 @@ $SETCOLOR_GREEN && echo "Building neocd..." && $SETCOLOR_NORMAL
 make -f Makefile -j`nproc` &>/dev/null
 
 strip -s neocd_libretro.dll
-cp neocd_libretro.dll ../../cores_dist/
+cp neocd_libretro.dll ../../retroarch_dist/cores/
 cd ../..
 
 $SETCOLOR_GREEN && echo "Done." && $SETCOLOR_NORMAL

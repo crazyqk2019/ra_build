@@ -12,7 +12,7 @@ $SETCOLOR_GREEN && echo "Building snes9x..." && $SETCOLOR_NORMAL
 make -f Makefile -j`nproc` &>/dev/null
 
 strip -s snes9x_libretro.dll
-cp snes9x_libretro.dll ../../../cores_dist/
+cp snes9x_libretro.dll ../../../retroarch_dist/cores/
 cd ../../..
 
 $SETCOLOR_GREEN && echo "Done." && $SETCOLOR_NORMAL

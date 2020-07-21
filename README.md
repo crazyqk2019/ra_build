@@ -6,11 +6,12 @@
 - retroarch_dist -- RetroArch编译输出目录
 - retrorach_font -- RetroArch包含中文字体
 - cores -- 内核source目录
-- cores_dist -- 内核编译输出目录
+- retroarch_dist/cores -- 内核编译输出目录
 
 ## 文件说明
 - inst_pkgs.sh -- 安装必需的msys和mingw包
 - clone_retro.sh -- 拉取RetroArch源代码
+- clone_retro_orig.sh -- 拉取原始RetorArch源代码
 - build_retro.sh -- 编译RetroArch
 - dist_retro.sh -- 提取RetorArch.exe依赖的dll库
 - dist_retro_noqt.sh -- 提取RetorArch.exe依赖的dll库，不包括Qt

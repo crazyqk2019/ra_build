@@ -12,7 +12,7 @@ $SETCOLOR_GREEN && echo "Building nestopia..." && $SETCOLOR_NORMAL
 make -f Makefile -j`nproc` &>/dev/null
 
 strip -s nestopia_libretro.dll
-cp nestopia_libretro.dll ../../../cores_dist/
+cp nestopia_libretro.dll ../../../retroarch_dist/cores/
 cd ../../..
 
 $SETCOLOR_GREEN && echo "Done." && $SETCOLOR_NORMAL

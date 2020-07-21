@@ -13,7 +13,7 @@ $SETCOLOR_GREEN && echo "Building ppsspp..." && $SETCOLOR_NORMAL
 mkdir build
 cd build
 ../../../vc_build_ppsspp.bat "$VCVARS64_BAT" &>/dev/null
-cp Release/ppsspp_libretro.dll ../../../cores_dist/
+cp Release/ppsspp_libretro.dll ../../../retroarch_dist/cores/
 cd ../../..
 
 $SETCOLOR_GREEN && echo "Done." && $SETCOLOR_NORMAL

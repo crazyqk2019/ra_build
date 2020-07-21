@@ -12,7 +12,7 @@ $SETCOLOR_GREEN && echo "Building yabause..." && $SETCOLOR_NORMAL
 make -f Makefile -j`nproc` &>/dev/null
 
 strip -s yabause_libretro.dll
-cp yabause_libretro.dll ../../../../../cores_dist/
+cp yabause_libretro.dll ../../../../../retroarch_dist/cores/
 cd ../../../../..
 
 $SETCOLOR_GREEN && echo "Done." && $SETCOLOR_NORMAL

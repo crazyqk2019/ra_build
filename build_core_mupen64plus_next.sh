@@ -11,7 +11,7 @@ $SETCOLOR_GREEN && echo "Building mupen64plus_next..." && $SETCOLOR_NORMAL
 make -f Makefile -j`nproc` &>/dev/null
 
 strip -s mupen64plus_next_libretro.dll
-cp mupen64plus_next_libretro.dll ../../cores_dist/
+cp mupen64plus_next_libretro.dll ../../retroarch_dist/cores/
 cd ../..
 
 $SETCOLOR_GREEN && echo "Done." && $SETCOLOR_NORMAL

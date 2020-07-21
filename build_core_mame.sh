@@ -11,7 +11,7 @@ $SETCOLOR_GREEN && echo "Building mame..." && $SETCOLOR_NORMAL
 make -f Makefile.libretro -j`nproc` &>/dev/null
 
 strip -s mame_libretro.dll
-cp mame_libretro.dll ../../cores_dist/
+cp mame_libretro.dll ../../retroarch_dist/cores/
 cd ../..
 
 $SETCOLOR_GREEN && echo "Done." && $SETCOLOR_NORMAL

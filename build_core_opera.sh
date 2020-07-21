@@ -11,7 +11,7 @@ $SETCOLOR_GREEN && echo "Building opera..." && $SETCOLOR_NORMAL
 make -f Makefile -j`nproc` &>/dev/null
 
 strip -s opera_libretro.dll
-cp opera_libretro.dll ../../cores_dist/
+cp opera_libretro.dll ../../retroarch_dist/cores/
 cd ../..
 
 $SETCOLOR_GREEN && echo "Done." && $SETCOLOR_NORMAL

@@ -11,7 +11,7 @@ $SETCOLOR_GREEN && echo "Building mgba..." && $SETCOLOR_NORMAL
 make -f Makefile.libretro -j`nproc` &>/dev/null
 
 strip -s mgba_libretro.dll
-cp mgba_libretro.dll ../../cores_dist/
+cp mgba_libretro.dll ../../retroarch_dist/cores/
 cd ../..
 
 $SETCOLOR_GREEN && echo "Done." && $SETCOLOR_NORMAL

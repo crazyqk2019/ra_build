@@ -11,7 +11,7 @@ $SETCOLOR_GREEN && echo "Building fmsx..." && $SETCOLOR_NORMAL
 make -f Makefile -j`nproc` &>/dev/null
 
 strip -s fmsx_libretro.dll
-cp fmsx_libretro.dll ../../cores_dist/
+cp fmsx_libretro.dll ../../retroarch_dist/cores/
 cd ../..
 
 $SETCOLOR_GREEN && echo "Done." && $SETCOLOR_NORMAL

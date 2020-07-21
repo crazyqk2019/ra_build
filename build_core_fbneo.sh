@@ -12,7 +12,7 @@ $SETCOLOR_GREEN && echo "Building fbneo..." && $SETCOLOR_NORMAL
 make -j`nproc` &>/dev/null
 
 strip -s fbneo_libretro.dll
-cp fbneo_libretro.dll ../../../../../cores_dist/
+cp fbneo_libretro.dll ../../../../../retroarch_dist/cores/
 cd ../../../../../
 
 $SETCOLOR_GREEN && echo "Done." && $SETCOLOR_NORMAL

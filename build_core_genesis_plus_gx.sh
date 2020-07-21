@@ -11,7 +11,7 @@ $SETCOLOR_GREEN && echo "Building genesis_plus_gx..." && $SETCOLOR_NORMAL
 make -f Makefile.libretro -j`nproc` &>/dev/null
 
 strip -s genesis_plus_gx_libretro.dll
-cp genesis_plus_gx_libretro.dll ../../cores_dist/
+cp genesis_plus_gx_libretro.dll ../../retroarch_dist/cores/
 cd ../..
 
 $SETCOLOR_GREEN && echo "Done." && $SETCOLOR_NORMAL

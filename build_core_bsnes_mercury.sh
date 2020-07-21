@@ -10,7 +10,7 @@ make clean &>/dev/null
 $SETCOLOR_GREEN && echo "Building bsnes_mercury..." && $SETCOLOR_NORMAL
 make profile=accuracy -j`nproc` &>/dev/null
 strip -s ./out/bsnes_mercury_accuracy_libretro.dll
-cp ./out/bsnes_mercury_accuracy_libretro.dll ../../cores_dist/
+cp ./out/bsnes_mercury_accuracy_libretro.dll ../../retroarch_dist/cores/
 cd ../..
 
 $SETCOLOR_GREEN && echo "Done." && $SETCOLOR_NORMAL

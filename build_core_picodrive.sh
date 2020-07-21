@@ -11,7 +11,7 @@ $SETCOLOR_GREEN && echo "Building picodrive..." && $SETCOLOR_NORMAL
 make -f Makefile.libretro -j`nproc` &>/dev/null
 
 strip -s picodrive_libretro.dll
-cp picodrive_libretro.dll ../../cores_dist/
+cp picodrive_libretro.dll ../../retroarch_dist/cores/
 cd ../..
 
 $SETCOLOR_GREEN && echo "Done." && $SETCOLOR_NORMAL

@@ -11,7 +11,7 @@ $SETCOLOR_GREEN && echo "Building mame2003_plus..." && $SETCOLOR_NORMAL
 make -f Makefile -j`nproc` &>/dev/null
 
 strip -s mame2003_plus_libretro.dll
-cp mame2003_plus_libretro.dll ../../cores_dist/
+cp mame2003_plus_libretro.dll ../../retroarch_dist/cores/
 cd ../..
 
 $SETCOLOR_GREEN && echo "Done." && $SETCOLOR_NORMAL

@@ -11,7 +11,7 @@ $SETCOLOR_GREEN && echo "Building fceumm..." && $SETCOLOR_NORMAL
 make -f Makefile.libretro -j`nproc` &>/dev/null
 
 strip -s fceumm_libretro.dll
-cp fceumm_libretro.dll ../../cores_dist/
+cp fceumm_libretro.dll ../../retroarch_dist/cores/
 cd ../..
 
 $SETCOLOR_GREEN && echo "Done." && $SETCOLOR_NORMAL

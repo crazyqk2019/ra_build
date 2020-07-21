@@ -11,7 +11,7 @@ $SETCOLOR_GREEN && echo "Building mednafen_saturn..." && $SETCOLOR_NORMAL
 make -f Makefile -j`nproc` &>/dev/null
 
 strip -s mednafen_saturn_libretro.dll
-cp mednafen_saturn_libretro.dll ../../cores_dist/
+cp mednafen_saturn_libretro.dll ../../retroarch_dist/cores/
 cd ../..
 
 $SETCOLOR_GREEN && echo "Done." && $SETCOLOR_NORMAL

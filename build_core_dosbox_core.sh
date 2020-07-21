@@ -13,7 +13,7 @@ make BUNDLED_AUDIO_CODECS=0 BUNDLED_LIBSNDFILE=0 WITH_DYNAREC=x86_64 -j`nproc` &
 strip -s dosbox_core_libretro.dll
 cp dosbox_core_libretro.dll ../../../retroarch_dist/cores/
 cd ../../../retroarch_dist/cores/
-../dist_core.sh dosbox_core_libretro.dll
+../../dist_core.sh dosbox_core_libretro.dll
 cd ../..
 
 

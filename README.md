@@ -37,11 +37,11 @@
 
 
 ## 个人汉化RA主程序
-- [汉化仓库地址](https://github.com/crazyqk2019/RetroArch)
+- [汉化仓库地址](https://github.com/crazyqk2019/RetroArch)(同步到v1.8.9)
 - [原始仓库地址](https://github.com/libretro/RetroArch)
 
 
-## 个人汉化内核
+## 个人汉化内核(同步时间2020/07/24)
 
 - ### 街机模拟器
 	* [MAME 2003-Plus](https://docs.libretro.com/library/mame2003_plus/)
@@ -80,7 +80,7 @@
 		+ [原始仓库地址](https://github.com/libretro/nestopia)
 	
 - ### Nintendo SNES/SFC模拟器
-	* [bsnes-mercury Accuracy](https://docs.libretro.com/library/bsnes_mercury_accuracy/)
+	* [bsnes-mercury Accuracy](https://docs.libretro.com/library/bsnes_mercury_accuracy/)(最近同步日期2020/07/24)
 		+ [汉化仓库地址](https://github.com/crazyqk2019/libretro-bsnes_mercury)
 		+ [原始仓库地址](https://github.com/libretro/bsnes-mercury)
 	* [Snes9x](https://docs.libretro.com/library/snes9x/)

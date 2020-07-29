@@ -7,8 +7,10 @@
 - retrorach_font -- RetroArch包含中文字体
 - cores -- 内核source目录
 - retroarch_dist/cores -- 内核编译输出目录
+- scripts -- 安装/拉取/编译脚本
+- tools -- 需要用的一些第三方工具
 
-## 文件说明
+## scripts目录脚本文件说明
 - inst_pkgs.sh -- 安装必需的msys和mingw包
 - clone_retro.sh -- 拉取RetroArch源代码
 - clone_retro_orig.sh -- 拉取原始RetorArch源代码

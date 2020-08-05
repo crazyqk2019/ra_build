@@ -355,5 +355,18 @@ cd ..
 $SETCOLOR_GREEN && echo "Done." && $SETCOLOR_NORMAL
 ###############################################################################
 
+###############################################################################
+$SETCOLOR_GREEN && echo "Cloning Dolphin..." && $SETCOLOR_NORMAL
+git clone --recursive https://github.com/crazyqk2019/libretro-dolphin.git
+cd libretro-dolphin
+
+$SETCOLOR_GREEN && echo "Adding upstream repository for Dolphin..." && $SETCOLOR_NORMAL
+git remote add upstream https://github.com/libretro/dolphin.git
+cd ..
+
+$SETCOLOR_GREEN && echo "Done." && $SETCOLOR_NORMAL
+###############################################################################
+
+
 popd &>/dev/null
 $SETCOLOR_GREEN && echo "All done." && $SETCOLOR_NORMAL

@@ -80,7 +80,7 @@
 	* [Nestopia UE](https://docs.libretro.com/library/nestopia_ue/)
 		+ [汉化仓库地址](https://github.com/crazyqk2019/libretro-nestopia)
 		+ [原始仓库地址](https://github.com/libretro/nestopia)
-	
+
 - ### Nintendo SNES/SFC模拟器
 	* [bsnes-mercury Accuracy](https://docs.libretro.com/library/bsnes_mercury_accuracy/)(最近同步日期2020/07/24)
 		+ [汉化仓库地址](https://github.com/crazyqk2019/libretro-bsnes_mercury)
@@ -88,7 +88,7 @@
 	* [Snes9x](https://docs.libretro.com/library/snes9x/)
 		+ [汉化仓库地址](https://github.com/crazyqk2019/libretro-snes9x)
 		+ [原始仓库地址](https://github.com/libretro/snes9x)
-	
+
 - ### Nintendo 64模拟器
 	* [Mupen64Plus](https://docs.libretro.com/library/mupen64plus/)
 		+ [汉化仓库地址](https://github.com/crazyqk2019/libretro-mupen64plus_next)
@@ -96,6 +96,11 @@
 	* ParaLLEl N64
 		+ [汉化仓库地址](https://github.com/crazyqk2019/libretro-parallel_n64)
 		+ [原始仓库地址](https://github.com/libretro/parallel-n64)
+
+- ### Nintendo Gamecube/Wii模拟器
+	* [Dolphin](https://docs.libretro.com/library/dolphin/)
+		+ [汉化仓库地址](https://github.com/crazyqk2019/libretro-dolphin)
+		+ [原始仓库地址](https://github.com/libretro/dolphin)
 ----
 - ### Sega MS/GG/MD/CD模拟器
 	* [Genesis Plus GX](https://docs.libretro.com/library/genesis_plus_gx/)
@@ -172,13 +177,11 @@
 
 ### libretro-parallel_n64
 编译命令：
-
 ```bash
 make HAVE_PARALLEL=1 HAVE_PARALLEL_RSP=1 WITH_DYNAREC=x86_64
 ```
 
 ### libretro-mednafen_psx_hw
-
 编译命令：
 
 ```bash
@@ -186,7 +189,6 @@ make HAVE_HW=1
 ```
 
 ### libretro-bsnes_mercury
-
 三个不同的profile编译命令，默认编译accurary。
 ```bash
 make profile=accuracy
@@ -195,7 +197,6 @@ make profile=performance
 ```
 
 ### libretro-dosbox_core
-
 编译命令：
 ```bash
 make BUNDLED_AUDIO_CODECS=0 BUNDLED_LIBSNDFILE=0 WITH_DYNAREC=x86_64
@@ -207,26 +208,42 @@ cd cores_dist
 ```
 
 ### libretro-ppsspp
-
-只能用VC2019编译，mingw编译通不过。
-
+需用VC2019编译。
 必要软件和编译步骤：
 
 1. 下载安装 [VC2019 Community](https://visualstudio.microsoft.com/zh-hans/vs/)
-
 2. 通过 Windows  Store 安装 Python3
-
 3. 生成 `.vcproject` 文件
-
-   ```bash
+   进入VC2019 x64命令行，运行：
+   
+	```shell
 	mkdir build
 	cd build
-	cmake -DLIBRETRO=ON -DCMAKE_CXX_FLAGS_RELEASE="/MT /UTF-8" ..
+	cmake -DLIBRETRO=ON -DCMAKE_CXX_FLAGS_RELEASE="/MT /utf-8" ..
 	```
-	
 5. 编译
-	```bash
+	```shell
 	cd libretro
 	msbuild ppsspp_libretro.vcxproj -p:Platform=x64;Configuration=Release
 	```
+
+### libretro-dolphin
+需用VC2019编译。
+必要软件和编译步骤：
+
+1. 下载安装 [VC2019 Community](https://visualstudio.microsoft.com/zh-hans/vs/)
+2. 通过 Windows  Store 安装 Python3
+3. 生成 `.vcproject` 文件
+   进入VC2019 x64命令行，运行：
+   ```shell
+	mkdir build
+	cd build
+	cmake -G "Visual Studio 16 2019" -DLIBRETRO=ON -DCMAKE_CXX_FLAGS_RELEASE="/MT /utf-8 /D_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING" ..
+	```
+5. 编译
+	```shell
+    cd Source\Core\DolphinLibretro
+    msbuild dolphin_libretro.vcxproj -p:Platform=x64;Configuration=Release
+	```
+	
 	

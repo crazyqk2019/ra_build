@@ -31,7 +31,7 @@ cp ./bin/Release/citra_libretro.dll ../../../retroarch_dist/cores/
 
 $SETCOLOR_GREEN && echo "Cleaning Citra..." && $SETCOLOR_NORMAL
 cd ..
-#rm -r -f build
+rm -r -f build
 
 popd &>/dev/null
 

@@ -31,6 +31,7 @@ pacman -S --needed --noconfirm \
 	mingw-w64-x86_64-libsndfile \
 	mingw-w64-x86_64-fluidsynth \
 	mingw-w64-x86_64-fmt \
+    mingw-w64-x86_64-boost \
     mingw-w64-x86_64-qt5 \
     mingw-w64-x86_64-qt-creator
     

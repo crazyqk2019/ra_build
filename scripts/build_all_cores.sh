@@ -32,6 +32,8 @@ SETCOLOR_NORMAL="echo -en \\E[0;39m"
 ./build_core_mame2016.sh
 ./build_core_mame.sh
 ./build_core_dosbox_core.sh
+./build_core_dolphin.sh
+./build_core_citra.sh
 
 $SETCOLOR_GREEN && echo "All done." && $SETCOLOR_NORMAL
 

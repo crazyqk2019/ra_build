@@ -379,5 +379,26 @@ cd ..
 $SETCOLOR_GREEN && echo "Done." && $SETCOLOR_NORMAL
 ###############################################################################
 
+
+###############################################################################
+$SETCOLOR_GREEN && echo "Cloning DeSmuME..." && $SETCOLOR_NORMAL
+git clone --recursive https://github.com/crazyqk2019/libretro-desmume.git
+cd libretro-desmume
+$SETCOLOR_GREEN && echo "Adding upstream repository for DeSmuME..." && $SETCOLOR_NORMAL
+git remote add upstream https://github.com/libretro/desmume.git
+cd ..
+$SETCOLOR_GREEN && echo "Done." && $SETCOLOR_NORMAL
+###############################################################################
+
+###############################################################################
+$SETCOLOR_GREEN && echo "Cloning melonDS..." && $SETCOLOR_NORMAL
+git clone --recursive https://github.com/crazyqk2019/libretro-melonds.git
+cd libretro-melonds
+$SETCOLOR_GREEN && echo "Adding upstream repository for melonDS..." && $SETCOLOR_NORMAL
+git remote add upstream https://github.com/libretro/melonDS.git
+cd ..
+$SETCOLOR_GREEN && echo "Done." && $SETCOLOR_NORMAL
+###############################################################################
+
 popd &>/dev/null
 $SETCOLOR_GREEN && echo "All done." && $SETCOLOR_NORMAL

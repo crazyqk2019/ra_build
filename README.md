@@ -102,7 +102,16 @@
         + [汉化仓库地址](https://github.com/crazyqk2019/libretro-dolphin)
         + [原始仓库地址](https://github.com/libretro/dolphin)
   
+- ### Nintendo - DS模拟器
+    * [DeSmuME](https://docs.libretro.com/library/desmume/)
+        + [汉化仓库地址](https://github.com/crazyqk2019/libretro-desmume)
+        + [原始仓库地址](https://github.com/libretro/desmume)
+    * [melonDS](https://docs.libretro.com/library/melonds/)
+        + [汉化仓库地址](https://github.com/crazyqk2019/libretro-melonds)
+        + [原始仓库地址](https://github.com/libretro/melonDS)
+
 - ### Nintendo 3DS模拟器
+  
     * [Citra](https://docs.libretro.com/library/citra/)
         + [汉化仓库地址](https://github.com/crazyqk2019/libretro-citra)
         + [原始仓库地址](https://github.com/libretro/citra)
@@ -140,10 +149,9 @@
         + [原始仓库地址](https://github.com/libretro/pcsx_rearmed)
 
 - ### Sony PlayStation Portable模拟器
-        * [PPSSPP](https://docs.libretro.com/library/ppsspp/)
+    * [PPSSPP](https://docs.libretro.com/library/ppsspp/)
         + [汉化仓库地址](https://github.com/crazyqk2019/libretro-ppsspp)
         + [原始仓库地址](https://github.com/libretro/ppsspp)
-    
 ----
 - ### SNK Neo Geo Pocket / Color模拟器
     * [Beetle NeoPop](https://docs.libretro.com/library/beetle_neopop/)
@@ -158,7 +166,7 @@
 - ### The 3DO Company 3DO模拟器
     * [4DO/Opera](https://docs.libretro.com/library/4do/)
         + [汉化仓库地址](https://github.com/crazyqk2019/libretro-opera)
-    + [原始仓库地址](https://github.com/libretro/opera-libretro)
+        + [原始仓库地址](https://github.com/libretro/opera-libretro)
 ----
 - ### NEC PC-Engine模拟器
     * Beetle PCE
@@ -174,7 +182,6 @@
     * [PX68k](https://docs.libretro.com/library/px68k/)
         + [汉化仓库地址](https://github.com/crazyqk2019/libretro-px68k)
         + [原始仓库地址](https://github.com/libretro/px68k-libretro)
-
 ----
 - ### DOS模拟器
     * [DOSBox Core](https://docs.libretro.com/library/dosbox/)

@@ -33,9 +33,8 @@
 把 https://mirrors.tuna.tsinghua.edu.cn 服务器地址移到最前面
 4. 升级 msys2
 运行 pacman -Syu 数次，直到无更新
-5. 安装必要包
-运行inst_pkgs.sh
-6. 安装pkgs目录中的包，可直接解压安装，无须用pacman命令安装
+5. 运行inst_pkgs.sh安装必要包
+6. 安装pkgs目录中的包，直接解压到对应目录，无须用pacman命令安装
 
 
 ## 个人汉化RA主程序
@@ -82,7 +81,7 @@
         + [原始仓库地址](https://github.com/libretro/nestopia)
 
 - ### Nintendo SNES/SFC模拟器
-    * [bsnes-mercury Accuracy](https://docs.libretro.com/library/bsnes_mercury_accuracy/)(最近同步日期2020/07/24)
+    * [bsnes-mercury Accuracy](https://docs.libretro.com/library/bsnes_mercury_accuracy/)
         + [汉化仓库地址](https://github.com/crazyqk2019/libretro-bsnes_mercury)
         + [原始仓库地址](https://github.com/libretro/bsnes-mercury)
     * [Snes9x](https://docs.libretro.com/library/snes9x/)
@@ -149,7 +148,7 @@
         + [原始仓库地址](https://github.com/libretro/pcsx_rearmed)
 
 - ### Sony PlayStation Portable模拟器
-    * [PPSSPP](https://docs.libretro.com/library/ppsspp/)
+    * [PPSSPP](https://docs.libretro.com/library/ppsspp/)(同步到v1.9.4)
         + [汉化仓库地址](https://github.com/crazyqk2019/libretro-ppsspp)
         + [原始仓库地址](https://github.com/libretro/ppsspp)
 ----

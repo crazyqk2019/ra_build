@@ -36,6 +36,9 @@ SETCOLOR_NORMAL="echo -en \\E[0;39m"
 ./build_core_citra.sh
 ./build_core_desmume.sh
 ./build_core_melonds.sh
+./build_core_sameboy.sh
+./build_core_gearboy.sh
+./build_core_tgbdual.sh
 
 $SETCOLOR_GREEN && echo "All done." && $SETCOLOR_NORMAL
 

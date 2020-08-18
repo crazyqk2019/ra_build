@@ -17,11 +17,13 @@
 - build_retro.sh -- 编译RetroArch
 - dist_retro.sh -- 提取RetorArch.exe依赖的dll库
 - dist_retro_noqt.sh -- 提取RetorArch.exe依赖的dll库，不包括Qt
-- clone_cores.sh -- 拉取内核源代码
+- clone_all_cores.sh -- 拉取所有内核源代码
 - build_core_xxx.sh -- 编译各个内核
 - build_all_cores.sh -- 编译所有内核
 - dist_core.sh -- 提取内核依赖的dll库
-- vc_build_ppsspp.bat -- 调用VC2019编译PPSSPP的特殊命令，由build_core_ppsspp.sh调用
+- vc_build_ppsspp.bat -- 使用VC2019编译PPSSPP的特殊命令，由build_core_ppsspp.sh调用
+- vc_build_citra.bat -- 使用VC2019编译Citra的特殊命令，由build_core_citra.调用
+- vc_build_dolphin.bat -- 使用VC209编译Dolphin的特殊命令，由build_core_dolphin.sh调用
 
 ## msys2/mingw64编译环境安装步骤
 1. 从 https://www.msys2.org/ 下载msys2安装器进行安装
@@ -67,6 +69,17 @@
         + [汉化仓库地址](https://github.com/crazyqk2019/libretro-fbneo)
         + [原始仓库地址](https://github.com/libretro/FBNeo)
 ----
+- ### Nintendo GB/GBC模拟器
+    * [SameBoy](https://docs.libretro.com/library/sameboy/)
+        + [汉化仓库地址](https://github.com/crazyqk2019/libretro-sameboy)
+        + [原始仓库地址](https://github.com/libretro/SameBoy)
+    * [Gearboy](https://docs.libretro.com/library/gearboy/)
+        + [汉化仓库地址](https://github.com/crazyqk2019/libretro-gearboy)
+        + [原始仓库地址](https://github.com/libretro/Gearboy)
+    * [TGB Dual](https://docs.libretro.com/library/tgb_dual/)
+        + [汉化仓库地址](https://github.com/crazyqk2019/libretro-tgbdual)
+        + [原始仓库地址](https://github.com/libretro/tgbdual-libretro)
+
 - ### Nintendo GBA模拟器
     * [mGBA](https://docs.libretro.com/library/mgba/)
         + [汉化仓库地址](https://github.com/crazyqk2019/libretro-mgba)
@@ -110,7 +123,6 @@
         + [原始仓库地址](https://github.com/libretro/melonDS)
 
 - ### Nintendo 3DS模拟器
-  
     * [Citra](https://docs.libretro.com/library/citra/)
         + [汉化仓库地址](https://github.com/crazyqk2019/libretro-citra)
         + [原始仓库地址](https://github.com/libretro/citra)

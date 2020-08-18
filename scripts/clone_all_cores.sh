@@ -400,5 +400,35 @@ cd ..
 $SETCOLOR_GREEN && echo "Done." && $SETCOLOR_NORMAL
 ###############################################################################
 
+###############################################################################
+$SETCOLOR_GREEN && echo "Cloning SameBoy..." && $SETCOLOR_NORMAL
+git clone --recursive https://github.com/crazyqk2019/libretro-sameboy.git
+cd libretro-sameboy
+$SETCOLOR_GREEN && echo "Adding upstream repository for SameBoy..." && $SETCOLOR_NORMAL
+git remote add upstream https://github.com/libretro/SameBoy.git
+cd ..
+$SETCOLOR_GREEN && echo "Done." && $SETCOLOR_NORMAL
+###############################################################################
+
+###############################################################################
+$SETCOLOR_GREEN && echo "Cloning Gearboy..." && $SETCOLOR_NORMAL
+git clone --recursive https://github.com/crazyqk2019/libretro-gearboy.git
+cd libretro-gearboy
+$SETCOLOR_GREEN && echo "Adding upstream repository for Gearboy..." && $SETCOLOR_NORMAL
+git remote add upstream https://github.com/libretro/Gearboy.git
+cd ..
+$SETCOLOR_GREEN && echo "Done." && $SETCOLOR_NORMAL
+###############################################################################
+
+###############################################################################
+$SETCOLOR_GREEN && echo "Cloning TGB Dual..." && $SETCOLOR_NORMAL
+git clone --recursive https://github.com/crazyqk2019/libretro-tgbdual.git
+cd libretro-tgbdual
+$SETCOLOR_GREEN && echo "Adding upstream repository for TGB Dual..." && $SETCOLOR_NORMAL
+git remote add upstream https://github.com/libretro/tgbdual-libretro.git
+cd ..
+$SETCOLOR_GREEN && echo "Done." && $SETCOLOR_NORMAL
+###############################################################################
+
 popd &>/dev/null
 $SETCOLOR_GREEN && echo "All done." && $SETCOLOR_NORMAL

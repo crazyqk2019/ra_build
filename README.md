@@ -40,7 +40,7 @@
 
 
 ## 个人汉化RA主程序
-- [汉化仓库地址](https://github.com/crazyqk2019/RetroArch)(同步到v1.8.9)
+- [汉化仓库地址](https://github.com/crazyqk2019/RetroArch)(同步到v1.9.0)
 - [原始仓库地址](https://github.com/libretro/RetroArch)
 
 

@@ -98,6 +98,9 @@ http://buildbot.libretro.com/
         + [原始仓库地址](https://github.com/libretro/nestopia)
 
 - ### Nintendo SNES/SFC模拟器
+    * bsnes
+        + [汉化仓库地址](https://github.com/crazyqk2019/libretro-bsnes)
+        + [原始仓库地址](https://github.com/libretro/bsnes)
     * [bsnes-mercury Accuracy](https://docs.libretro.com/library/bsnes_mercury_accuracy/)
         + [汉化仓库地址](https://github.com/crazyqk2019/libretro-bsnes_mercury)
         + [原始仓库地址](https://github.com/libretro/bsnes-mercury)
@@ -219,6 +222,12 @@ make HAVE_PARALLEL=1 HAVE_PARALLEL_RSP=1 WITH_DYNAREC=x86_64
 编译命令：
 ```bash
 make HAVE_HW=1
+```
+
+### libretro-bsnes
+```bash
+cd bsnes
+make -f GNUmakefile target=libretro binary=library
 ```
 
 ### libretro-bsnes_mercury

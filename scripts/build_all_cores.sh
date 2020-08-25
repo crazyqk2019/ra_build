@@ -39,6 +39,7 @@ SETCOLOR_NORMAL="echo -en \\E[0;39m"
 ./build_core_sameboy.sh
 ./build_core_gearboy.sh
 ./build_core_tgbdual.sh
+./build_core_bsnes.sh
 
 $SETCOLOR_GREEN && echo "All done." && $SETCOLOR_NORMAL
 

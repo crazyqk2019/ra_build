@@ -25,7 +25,11 @@
 - vc_build_citra.bat -- 使用VC2019编译Citra的特殊命令，由build_core_citra.调用
 - vc_build_dolphin.bat -- 使用VC209编译Dolphin的特殊命令，由build_core_dolphin.sh调用
 
-## msys2/mingw64编译环境安装步骤
+## 官方最新编译和资源下载
+http://buildbot.libretro.com/
+
+## MSYS2/MinGW64编译环境安装步骤
+
 1. 从 https://www.msys2.org/ 下载msys2安装器进行安装
 2. 修改配置，以使用wget下载安装包
 编辑 /etc/pacman.conf 去掉此行注释

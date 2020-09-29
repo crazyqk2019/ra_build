@@ -2,12 +2,12 @@
 
 
 ## 目录说明
-- pkgs -- 第三方lib库包
 - retroarch_dist -- RetroArch编译输出目录
-- retrorach_font -- RetroArch包含中文字体
-- cores -- 内核source目录
 - retroarch_dist/cores -- 内核编译输出目录
+- retrorach_font -- RetroArch中文字体
+- cores -- 内核source目录
 - scripts -- 安装/拉取/编译脚本
+- pkgs -- 第三方lib库包
 - tools -- 需要用的一些第三方工具
 
 ## scripts目录脚本文件说明
@@ -21,11 +21,12 @@
 - build_core_xxx.sh -- 编译各个内核
 - build_all_cores.sh -- 编译所有内核
 - dist_core.sh -- 提取内核依赖的dll库
-- vc_build_ppsspp.bat -- 使用VC2019编译PPSSPP的特殊命令，由build_core_ppsspp.sh调用
-- vc_build_citra.bat -- 使用VC2019编译Citra的特殊命令，由build_core_citra.调用
-- vc_build_dolphin.bat -- 使用VC209编译Dolphin的特殊命令，由build_core_dolphin.sh调用
+- vc_build_ppsspp.bat -- 调用VC2019编译PPSSPP的特殊命令，由build_core_ppsspp.sh调用
+- vc_build_citra.bat -- 调用VC2019编译Citra的特殊命令，由build_core_citra.sh调用
+- vc_build_dolphin.bat -- 调用VC2019编译Dolphin的特殊命令，由build_core_dolphin.sh调用
 
 ## 官方最新编译和资源下载
+
 http://buildbot.libretro.com/
 
 ## MSYS2/MinGW64编译环境安装步骤

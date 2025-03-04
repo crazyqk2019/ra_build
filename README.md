@@ -1,16 +1,285 @@
 # Windows下RetroArch编译/汉化环境
 
+## MSYS2/MinGW64编译环境安装步骤
 
+1. 从 https://www.msys2.org/ 下载msys2安装器进行安装
+
+2. （可选）修改配置，以使用wget下载安装包
+     编辑 /etc/pacman.conf 去掉此行注释
+
+     ```bash
+     XferCommand = /usr/bin/wget --passive-ftp -c -O %o %u
+     ```
+     
+3. （可选）使用清华大学服务器镜像
+     编辑 /etc/pacman.d下的mirrorlist.*文件
+       把 https://mirrors.tuna.tsinghua.edu.cn 服务器地址移到最前面
+
+4. 进入msys2 shell环境。
+
+5. 升级msys2：运行 `pacman -Syu` 数次，直到无更新
+
+6. 运行`scripts/inst_pkgs.sh`脚本，安装编译所需工具和依赖包。(默认使用ucrt64工具链)
+
+7. ~~安装pkgs目录中的包，直接解压到对应目录，无须用pacman命令安装~~（已经可以在第6步使用pacman直接下载）
+
+> [!TIP]
+>
+> 命令行下使用 `msys2_shell.cmd -msys2 -defterm -no-start`命令可以在不打开新窗口的情况下，在当前终端进入msys环境。运行 `msys2_shell.cmd --help`可查看帮助。
+
+## 拉取RA源代码
+
+1. 进入ucrt64环境，执行：
+
+   ```bash
+   git clone https://github.com/libretro/RetroArch retroarch
+   ```
+
+2. ~~完成后进入retroarch源代码目录，执行拉取子模块脚本：~~
+
+   ```bash
+   ./fetch-submodules.sh
+   ```
+
+> [!NOTE]
+>
+> 可使用`scripts/clone_ra_orig.sh`和`scripts/clone_ra.sh`脚本自动执行拉取。
+
+## 编译RA主程序
+
+1. 进入ucrt64编译环境：
+
+   ```cmd
+   `msys2_shell.cmd -ucrt64 -defterm -no-start`
+   ```
+
+2. 进入RA源代码目录，运行配置程序：
+
+   ```bash
+   ./configure
+   ```
+
+3. 编译：
+
+   ```bash
+   make clean
+   make -j
+   ```
+
+4. 裁剪优化，减小可执行文件大小：
+
+   ```bash
+   strip -s retroarch.exe
+   ```
+
+> [!NOTE]
+>
+> 可使用`scripts/build_ra.sh`脚本自动执行以上编译步骤（在源代码根目录下运行）。
+
+## 编译视频滤镜和音频滤镜(DSP)
+
+1. 编译视频滤镜：
+
+   ```bash
+   cd gfx/video_filters
+   make -j
+   ```
+
+2. 编译音频滤镜(DSP)
+
+   ```bash
+   cd libretro-common/audio/dsp_filters
+   make -j
+   ```
+
+> [!NOTE]
+>
+> 可使用`scripts/build_ra_filters.sh`脚本自动编译视频滤镜和音频DSP（在源代码根目录下运行）。
+
+## 建立完整RA发行目录
+
+1. 拷贝retroarch.exe到分发目录。
+
+2. 拷贝依赖的msys和mingw的dll:
+
+   ```bash
+   for bin in $(ntldd -R retroarch.exe | grep -i ucrt64 | cut -d">" -f2 | cut -d" " -f2); do cp -v "$bin" . ; done;
+   ```
+
+3. 拷贝依赖的QT的dll:
+
+   ```bash
+   windeployqt6 retroarch.exe
+   for bin in $(ntldd -R imageformats/*dll | grep -i ucrt64 | cut -d">" -f2 | cut -d" " -f2); do cp -v "$bin" . ; done;
+   ```
+
+4. 拷贝音视频滤镜：
+
+   ```bash
+   mkdir -p ../retroarch_dist/filters/video
+   cp -t ../retroarch_dist/filters/video gfx/video_filters/*.dll gfx/video_filters/*.filt
+   mkdir -p ../retroarch_dist/filters/audio
+   cp -t ../retroarch_dist/filters/audio libretro-common/audio/dsp_filters/*.dll libretro-common/audio/dsp_filters/*.dsp
+   ```
+
+5. 从<https://buildbot.libretro.com/assets/frontend/>下载并解压其他资源:
+
+   ```bash
+   wget https://buildbot.libretro.com/assets/frontend/assets.zip
+   7z x assets.zip -oassets
+   rm assets.zip
+   
+   wget https://buildbot.libretro.com/assets/frontend/autoconfig.zip
+   7z x autoconfig.zip -oautoconfig
+   rm autoconfig.zip
+   
+   wget https://buildbot.libretro.com/assets/frontend/cheats.zip
+   7z x cheats.zip -ocheats
+   rm cheats.zip
+   
+   wget https://buildbot.libretro.com/assets/frontend/database-cursors.zip
+   7z x database-cursors.zip -odatabase/cursors
+   rm database-cursors.zip
+   
+   7z x database-rdb.zip -odatabase/rdb
+   rm database-rdb.zip
+   
+   wget https://buildbot.libretro.com/assets/frontend/info.zip
+   7z x info.zip -oinfo
+   rm info.zip
+   
+   wget https://buildbot.libretro.com/assets/frontend/overlays.zip
+   7z x overlays.zip -ooverlays
+   rm overlays.zip
+   
+   wget https://buildbot.libretro.com/assets/frontend/shaders_cg.zip
+   7z x shaders_cg.zip -oshaders/shaders_cg
+   rm shaders_cg.zip
+   
+   wget https://buildbot.libretro.com/assets/frontend/shaders_glsl.zip
+   7z x shaders_glsl.zip -oshaders/shaders_glsl
+   rm shaders_glsl.zip
+   
+   wget https://buildbot.libretro.com/assets/frontend/shaders_slang.zip
+   7z x shaders_slang.zip -oshaders/shaders_slang
+   rm shaders_slang.zip
+   ```
+
+> [!NOTE]
+>
+> 可使用`scripts\dist_ra.sh`脚本自动执行以上步骤（在源代码根目录下运行）。
+
+## 各个内核编译方法
+
+需要用MSVC编译的内核需要安装VC,CMake和Python：
+1. 下载安装 [VC2019 Community](https://visualstudio.microsoft.com/zh-hans/vs/)
+    安装后会包含CMake
+2. 通过 Windows  Store 安装 Python3
+
+### libretro-parallel_n64
+编译命令：
+```bash
+make HAVE_PARALLEL=1 HAVE_PARALLEL_RSP=1 WITH_DYNAREC=x86_64
+```
+
+### libretro-mednafen_psx_hw
+编译命令：
+```bash
+make HAVE_HW=1
+```
+
+### libretro-bsnes
+```bash
+cd bsnes
+make -f GNUmakefile target=libretro binary=library
+```
+
+### libretro-bsnes_mercury
+三个不同的profile编译命令，默认编译accurary。
+```bash
+make profile=accuracy
+make profile=balanced
+make profile=performance
+```
+
+### libretro-dosbox_core
+编译命令：
+```bash
+make BUNDLED_AUDIO_CODECS=0 BUNDLED_LIBSNDFILE=0 WITH_DYNAREC=x86_64
+```
+拷贝依赖的dll：
+```bash
+cd cores_dist
+../dist_cores.sh dosbox_core_libretro.dll
+```
+
+### libretro-ppsspp
+需用VC2019编译。
+1. 生成 `.vcproject` 文件，进入VC2019 x64命令行，运行：
+```shell
+mkdir build
+cd build
+cmake -G "Visual Studio 16 2019" -DLIBRETRO=ON -DCMAKE_C_FLAGS_RELEASE="/MT /utf-8" -DCMAKE_CXX_FLAGS_RELEASE="/MT /utf-8" ..
+```
+2. 编译
+```shell
+cd libretro
+msbuild ppsspp_libretro.vcxproj -p:Platform=x64;Configuration=Release
+```
+
+### libretro-dolphin
+需用VC2019编译。
+1. 生成 `.vcproject` 文件，进入VC2019 x64命令行，运行：
+```shell
+mkdir build
+cd build
+cmake -G "Visual Studio 16 2019" -DLIBRETRO=ON -DCMAKE_C_FLAGS="/utf-8 /D_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING" -DCMAKE_CXX_FLAGS="/utf-8 /D_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING" ..
+```
+2. 编译
+```shell
+cd Source\Core\DolphinLibretro
+msbuild dolphin_libretro.vcxproj -p:Platform=x64;Configuration=Release
+```
+
+### libretro-citra
+可以使用VC2019或者MSYS2编译，默认使用VC编译。
+- VC2019编译步骤：
+1. 生成`.vcproject`文件
+```shell
+mkdir build
+cd build
+cmake -G "Visual Studio 16 2019" -DENABLE_LIBRETRO=ON -DENABLE_QT=OFF -DENABLE_SDL2=OFF -DENABLE_WEB_SERVICE=OFF ..
+```
+2. 编译
+```shell
+cd src\citra_libretro
+msbuild citra_libretro.vcxproj -p:Platform=x64;Configuration=Release
+```
+
+- MSYS2编译步骤：
+1. 生成Makefile
+```shell
+mkdir build
+cd build
+cmake -G "MSYS Makefiles" -DENABLE_LIBRETRO=ON -DENABLE_SDL2=OFF -DENABLE_QT=OFF -DENABLE_WEB_SERVICE=OFF -DCMAKE_BUILD_TYPE="Release" .. 
+```
+
+2. 编译
+```shell
+cd src/citra_libretro
+make -j`nproc`
+```
 ## 目录说明
+
 - retroarch_dist -- RetroArch编译输出目录
 - retroarch_dist/cores -- 内核编译输出目录
-- retrorach_font -- RetroArch中文字体
 - cores -- 内核source目录
 - scripts -- 安装/拉取/编译脚本
 - pkgs -- 第三方lib库包
 - tools -- 需要用的一些第三方工具
 
 ## scripts目录脚本文件说明
+
 - inst_pkgs.sh -- 安装必需的msys和mingw包
 - clone_retro.sh -- 拉取RetroArch源代码
 - clone_retro_orig.sh -- 拉取原始RetorArch源代码
@@ -25,29 +294,10 @@
 - vc_build_citra.bat -- 调用VC2019编译Citra的特殊命令，由build_core_citra.sh调用
 - vc_build_dolphin.bat -- 调用VC2019编译Dolphin的特殊命令，由build_core_dolphin.sh调用
 
-## 官方最新编译和资源下载
-
-http://buildbot.libretro.com/
-
-## MSYS2/MinGW64编译环境安装步骤
-
-1. 从 https://www.msys2.org/ 下载msys2安装器进行安装
-2. 修改配置，以使用wget下载安装包
-编辑 /etc/pacman.conf 去掉此行注释
-`XferCommand = /usr/bin/wget --passive-ftp -c -O %o %u`
-3. 使用清华大学服务器镜像
-编辑 /etc/pacman.d下的mirrorlist.*文件
-把 https://mirrors.tuna.tsinghua.edu.cn 服务器地址移到最前面
-4. 升级 msys2
-运行 pacman -Syu 数次，直到无更新
-5. 运行inst_pkgs.sh安装必要包
-6. 安装pkgs目录中的包，直接解压到对应目录，无须用pacman命令安装
-
-
 ## 个人汉化RA主程序
+
 - [汉化仓库地址](https://github.com/crazyqk2019/RetroArch)(同步到v1.9.0)
 - [原始仓库地址](https://github.com/libretro/RetroArch)
-
 
 ## 个人汉化内核(同步时间2020/07/24)
 
@@ -203,106 +453,15 @@ http://buildbot.libretro.com/
         + [原始仓库地址](https://github.com/libretro/px68k-libretro)
 ----
 - ### DOS模拟器
+  
     * [DOSBox Core](https://docs.libretro.com/library/dosbox/)
         + [汉化仓库地址](https://github.com/crazyqk2019/libretro-dosbox_core)
         + [原始仓库地址](https://github.com/realnc/dosbox-core)
 
-## 特殊内核编译方法
-需要用MSVC编译的内核需要安装VC,CMake和Python：
-1. 下载安装 [VC2019 Community](https://visualstudio.microsoft.com/zh-hans/vs/)
-    安装后会包含CMake
-2. 通过 Windows  Store 安装 Python3
+---
 
-### libretro-parallel_n64
-编译命令：
-```bash
-make HAVE_PARALLEL=1 HAVE_PARALLEL_RSP=1 WITH_DYNAREC=x86_64
-```
+[官方Windows编译指导]: https://docs.libretro.com/development/retroarch/compilation/windows/
+[官方最新编译和资源下载]: https://buildbot.libretro.com/
 
-### libretro-mednafen_psx_hw
-编译命令：
-```bash
-make HAVE_HW=1
-```
 
-### libretro-bsnes
-```bash
-cd bsnes
-make -f GNUmakefile target=libretro binary=library
-```
 
-### libretro-bsnes_mercury
-三个不同的profile编译命令，默认编译accurary。
-```bash
-make profile=accuracy
-make profile=balanced
-make profile=performance
-```
-
-### libretro-dosbox_core
-编译命令：
-```bash
-make BUNDLED_AUDIO_CODECS=0 BUNDLED_LIBSNDFILE=0 WITH_DYNAREC=x86_64
-```
-拷贝依赖的dll：
-```bash
-cd cores_dist
-../dist_cores.sh dosbox_core_libretro.dll
-```
-
-### libretro-ppsspp
-需用VC2019编译。
-1. 生成 `.vcproject` 文件，进入VC2019 x64命令行，运行：
-```shell
-mkdir build
-cd build
-cmake -G "Visual Studio 16 2019" -DLIBRETRO=ON -DCMAKE_C_FLAGS_RELEASE="/MT /utf-8" -DCMAKE_CXX_FLAGS_RELEASE="/MT /utf-8" ..
-```
-2. 编译
-```shell
-cd libretro
-msbuild ppsspp_libretro.vcxproj -p:Platform=x64;Configuration=Release
-```
-
-### libretro-dolphin
-需用VC2019编译。
-1. 生成 `.vcproject` 文件，进入VC2019 x64命令行，运行：
-```shell
-mkdir build
-cd build
-cmake -G "Visual Studio 16 2019" -DLIBRETRO=ON -DCMAKE_C_FLAGS="/utf-8 /D_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING" -DCMAKE_CXX_FLAGS="/utf-8 /D_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING" ..
-```
-2. 编译
-```shell
-cd Source\Core\DolphinLibretro
-msbuild dolphin_libretro.vcxproj -p:Platform=x64;Configuration=Release
-```
-
-### libretro-citra
-可以使用VC2019或者MSYS2编译，默认使用VC编译。
-- VC2019编译步骤：
-1. 生成`.vcproject`文件
-```shell
-mkdir build
-cd build
-cmake -G "Visual Studio 16 2019" -DENABLE_LIBRETRO=ON -DENABLE_QT=OFF -DENABLE_SDL2=OFF -DENABLE_WEB_SERVICE=OFF ..
-```
-2. 编译
-```shell
-cd src\citra_libretro
-msbuild citra_libretro.vcxproj -p:Platform=x64;Configuration=Release
-```
-
-- MSYS2编译步骤：
-1. 生成Makefile
-```shell
-mkdir build
-cd build
-cmake -G "MSYS Makefiles" -DENABLE_LIBRETRO=ON -DENABLE_SDL2=OFF -DENABLE_QT=OFF -DENABLE_WEB_SERVICE=OFF -DCMAKE_BUILD_TYPE="Release" .. 
-```
-
-2. 编译
-```shell
-cd src/citra_libretro
-make -j`nproc`
-```

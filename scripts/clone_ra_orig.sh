@@ -7,6 +7,7 @@ pushd $(dirname "$0") >/dev/null
 
 $SETCOLOR_GREEN && echo "Cloning RetroArch..." && $SETCOLOR_NORMAL
 git clone https://github.com/libretro/RetroArch ../retroarch_orig
+echo
 
 # $SETCOLOR_GREEN && echo "Fetching submodules..." && $SETCOLOR_NORMAL
 # pushd ../retroarch_orig >/dev/null

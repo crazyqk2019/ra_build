@@ -45,6 +45,8 @@
 >
 > 可使用`scripts/clone_ra_orig.sh`和`scripts/clone_ra.sh`脚本自动执行拉取。
 
+
+
 ## 编译RA主程序
 
 1. 进入ucrt64编译环境：
@@ -169,6 +171,15 @@
 >
 > 可使用`scripts\dist_ra.sh`脚本自动执行以上步骤（在源代码根目录下运行）。
 
+## RA中文字体显示问题
+
+目前RA的assets资源里自带一个中文字体`chinese-fallback-font.ttf`（在assets/pkg目录下），但是该字体仍然不完善，会有显示方块的问题。
+
+建议使用[Maple Mono](chinese-fallback-font.ttf)字体。
+
+- 低分辨屏建议使用`MapleMonoNL-CN-unhinted`（不含控制台图形字符、无连字、含中文、有渲染提示）
+- 高分辨率屏建议使用`MapleMonoNL-CN`（不含控制台图形字符、无连字、含中文、无渲染提示）
+
 ## 各个内核编译方法
 
 需要用MSVC编译的内核需要安装VC,CMake和Python：
@@ -269,6 +280,30 @@ cmake -G "MSYS Makefiles" -DENABLE_LIBRETRO=ON -DENABLE_SDL2=OFF -DENABLE_QT=OFF
 cd src/citra_libretro
 make -j`nproc`
 ```
+## 如何同步上游仓库更新
+
+1. 添加上游仓库：
+
+   ```bash
+   git remote add upstream https://github.com/原始仓库地址.git
+   ```
+
+2. 拉取上游仓库最新代码。
+
+   ```bash
+   git fetch upstream
+   ```
+
+3. 合并到本地分支。
+
+   ```bash
+   git merge upstream/master
+   ```
+
+4. 处理合并冲突。
+
+5. 提交。
+
 ## 目录说明
 
 - retroarch_dist -- RetroArch编译输出目录
@@ -457,6 +492,19 @@ make -j`nproc`
     * [DOSBox Core](https://docs.libretro.com/library/dosbox/)
         + [汉化仓库地址](https://github.com/crazyqk2019/libretro-dosbox_core)
         + [原始仓库地址](https://github.com/realnc/dosbox-core)
+
+## 如何处理git换行符问题
+
+```bash
+# 拉取和提交时都保持原样，不要自动转换换行符
+git config --system core.autocrlf false
+git config --global core.autocrlf false
+# 提交时检查换行符，不许提交包含混合换行符的文件
+git config --system core.safecrlf true
+git config --global core.safecrlf true
+```
+
+
 
 ---
 

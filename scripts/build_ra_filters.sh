@@ -8,12 +8,14 @@ pushd gfx/video_filters >/dev/null
 make clean
 make -j
 popd >/dev/null
+echo
 
 $SETCOLOR_GREEN && echo "Building audio filters(DSPs)..." && $SETCOLOR_NORMAL
 pushd libretro-common/audio/dsp_filters >/dev/null
 make clean
 make -j
 popd >/dev/null
+echo
 
 $SETCOLOR_GREEN && echo "Done." && $SETCOLOR_NORMAL
 

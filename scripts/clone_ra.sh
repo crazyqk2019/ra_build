@@ -7,11 +7,13 @@ pushd $(dirname "$0") >/dev/null
 
 $SETCOLOR_GREEN && echo "Cloning RetroArch..." && $SETCOLOR_NORMAL
 git clone https://github.com/crazyqk2019/RetroArch ../retroarch
+echo
 
 cd ../retroarch
 
 $SETCOLOR_GREEN && echo "Adding upstream repository..." && $SETCOLOR_NORMAL
 git remote add upstream https://github.com/libretro/RetroArch
+echo
 
 popd >/dev/null
 

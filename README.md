@@ -2,26 +2,28 @@
 
 ## MSYS2/MinGW64编译环境安装步骤
 
-1. 从 https://www.msys2.org/ 下载msys2安装器进行安装
+1. 安装[Git for Windows](https://gitforwindows.org/)或者[TortoiseGit](https://tortoisegit.org/)，把路径加入PATH环境变量。
 
-2. （可选）修改配置，以使用wget下载安装包
-     编辑 /etc/pacman.conf 去掉此行注释
+2. 从 https://www.msys2.org/ 下载msys2安装器进行安装
+
+3. （可选）修改配置（之前版本msys2使用curl下载有bug），以使用wget下载安装包
+     编辑 /etc/pacman.conf 去掉此行注释：
 
      ```bash
      XferCommand = /usr/bin/wget --passive-ftp -c -O %o %u
      ```
-     
-3. （可选）使用清华大学服务器镜像
+
+4. （可选）使用清华大学服务器镜像
      编辑 /etc/pacman.d下的mirrorlist.*文件
        把 https://mirrors.tuna.tsinghua.edu.cn 服务器地址移到最前面
 
-4. 进入msys2 shell环境。
+5. 进入msys2 shell环境。
 
-5. 升级msys2：运行 `pacman -Syu` 数次，直到无更新
+6. 升级msys2：运行 `pacman -Syu` 数次，直到无更新
 
-6. 运行`scripts/inst_pkgs.sh`脚本，安装编译所需工具和依赖包。(默认使用ucrt64工具链)
+7. 运行`scripts/inst_pkgs.sh`脚本，安装编译所需工具和依赖包。(默认使用ucrt64工具链)
 
-7. ~~安装pkgs目录中的包，直接解压到对应目录，无须用pacman命令安装~~（已经可以在第6步使用pacman直接下载）
+8. ~~安装pkgs目录中的包，直接解压到对应目录，无须用pacman命令安装~~（这些包已经可以在第6步使用pacman直接下载）
 
 > [!TIP]
 >
@@ -35,7 +37,7 @@
    git clone https://github.com/libretro/RetroArch retroarch
    ```
 
-2. ~~完成后进入retroarch源代码目录，执行拉取子模块脚本：~~
+2. ~~完成后进入retroarch源代码目录，执行拉取子模块脚本：~~（子模块为资源，可以直接在<https://buildbot.libretro.com/assets/frontend/>下载打包好的资源）
 
    ```bash
    ./fetch-submodules.sh
@@ -45,9 +47,9 @@
 >
 > 可使用`scripts/clone_ra_orig.sh`和`scripts/clone_ra.sh`脚本自动执行拉取。
 
-
-
 ## 编译RA主程序
+
+
 
 1. 进入ucrt64编译环境：
 
@@ -171,18 +173,67 @@
 >
 > 可使用`scripts\dist_ra.sh`脚本自动执行以上步骤（在源代码根目录下运行）。
 
-## RA中文字体显示问题
+## 中文显示问题
 
 目前RA的assets资源里自带一个中文字体`chinese-fallback-font.ttf`（在assets/pkg目录下），但是该字体仍然不完善，会有显示方块的问题。
 
 建议使用[Maple Mono](chinese-fallback-font.ttf)字体。
 
-- 低分辨屏建议使用`MapleMonoNL-CN-unhinted`（不含控制台图形字符、无连字、含中文、有渲染提示）
-- 高分辨率屏建议使用`MapleMonoNL-CN`（不含控制台图形字符、无连字、含中文、无渲染提示）
+- 低分辨屏（1080p及以下）建议使用`MapleMonoNL-CN-unhinted`（不含控制台图形字符、无连字、含中文、有渲染提示）
+- 高分辨率屏（1080p以上）建议使用`MapleMonoNL-CN`（不含控制台图形字符、无连字、含中文、无渲染提示）
 
-## 各个内核编译方法
+根据选择把下载好的字体regular版本更名为`chinese-fallback-font.ttf`，覆盖assets/pkg目录下同名文件。
+
+## 模拟器内核编译方法
+
+### 通用内核编译方法
+
+进入内核源代码目录，如果存在Makefile.libretro文件，运行：
+
+```bash
+make -f Makefile.libretro
+```
+
+如果不存在Makefile.libretro文件，直接运行：
+
+```bash
+make
+```
+
+裁剪，去除调试信息：
+
+```bash
+strip -s libretro-*.dll
+```
+
+### 需要特殊处理的内核编译
+
+#### MAME 2015
+
+需要在make命令行添加"CC=g++"参数，指定使用g++编译，否则链接时会出错，找不到c++的部分库。
+
+```bash
+make CC=g++
+```
+
+#### MAME 2016
+
+需要在make命令行指定编译环境ucrt64根目录，指定使用python3。
+
+```bash
+make MINGW64=/ucrt64 PYTHON_EXECUTABLE=python3
+```
+
+#### MAME
+
+需要在make命令行指定编译环境ucrt64根目录，指定使用python3。
+
+```bash
+make MINGW64=/ucrt64 PYTHON_EXECUTABLE=python3
+```
 
 需要用MSVC编译的内核需要安装VC,CMake和Python：
+
 1. 下载安装 [VC2019 Community](https://visualstudio.microsoft.com/zh-hans/vs/)
     安装后会包含CMake
 2. 通过 Windows  Store 安装 Python3
@@ -280,47 +331,27 @@ cmake -G "MSYS Makefiles" -DENABLE_LIBRETRO=ON -DENABLE_SDL2=OFF -DENABLE_QT=OFF
 cd src/citra_libretro
 make -j`nproc`
 ```
-## 如何同步上游仓库更新
-
-1. 添加上游仓库：
-
-   ```bash
-   git remote add upstream https://github.com/原始仓库地址.git
-   ```
-
-2. 拉取上游仓库最新代码。
-
-   ```bash
-   git fetch upstream
-   ```
-
-3. 合并到本地分支。
-
-   ```bash
-   git merge upstream/master
-   ```
-
-4. 处理合并冲突。
-
-5. 提交。
 
 ## 目录说明
 
-- retroarch_dist -- RetroArch编译输出目录
-- retroarch_dist/cores -- 内核编译输出目录
-- cores -- 内核source目录
 - scripts -- 安装/拉取/编译脚本
-- pkgs -- 第三方lib库包
 - tools -- 需要用的一些第三方工具
 
-## scripts目录脚本文件说明
+## scripts目录下脚本文件说明
 
-- inst_pkgs.sh -- 安装必需的msys和mingw包
-- clone_retro.sh -- 拉取RetroArch源代码
-- clone_retro_orig.sh -- 拉取原始RetorArch源代码
-- build_retro.sh -- 编译RetroArch
-- dist_retro.sh -- 提取RetorArch.exe依赖的dll库
-- dist_retro_noqt.sh -- 提取RetorArch.exe依赖的dll库，不包括Qt
+| 文件名              | 用途                                                         |
+| ------------------- | ------------------------------------------------------------ |
+| msys2shell.cmd      | 进入msys2 shell环境，运行方法为：`msys2shell.cmd <msys2安装目录>` |
+| ucrt64shell.cmd     | 进入ucrt64 shell环境，运行方法为：`ucrt64shell.cmd <msys2安装目录>` |
+| inst_pkgs.sh        | 安装编译所需的软件、编译工具链和依赖库。                     |
+| clone_ra_orig.sh    | 克隆原始RetroArch源代码到retroarch_orig目录。                |
+| clone_ra.sh         | 克隆RetroArch汉化库源代码到retrorch目录，并把原始RA仓库添加为上游仓库。 |
+| build_ra.sh         | 编译RetroArch，请在retroarch_orig或者retrorch源代码根目录下运行。 |
+| build_ra_filters.sh | 编译音视频滤镜，请在retroarch_orig或者retrorch源代码根目录下运行。 |
+| dist_ra.sh          | 创建RetroArch分发目录retroarch_dist，请在retroarch_orig或者retrorch源代码根目录下运行。 |
+|                     |                                                              |
+|                     |                                                              |
+
 - clone_all_cores.sh -- 拉取所有内核源代码
 - build_core_xxx.sh -- 编译各个内核
 - build_all_cores.sh -- 编译所有内核
@@ -329,51 +360,36 @@ make -j`nproc`
 - vc_build_citra.bat -- 调用VC2019编译Citra的特殊命令，由build_core_citra.sh调用
 - vc_build_dolphin.bat -- 调用VC2019编译Dolphin的特殊命令，由build_core_dolphin.sh调用
 
-## 个人汉化RA主程序
+## 个人汉化内核列表
 
-- [汉化仓库地址](https://github.com/crazyqk2019/RetroArch)(同步到v1.9.0)
-- [原始仓库地址](https://github.com/libretro/RetroArch)
+### 街机模拟器
 
-## 个人汉化内核(同步时间2020/07/24)
+| 内核名称                                                     | 汉化仓库地址                                                 | 内核说明                                                     | 最新汉化时间和版本 |
+| ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------ |
+| MAME 2000                                                    | [libretro-mame2000](https://github.com/crazyqk2019/libretro-mame2000) | 2000 version of MAME (0.37b5) for libretro. Compatible with iMAME4All/MAME4Droid/MAME 0.37b5 |                    |
+| [MAME 2003-Plus](https://docs.libretro.com/library/mame2003_plus/) | [libretro-mame2003_plus](https://github.com/crazyqk2019/libretro-mame2003_plus) | Updated 2018 version of MAME (0.78) for libretro.            |                    |
+| [MAME 2010](https://docs.libretro.com/library/mame_2010/)    | [libretro-mame2010](https://github.com/crazyqk2019/libretro-mame2010) | Late 2010 version of MAME (0.139) for libretro.              |                    |
+| MAME 2015                                                    | [libretro-mame2015](https://github.com/crazyqk2019/libretro-mame2015) | Late 2014/Early 2015 version of MAME (0.160-ish) for libretro. |                    |
+| MAME 2016                                                    | [libretro-mame2016](https://github.com/crazyqk2019/libretro-mame2016) | Late 2016 version of MAME (0.174) for libretro.              |                    |
+| MAME                                                         | [libretro-mame](https://github.com/crazyqk2019/libretro-mame) | MAME - Multiple Arcade Machine Emulator                      |                    |
+| Final Burn Alpha 2012                                        | [libretro-fbalpha2012](https://github.com/crazyqk2019/libretro-fbalpha2012) | Final Burn Alpha 2012. Port of Final Burn Alpha to Libretro (0.2.97.24). |                    |
+| Final Burn Alpha 2012 CPS1                                   | [libretro-fbalpha2012_cps1](https://github.com/crazyqk2019/libretro-fbalpha2012_cps1) | Final Burn Alpha 2012. Port of Final Burn Alpha to Libretro (0.2.97.24). Standalone core for Capcom CPS1. |                    |
+| Final Burn Alpha 2012 CPS2                                   | [libretro-fbalpha2012_cps2](https://github.com/crazyqk2019/libretro-fbalpha2012_cps2) | Final Burn Alpha 2012. Port of Final Burn Alpha to Libretro (0.2.97.24). Standalone core for Capcom CPS2. |                    |
+| Final Burn Alpha 2012 CPS3                                   | [libretro-fbalpha2012_cps3](https://github.com/crazyqk2019/libretro-fbalpha2012_cps3) | Final Burn Alpha 2012. Port of Final Burn Alpha to Libretro (0.2.97.24). Standalone core for Capcom CPS3. |                    |
+| Final Burn Alpha 2012 Neo Geo                                | [libretro-fbalpha2012_neogeo](https://github.com/crazyqk2019/libretro-fbalpha2012_neogeo) | Final Burn Alpha 2012. Port of Final Burn Alpha to Libretro (0.2.97.24). Standalone core for Neo Geo. |                    |
+| [FinalBurn Neo](https://docs.libretro.com/library/fbneo/)    | [libretro-fbneo](https://github.com/crazyqk2019/libretro-fbneo) | FBNeo is the follow-up of the FinalBurn and FinalBurn Alpha emulators. |                    |
 
-- ### 街机模拟器
-    * [MAME 2003-Plus](https://docs.libretro.com/library/mame2003_plus/)
-        + [汉化仓库地址](https://github.com/crazyqk2019/libretro-mame2003_plus)
-        + [原始仓库地址](https://github.com/libretro/mame2003-plus-libretro)
-    * [MAME 2010](https://docs.libretro.com/library/mame_2010/)
-        + [汉化仓库地址](https://github.com/crazyqk2019/libretro-mame2010)
-        + [原始仓库地址](https://github.com/libretro/mame2010-libretro)
-    * MAME 2015
-        + [汉化仓库地址](https://github.com/crazyqk2019/libretro-mame2015)
-        + [原始仓库地址](https://github.com/libretro/mame2015-libretro)
-    * MAME 2016
-        + [汉化仓库地址](https://github.com/crazyqk2019/libretro-mame2016)
-        + [原始仓库地址](https://github.com/libretro/mame2016-libretro)
-    * MAME
-        + [汉化仓库地址](https://github.com/crazyqk2019/libretro-mame)
-        + [原始仓库地址](https://github.com/libretro/mame)
-    * FinalBurn Alpha 2012
-        + [汉化仓库地址](https://github.com/crazyqk2019/libretro-fbalpha2012)
-        + [原始仓库地址](https://github.com/libretro/fbalpha2012)
-    * FinalBurn Neo
-        + [汉化仓库地址](https://github.com/crazyqk2019/libretro-fbneo)
-        + [原始仓库地址](https://github.com/libretro/FBNeo)
 ----
-- ### Nintendo GB/GBC模拟器
-    * [SameBoy](https://docs.libretro.com/library/sameboy/)
-        + [汉化仓库地址](https://github.com/crazyqk2019/libretro-sameboy)
-        + [原始仓库地址](https://github.com/libretro/SameBoy)
-    * [Gearboy](https://docs.libretro.com/library/gearboy/)
-        + [汉化仓库地址](https://github.com/crazyqk2019/libretro-gearboy)
-        + [原始仓库地址](https://github.com/libretro/Gearboy)
-    * [TGB Dual](https://docs.libretro.com/library/tgb_dual/)
-        + [汉化仓库地址](https://github.com/crazyqk2019/libretro-tgbdual)
-        + [原始仓库地址](https://github.com/libretro/tgbdual-libretro)
+### Nintendo GB/GBC/GBA模拟器
 
-- ### Nintendo GBA模拟器
-    * [mGBA](https://docs.libretro.com/library/mgba/)
-        + [汉化仓库地址](https://github.com/crazyqk2019/libretro-mgba)
-        + [原始仓库地址](https://github.com/libretro/mgba)
+| 内核名称 | 汉化仓库地址                                                 | 内核说明                                                     | 最新汉化时间和版本 |
+| -------- | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------ |
+| SameBoy  | [libretro-sameboy](https://github.com/crazyqk2019/libretro-sameboy) | Gameboy and Gameboy Color emulator written in C              |                    |
+| Gearboy  | [libretro-gearboy](https://github.com/crazyqk2019/libretro-gearboy) | Game Boy / Gameboy Color emulator for iOS, Mac, Raspberry Pi, Windows, Linux and RetroArch |                    |
+| TGB Dual | [libretro-tgbdual](https://github.com/crazyqk2019/libretro-tgbdual) | libretro port of TGB Dual                                    |                    |
+| mGBA     | [libretro-mgba](https://github.com/crazyqk2019/libretro-mgba) | mGBA Game Boy Advance Emulator                               |                    |
+
+
 
 - ### Nintendo NES/FC模拟器
     * [FCEUmm](https://docs.libretro.com/library/fceumm/)
@@ -406,7 +422,7 @@ make -j`nproc`
     * [Dolphin](https://docs.libretro.com/library/dolphin/)
         + [汉化仓库地址](https://github.com/crazyqk2019/libretro-dolphin)
         + [原始仓库地址](https://github.com/libretro/dolphin)
-  
+
 - ### Nintendo - DS模拟器
     * [DeSmuME](https://docs.libretro.com/library/desmume/)
         + [汉化仓库地址](https://github.com/crazyqk2019/libretro-desmume)
@@ -419,6 +435,7 @@ make -j`nproc`
     * [Citra](https://docs.libretro.com/library/citra/)
         + [汉化仓库地址](https://github.com/crazyqk2019/libretro-citra)
         + [原始仓库地址](https://github.com/libretro/citra)
+
 ----
 - ### Sega MS/GG/MD/CD模拟器
     * [Genesis Plus GX](https://docs.libretro.com/library/genesis_plus_gx/)
@@ -492,6 +509,30 @@ make -j`nproc`
     * [DOSBox Core](https://docs.libretro.com/library/dosbox/)
         + [汉化仓库地址](https://github.com/crazyqk2019/libretro-dosbox_core)
         + [原始仓库地址](https://github.com/realnc/dosbox-core)
+
+## 如何同步上游仓库更新
+
+1. 添加上游仓库：
+
+   ```bash
+   git remote add upstream https://github.com/原始仓库地址.git
+   ```
+
+2. 拉取上游仓库最新代码。
+
+   ```bash
+   git fetch upstream
+   ```
+
+3. 合并到本地分支，假设同步分支master分支。
+
+   ```bash
+   git merge upstream/master
+   ```
+
+4. 处理合并冲突，可借助图形化工具。
+
+5. 提交，可借助图形化工具。
 
 ## 如何处理git换行符问题
 

@@ -38,6 +38,7 @@ pacman -S --needed --noconfirm \
     mingw-w64-ucrt-x86_64-directxtk \
     mingw-w64-ucrt-x86_64-angleproject \
     mingw-w64-ucrt-x86_64-qt6 \
-    mingw-w64-ucrt-x86_64-openssl
+    mingw-w64-ucrt-x86_64-openssl \
+    mingw-w64-ucrt-x86_64-ccache
 #    mingw-w64-ucrt-x86_64-qt-creator
 #    mingw-w64-ucrt-x86_64-python2 \    

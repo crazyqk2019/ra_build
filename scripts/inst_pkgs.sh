@@ -1,44 +1,81 @@
-#!/bin/bash -v
+#!/bin/bash
+
+print_usage() {
+    echo "参数不正确！"
+    echo "使用方法："
+    echo "./inst_pkgs.sh <ucrt64|mingw64|clang64>"
+    exit 1
+}
+
+if [ $# -ne 1 ]; then
+    print_usage
+fi
+
+compiler_env_list=("mingw64" "ucrt64" "clang64")
+if [[ " ${compiler_env_list[@]} " =~ " $1 " ]]; then
+    compiler_env=$1
+else
+    print_usage
+fi
+
+echo "Installing packages for \"$compiler_env\"..."
+if [ "$compiler_env" == "mingw64" ]; then
+    compiler_env="-x86_64"
+elif [ "$compiler_env" == "ucrt64" ]; then
+    compiler_env="-ucrt-x86_64"
+elif [ "$compiler_env" == "clang64" ]; then
+    compiler_env="-clang-x86_64"
+fi
 
 pacman -S --needed --noconfirm \
     wget \
     make \
     patch \
-    mingw-w64-ucrt-x86_64-7zip \
-    mingw-w64-ucrt-x86_64-toolchain \
-    mingw-w64-ucrt-x86_64-libc++ \
-    mingw-w64-ucrt-x86_64-clang \
-    mingw-w64-ucrt-x86_64-cmake \
-    mingw-w64-ucrt-x86_64-ntldd \
-    mingw-w64-ucrt-x86_64-libxml2 \
-    mingw-w64-ucrt-x86_64-freetype \
-    mingw-w64-ucrt-x86_64-ffmpeg \
-    mingw-w64-ucrt-x86_64-flac \
-    mingw-w64-ucrt-x86_64-drmingw \
-    mingw-w64-ucrt-x86_64-mbedtls \
-    mingw-w64-ucrt-x86_64-glslang \
-    mingw-w64-ucrt-x86_64-spirv-tools \
-    mingw-w64-ucrt-x86_64-libusb \
-    mingw-w64-ucrt-x86_64-miniupnpc \
-    mingw-w64-ucrt-x86_64-SDL \
-	mingw-w64-ucrt-x86_64-SDL_image \
-	mingw-w64-ucrt-x86_64-SDL_net \
-    mingw-w64-ucrt-x86_64-SDL2 \
-    mingw-w64-ucrt-x86_64-SDL2_image \
-    mingw-w64-ucrt-x86_64-nasm \
-	mingw-w64-ucrt-x86_64-ninja \
-	mingw-w64-ucrt-x86_64-dlfcn \
-	mingw-w64-ucrt-x86_64-libsndfile \
-	mingw-w64-ucrt-x86_64-fluidsynth \
-	mingw-w64-ucrt-x86_64-fmt \
-    mingw-w64-ucrt-x86_64-boost \
-    mingw-w64-ucrt-x86_64-nvidia-cg-toolkit \
-    mingw-w64-ucrt-x86_64-FAudio \
-    mingw-w64-ucrt-x86_64-directx-headers \
-    mingw-w64-ucrt-x86_64-directxtk \
-    mingw-w64-ucrt-x86_64-angleproject \
-    mingw-w64-ucrt-x86_64-qt6 \
-    mingw-w64-ucrt-x86_64-openssl \
-    mingw-w64-ucrt-x86_64-ccache
-#    mingw-w64-ucrt-x86_64-qt-creator
-#    mingw-w64-ucrt-x86_64-python2 \    
+    bison \
+    mingw-w64$compiler_env-7zip \
+    mingw-w64$compiler_env-toolchain \
+    mingw-w64$compiler_env-autotools \
+    mingw-w64$compiler_env-libc++ \
+    mingw-w64$compiler_env-cmake \
+    mingw-w64$compiler_env-ntldd \
+    mingw-w64$compiler_env-libxml2 \
+    mingw-w64$compiler_env-freetype \
+    mingw-w64$compiler_env-ffmpeg \
+    mingw-w64$compiler_env-flac \
+    mingw-w64$compiler_env-drmingw \
+    mingw-w64$compiler_env-mbedtls \
+    mingw-w64$compiler_env-glslang \
+    mingw-w64$compiler_env-spirv-tools \
+    mingw-w64$compiler_env-spirv-headers \
+    mingw-w64$compiler_env-spirv-cross \
+    mingw-w64$compiler_env-libusb \
+    mingw-w64$compiler_env-miniupnpc \
+    mingw-w64$compiler_env-SDL \
+    mingw-w64$compiler_env-SDL_image \
+    mingw-w64$compiler_env-SDL_net \
+    mingw-w64$compiler_env-SDL2 \
+    mingw-w64$compiler_env-SDL2_image \
+    mingw-w64$compiler_env-nasm \
+    mingw-w64$compiler_env-ninja \
+    mingw-w64$compiler_env-dlfcn \
+    mingw-w64$compiler_env-libsndfile \
+    mingw-w64$compiler_env-opusfile \
+    mingw-w64$compiler_env-fluidsynth \
+    mingw-w64$compiler_env-fmt \
+    mingw-w64$compiler_env-boost \
+    mingw-w64$compiler_env-nvidia-cg-toolkit \
+    mingw-w64$compiler_env-FAudio \
+    mingw-w64$compiler_env-directx-headers \
+    mingw-w64$compiler_env-directxtk \
+    mingw-w64$compiler_env-angleproject \
+    mingw-w64$compiler_env-qt6 \
+    mingw-w64$compiler_env-openssl \
+    mingw-w64$compiler_env-pugixml \
+    mingw-w64$compiler_env-sfml \
+    mingw-w64$compiler_env-hidapi \
+    mingw-w64$compiler_env-glew \
+    mingw-w64$compiler_env-snappy \
+    mingw-w64$compiler_env-libzip \
+    mingw-w64$compiler_env-python \
+    mingw-w64$compiler_env-python-pip \
+    mingw-w64$compiler_env-ccache

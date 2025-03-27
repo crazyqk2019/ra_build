@@ -29,6 +29,36 @@
 >
 > 命令行下使用 `msys2_shell.cmd -msys2 -defterm -no-start`命令可以在不打开新窗口的情况下，在当前终端进入msys环境。运行 `msys2_shell.cmd --help`可查看帮助。
 
+## VS2022编译环境安装
+
+1. 安装VS2022，Community版本即可，安装时注意选中VC开发。
+
+2. 部分内核编译需要python，可使用embedded版本的python，手动安装pip和setuptools包。方法如下：
+
+   1. 解压embedded版本python压缩包，编辑python313._pth文件，去掉`#import site`前的注释。313为当前python的版本号，文件名根据版本号不同。
+
+   2. 下载get-pip.py脚本：
+
+      ```cmd
+      curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+      ```
+
+   3. 运行以下命令安装pip：
+
+      ```cmd
+      python get-pip.py
+      ```
+
+   4. 运行以下命令安装setuptools包：
+
+      ```cmd
+      Scripts\pip install setuptools
+      ```
+
+> [!TIP]
+>
+> tools目录下python.7z为已经安装好pip和setuptools的embedded版本python，解压即可使用。
+
 ## 如何完整编译和分发RA
 
 ###  1. 拉取RA源代码

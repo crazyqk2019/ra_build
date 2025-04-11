@@ -4,7 +4,17 @@
 
 1. 安装[Git for Windows](https://gitforwindows.org/)和[TortoiseGit](https://tortoisegit.org/)，把路径加入PATH环境变量。
 
-2. 从 https://www.msys2.org/ 下载msys2安装器进行安装
+2. 从 https://www.msys2.org/ 下载msys2安装器进行安装，安装路径不要有中文，空格和特殊符号。不要安装在FAT格式硬盘上。
+
+     建议下载自解压版本`msys2-base-x86_64-*.sfx.exe`，使用以下命令解压安装：
+
+     ```cmd
+     msys2-base-x86_64-latest.sfx.exe -y -oC:\
+     ```
+
+     此命令会安装msys2到`C:\msys2`。
+
+     自解压版本是绿色版本，不会生成快捷方式，不会生成卸载注册表项，其他功能和安装版完全一样。
 
 3. （可选）修改配置（之前版本msys2使用curl下载有bug），以使用wget下载安装包
      编辑 /etc/pacman.conf 去掉此行注释：
@@ -23,7 +33,7 @@
 
 7. 运行`scripts/inst_pkgs.sh`脚本，安装编译所需工具和依赖包。(默认使用ucrt64工具链)
 
-8. ~~安装pkgs目录中的包，直接解压到对应目录，无须用pacman命令安装~~（这些包已经可以在第6步使用pacman直接下载）
+8. ~~安装pkgs目录中的包，直接解压到对应目录，无须用pacman命令安装~~（已删除，这些包已经可以在第6步使用pacman直接下载）
 
 > [!TIP]
 >
@@ -103,11 +113,9 @@
    install -v -D include/caps/*.h $MINGW_PREFIX/include/caps/
    ```
 
-   
-
 2. VS2022版本编译安装
 
-
+   暂无
 
 ## 如何完整编译和分发 RA
 
@@ -125,7 +133,7 @@
    ./fetch-submodules.sh
    ```
 
-> [!NOTE]
+> [!TIP]
 >
 > 可使用`scripts/clone_ra_orig.sh`和`scripts/clone_ra.sh`脚本自动执行拉取。
 
@@ -160,7 +168,7 @@
 >
 > 可使用`scripts/build_ra.sh`脚本自动执行以上编译步骤（在源代码根目录下运行）。
 
-### 3. 编译 RA 视频滤镜和音频滤镜(DSP)
+### 3. 编译 RA 的视频滤镜和音频滤镜(DSP)
 
 1. 编译视频滤镜：
 
@@ -169,14 +177,14 @@
    make -j
    ```
 
-2. 编译音频滤镜(DSP)
+2. 编译音频滤镜(DSP)：
 
    ```bash
    cd libretro-common/audio/dsp_filters
    make -j
    ```
 
-> [!NOTE]
+> [!TIP]
 >
 > 可使用`scripts/build_ra_filters.sh`脚本自动编译视频滤镜和音频DSP（在源代码根目录下运行）。
 
@@ -190,7 +198,7 @@
    for bin in $(ntldd -R retroarch.exe | grep -i ucrt64 | cut -d">" -f2 | cut -d" " -f2); do cp -v "$bin" . ; done;
    ```
 
-3. 拷贝依赖的QT的dll:
+3. 拷贝依赖的Qt的dll:
 
    ```bash
    windeployqt6 retroarch.exe
@@ -249,7 +257,7 @@
    rm shaders_slang.zip
    ```
 
-> [!NOTE]
+> [!TIP]
 >
 > 可使用`scripts\dist_ra.sh`脚本自动执行以上步骤（在源代码根目录下运行）。
 
@@ -268,13 +276,13 @@
 
 具体方法见下节。
 
-## 模拟器内核编译和分发
+## 模拟器内核的编译和分发
 
 > [!TIP]
 >
-> 使用脚本build_cores.sh, build_cores.cmd可自动化编译内核。
+> - 使用脚本build_cores.sh, build_cores.cmd可自动化编译内核。
 >
-> 使用脚本dist_cores.sh可完成内核的分发。
+> - 使用脚本dist_cores.sh可完成内核的分发。
 
 ### 通用内核编译方法
 
@@ -348,10 +356,10 @@
 
 - 需要修正genie生成MinGW下的链接命令的错误，不适用static链接。
 
-- 需要在make命令行指定编译环境ucrt64根目录，指定使用python3。
+- 需要在make命令行指定使用python3。
 
 ```bash
-make MINGW64=/ucrt64 PYTHON_EXECUTABLE=python3
+make PYTHON_EXECUTABLE=python3
 ```
 
 #### MAME 2015
@@ -364,10 +372,10 @@ make CC=g++
 
 #### MAME 2016
 
-需要在make命令行指定编译环境ucrt64根目录，指定使用python3。
+需要在make命令行指定使用python3。
 
 ```bash
-make MINGW64=/ucrt64 PYTHON_EXECUTABLE=python3
+make PYTHON_EXECUTABLE=python3
 ```
 
 #### HBMAME

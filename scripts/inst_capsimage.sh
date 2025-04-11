@@ -49,6 +49,8 @@ inst_5.1() {
     message "安装头文件..."
     install -v -D ../LibIPF/*.h "$MINGW_PREFIX/include/caps5/" || return $?
     install -v -D ../Core/CommonTypes.h "$MINGW_PREFIX/include/caps5/CommonTypes.h" || return $?
+    cd ../..
+    rm -r -f capsimg_source_linux_macosx
     echo "完成"
     echo
 }
@@ -60,6 +62,8 @@ inst_4.2() {
     fi
     cd x86_64-linux-gnu-capsimage
     install -v -D include/caps/*.h $MINGW_PREFIX/include/caps/  || return $?
+    cd ..
+    rm -r -f x86_64-linux-gnu-capsimage
     echo "完成"
     echo
 }

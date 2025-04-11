@@ -146,7 +146,7 @@ clone_bsnes_mercury() {
 }
 
 clone_bsnes2014() {
-    common_clone_core "bsnes 2014" "bsnes2014" "bsnes2014"
+    common_clone_core "bsnes 2014" "bsnes2014" "bsnes2014" "libretro"
 }
 
 clone_bsnes_hd() {
@@ -254,9 +254,236 @@ clone_dosbox_core() {
 }
 
 clone_dosbox_pure() {
-    common_clone_core "DOSBox Pure" "dosbox_pure" "dosbox-pure"
+    common_clone_core "DOSBox Pure" "dosbox_pure" "https://github.com/schellingb/dosbox-pure" "main"
 }
 
+clone_81() {
+   common_clone_core "ZX81" "81" "81-libretro"
+}
+
+clone_fuse() {
+   common_clone_core "Fuse" "fuse" "fuse-libretro"
+}
+
+clone_atari800() {
+    common_clone_core "Atari800" "atari800" "libretro-atari800"
+}
+
+clone_stella() {
+   common_clone_core "Stella" "stella" "https://github.com/stella-emu/stella"
+}
+
+clone_prosystem() {
+    common_clone_core "ProSystem" "prosystem" "prosystem-libretro"
+}
+
+clone_virtualjaguar() {
+    common_clone_core "Virtual Jaguar" "virtualjaguar" "virtualjaguar-libretro"
+}
+
+clone_mednafen_lynx() {
+    common_clone_core "Beetle Lynx" "mednafen_lynx" "beetle-lynx-libretro"
+}
+
+clone_handy() {
+    common_clone_core "Handy" "handy" "libretro-handy"
+}
+
+clone_holani() {
+    common_clone_core "Holani" "holani" "https://github.com/LLeny/holani-retro"
+}
+
+clone_hatari() {
+    common_clone_core "Hatari" "hatari" "hatari"
+}
+
+clone_bk() {
+    common_clone_core "bk" "bk" "bk-emulator"
+}
+
+clone_blastem() {
+    common_clone_core "BlastEm" "blastem" "blastem"
+}
+
+clone_bluemsx() {
+    common_clone_core "blueMSX" "bluemsx" "blueMSX-libretro"
+}
+
+clone_cap32() {
+    common_clone_core "Caprice32" "cap32" "libretro-cap32"
+}
+
+clone_crocods() {
+    common_clone_core "CrocoDS" "crocods" "libretro-crocods"
+}
+
+clone_jaxe() {
+    common_clone_core "JAXE" "jaxe" "https://github.com/kurtjd/jaxe" "main"
+}
+
+clone_ep128emu_core() {
+    common_clone_core "ep128emu" "ep128emu_core" "ep128emu-core" "core"
+}
+
+clone_freeintv() {
+    common_clone_core "FreeIntv" "freeintv" "FreeIntv"
+}
+
+clone_gambatte() {
+    common_clone_core "Gambatte" "gambatte" "gambatte-libretro"
+}
+
+clone_gearcoleco() {
+    common_clone_core "GearColeco" "gearcoleco" "https://github.com/drhelius/Gearcoleco"
+}
+
+clone_gearsystem() {
+    common_clone_core "Gearsystem" "gearsystem" "https://github.com/drhelius/Gearsystem"
+}
+
+clone_gpsp() {
+    common_clone_core "gpSP" "gpsp" "gpsp"
+}
+
+clone_gw() {
+    common_clone_core "GW" "gw" "gw-libretro"
+}
+
+clone_hbmame() {
+    common_clone_core "HBMAME" "hbmame" "hbmame-libretro"
+}
+
+clone_mednafen_gba() {
+    common_clone_core "Beetle GBA" "mednafen_gba" "beetle-gba-libretro"
+}
+
+clone_mednafen_wswan() {
+    common_clone_core "Beetle Cygne" "mednafen_wswan" "beetle-wswan-libretro"
+}
+
+clone_mednafen_pcfx() {
+    common_clone_core "Beetle PC-FX" "mednafen_pcfx" "beetle-pcfx-libretro"
+}
+
+clone_mednafen_supergrafx() {
+    common_clone_core "Beetle SuperGrafx" "mednafen_supergrafx" "beetle-supergrafx-libretro"
+}
+
+clone_mednafen_vb() {
+    common_clone_core "Beetle VB" "mednafen_vb" "beetle-vb-libretro"
+}
+
+clone_meteor() {
+    common_clone_core "Meteor" "meteor" "meteor-libretro"
+}
+
+clone_np2kai() {
+    common_clone_core "Neko Project II Kai" "np2kai" "NP2kai"
+}
+
+clone_numero() {
+    common_clone_core "Numero" "numero" "https://github.com/nbarkhina/numero"
+}
+
+clone_o2em() {
+    common_clone_core "O2EM" "o2em" "libretro-o2em"
+}
+
+clone_oberon() {
+    common_clone_core "Oberon" "oberon" "oberon-risc-emu"
+}
+
+clone_pcsx2() {
+    common_clone_core "PCSX2" "pcsx2" "LRPS2"
+}
+
+clone_play() {
+    common_clone_core "Play!" "play" "https://github.com/jpd002/Play-"
+}
+
+clone_pokemini() {
+    common_clone_core "PokeMini" "pokemini" "PokeMini"
+}
+
+clone_potator() {
+    common_clone_core "Potator" "potator" "potator"
+}
+
+clone_vice() {
+    common_clone_core "VICE" "vice" "vice-libretro"
+}
+
+clone_puae() {
+    common_clone_core "PUAE" "puae" "libretro-uae"
+}
+
+clone_quasi88() {
+    common_clone_core "QUASI88" "quasi88" "quasi88-libretro"
+}
+
+clone_quicknes() {
+    common_clone_core "QuickNES" "quicknes" "QuickNES_Core"
+}
+
+clone_race() {
+    common_clone_core "RACE" "race" "RACE"
+}
+
+clone_same_cdi() {
+    common_clone_core "SAME_CDI" "same_cdi" "same_cdi"
+}
+
+clone_sameduck() {
+    common_clone_core "SameDuck" "sameduck" "sameduck" "SameDuck-libretro"
+}
+
+clone_scummvm() {
+    common_clone_core "ScummVM" "scummvm" "scummvm"
+}
+
+clone_smsplus() {
+    common_clone_core "SMS Plus GX" "smsplus" "smsplus-gx"
+}
+
+clone_squirreljme() {
+    common_clone_core "SquirrelJME" "squirreljme" "https://github.com/SquirrelJME/SquirrelJME" "trunk"
+}
+
+clone_swanstation() {
+    common_clone_core "SwanStation" "swanstation" "swanstation"
+}
+
+clone_theodore() {
+    common_clone_core "Theodore" "theodore" "https://github.com/Zlika/theodore"
+}
+
+clone_tic80() {
+    common_clone_core "TIC-80" "tic80" "https://github.com/nesbox/TIC-80" "main"
+}
+
+clone_uw8() {
+    common_clone_core "MicroW8" "uw8" "uw8-libretro" "main"
+}
+
+clone_uzem() {
+    common_clone_core "Uzem" "uzem" "libretro-uzem"
+}
+
+clone_vbam() {
+    common_clone_core "VBA-M" "vbam" "https://github.com/visualboyadvance-m/visualboyadvance-m"
+}
+
+clone_vba_next() {
+    common_clone_core "VBA Next" "vba_next" "vba-next"
+}
+
+clone_vecx() {
+    common_clone_core "vecx" "vecx" "libretro-vecx"
+}
+
+clone_x1() {
+    common_clone_core "Sharp X1" "x1" "xmil-libretro"
+}
 
 if [ $# -lt 1 ]; then
     echo "需要指定内核名称！可用内核："

@@ -4,7 +4,9 @@
 
 1. 安装[Git for Windows](https://gitforwindows.org/)和[TortoiseGit](https://tortoisegit.org/)，把路径加入PATH环境变量。
 
-2. 从 https://www.msys2.org/ 下载msys2安装器进行安装，安装路径不要有中文，空格和特殊符号。不要安装在FAT格式硬盘上。
+2. 从 https://www.msys2.org/ 下载msys2安装器进行安装，**安装路径不要有中文，空格和特殊符号，不要安装在FAT格式硬盘上。**
+
+     最新版下载地址：
 
      建议下载自解压版本`msys2-base-x86_64-*.sfx.exe`，使用以下命令解压安装：
 
@@ -42,6 +44,8 @@
 ## VS2022 编译环境安装
 
 1. 安装VS2022，Community版本即可，安装时注意选中VC开发。
+
+   下载地址：<https://visualstudio.microsoft.com/zh-hans/vs/>
 
 2. 部分内核编译需要python，可使用embedded版本的python，手动安装pip和setuptools包。方法如下：
 
@@ -949,21 +953,24 @@ cmake --build Build --config Release --target squirreljme_libretro
 
 ### scripts 目录 - 安装/拉取/编译脚本
 
-| 文件名              | 说明                                                         |
-| ------------------- | ------------------------------------------------------------ |
-| msys2shell.cmd      | 进入不同的msys2 shell环境，运行参数：`msys2shell.cmd <msys2安装目录> [mingw64|ucrt64|clang64]`<br />第二个参数指定进入哪个开发环境，省略则进入msys2环境。 |
-| vc64shell.cmd       | 进入VC2022 64位编译环境，无参数直接运行。                    |
-| inst_pkgs.sh        | 安装msys2开发环境所需的包和库。运行参数：`./inst_pkgs.sh <mingw64|ucrt64|clang64>` |
-| inst_capsimage.sh   | MingGW下自动编译安装capsimage的脚本                          |
-| clone_ra.sh         | 克隆RetroArch汉化库源代码到retrorch目录，并把原始RA仓库添加为上游仓库。 |
-| clone_ra_orig.sh    | 克隆原始RetroArch源代码到retroarch_orig目录。                |
-| clone_cores.sh      | 克隆汉化RA模拟器内核源码到cores目录下，并把原始内核仓库添加为上游仓库。 |
-| build_ra.sh         | 编译RetroArch，请在retroarch_orig或者retrorch源代码根目录下运行。 |
-| build_ra_filters.sh | 编译RetroAch的音视频滤镜，请在retroarch_orig或者retrorch源代码根目录下运行。 |
-| build_cores.sh      | 编译RA模拟器内核。运行参数：`./build_cores.sh [-noclean] <all|core1 core2 ...>`<br />-noclean：编译前不要进行清理。<br />all: 编译所有内核。<br />core1 core2: 编译指定内核，不带参数运行脚本可以查看可用内核。<br />编译完成的内核文件为拷贝到`cores\dists`目录下 |
-| build_cores.cmd     | 编译需要在VS2022下编译的RA模拟器内核，运行参数同上。         |
-| dist_ra.sh          | 创建RetroArch分发目录retroarch_dist，请在retroarch_orig或者retrorch源代码根目录下运行。 |
-| dist_cores.sh       | 分发RA模拟器内核到retroarch_dist目录，运行参数：`./dist_cores.sh [all|core1.dll core2.dll...]`<br />此脚本在默认内核编译输出目录`cores\dists`下寻找内核。 |
+| 文件名                       | 说明                                                         |
+| ---------------------------- | ------------------------------------------------------------ |
+| setup_msys2_from_scratch.cmd | 从零开始自动安装和设置msys2，默认安装ucrt64编译环境。        |
+| msys2shell.cmd               | 进入不同的msys2 shell环境，运行参数：<br />`msys2shell.cmd [/m msys2_home_dir] [/e msys2|mingw64|ucrt64|clang64] [script] [script params]` |
+| msys2shell.ini               | msys2shell.cmd的配置文件，可以把msys2目录和要启动的编译环境写入配置文件，<br />运行msys2shell.cmd时可以不用输入参数。 |
+| vc64shell.cmd                | 进入VC2022 64位编译环境，无参数直接运行。                    |
+| inst_pkgs.sh                 | 安装msys2开发环境所需的包和库。运行参数：<br />`./inst_pkgs.sh <mingw64|ucrt64|clang64>` |
+| inst_capsimage.sh            | MingGW下自动编译安装capsimage的脚本。                        |
+| update_pkgs.sh               | 更新msys2。                                                  |
+| clone_ra.sh                  | 克隆RetroArch汉化库源代码到retrorch目录，并把原始RA仓库添加为上游仓库。 |
+| clone_ra_orig.sh             | 克隆原始RetroArch源代码到retroarch_orig目录。                |
+| clone_cores.sh               | 克隆汉化RA模拟器内核源码到cores目录下，并把原始内核仓库添加为上游仓库。 |
+| build_ra.sh                  | 编译RetroArch，请在retroarch_orig或者retrorch源代码根目录下运行。 |
+| build_ra_filters.sh          | 编译RetroAch的音视频滤镜，请在retroarch_orig或者retrorch源代码根目录下运行。 |
+| build_cores.sh               | 编译RA模拟器内核。运行参数：`./build_cores.sh [-noclean] all|core1 [core2]...`<br />-noclean：编译前不要进行清理。<br />all: 编译所有内核。<br />core1 core2: 编译指定内核，不带参数运行脚本可以查看可用内核。<br />编译完成的内核文件为拷贝到`cores\dists`目录下 |
+| build_cores.cmd              | 编译需要在VS2022下编译的RA模拟器内核，运行参数：<br />`build_cores.cmd [/noclean] all | core1 [core2]...` |
+| dist_ra.sh                   | 创建RetroArch分发目录retroarch_dist，请在retroarch_orig或者retrorch源代码根目录下运行。 |
+| dist_cores.sh                | 分发RA模拟器内核到retroarch_dist目录，运行参数：`./dist_cores.sh [all|core1.dll core2.dll...]`<br />此脚本在默认内核编译输出目录`cores\dists`下寻找内核。 |
 
 ### libs 目录 - 编译需要的一些第三方库
 

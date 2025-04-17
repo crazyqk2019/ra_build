@@ -3,3 +3,5 @@
 /retroarch_orig
 /retroarch_dist
 /tools/python
+/msys64
+/scripts/msys2-x86_64-latest.sfx.exe

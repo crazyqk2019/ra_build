@@ -41,6 +41,9 @@ pacman -S --needed --noconfirm \
     mingw-w64-$compiler_env-ntldd \
     mingw-w64-$compiler_env-libxml2 \
     mingw-w64-$compiler_env-freetype \
+    mingw-w64-$compiler_env-harfbuzz \
+    mingw-w64-$compiler_env-libwebp \
+    mingw-w64-$compiler_env-libtiff \
     mingw-w64-$compiler_env-ffmpeg \
     mingw-w64-$compiler_env-flac \
     mingw-w64-$compiler_env-drmingw \
@@ -56,9 +59,9 @@ pacman -S --needed --noconfirm \
     mingw-w64-$compiler_env-SDL_net \
     mingw-w64-$compiler_env-SDL2 \
     mingw-w64-$compiler_env-SDL2_image \
-    mingw-w64-$compiler_env-SDL3 \
-    mingw-w64-$compiler_env-SDL3_image \
-    mingw-w64-$compiler_env-SDL3_ttf \
+    mingw-w64-$compiler_env-sdl3 \
+    mingw-w64-$compiler_env-sdl3-image \
+    mingw-w64-$compiler_env-sdl3-ttf \
     mingw-w64-$compiler_env-nasm \
     mingw-w64-$compiler_env-ninja \
     mingw-w64-$compiler_env-dlfcn \
@@ -94,3 +97,4 @@ pacman -S --needed --noconfirm \
     mingw-w64-$compiler_env-lua \
     mingw-w64-$compiler_env-mruby \
     mingw-w64-$compiler_env-squirrel
+    

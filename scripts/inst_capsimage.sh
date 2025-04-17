@@ -47,6 +47,7 @@ inst_5.1() {
     install -v capsimg.dll.a "$MINGW_PREFIX/lib" || return $?
     echo
     message "安装头文件..."
+    if [ ! -d "$MINGW_PREFIX/include/caps5" ]; then mkdir "$MINGW_PREFIX/include/caps5"; fi
     install -v -D ../LibIPF/*.h "$MINGW_PREFIX/include/caps5/" || return $?
     install -v -D ../Core/CommonTypes.h "$MINGW_PREFIX/include/caps5/CommonTypes.h" || return $?
     cd ../..
@@ -61,7 +62,8 @@ inst_4.2() {
         7z x x86_64-linux-gnu-capsimage.7z  || return $?
     fi
     cd x86_64-linux-gnu-capsimage
-    install -v -D include/caps/*.h $MINGW_PREFIX/include/caps/  || return $?
+    if [ ! -d "$MINGW_PREFIX/include/caps" ]; then mkdir "$MINGW_PREFIX/include/caps"; fi
+    install -v -D include/caps/*.h "$MINGW_PREFIX/include/caps/"  || return $?
     cd ..
     rm -r -f x86_64-linux-gnu-capsimage
     echo "完成"

@@ -25,7 +25,7 @@ error_message()
    $SETCOLOR_RED && echo "$@" && $SETCOLOR_NORMAL
 }
 
-if [ $# -lt 1 ]; then die "需要指定内核文件！all - 指定全部可用内核。"; fi
+if [ $# -lt 1 ]; then die "需要指定内核！all - 全部可用内核。"; fi
 
 cd ..
 if [ ! -d cores/dists ]; then die "内核输出目录不存在！请先编译内核。"; fi
@@ -36,12 +36,19 @@ ra_cores_dists_dir="$PWD/retroarch_dist/cores"
 cd cores/dists
 
 dist_core() {
-    if [ ! -f "$cores_dir/$1" ]; then die "内核文件 \"$1\" 不存在！"; fi
-    message "拷贝 \"$1\"..."
-    cp -v "$cores_dir/$1" "$ra_cores_dists_dir/"
+    pushd . >/dev/null
+    if [[ "$1" =~ .*_libretro\.dll$ ]]; then 
+        core_file=$1
+    else
+        core_file=$1_libretro.dll
+    fi
+    if [ ! -f "$cores_dir/$core_file" ]; then die "内核文件 \"$core_file\" 不存在！"; fi
+    message "拷贝 \"$core_file\"..."
+    cp -v "$cores_dir/$core_file" "$ra_cores_dists_dir/"
     cd "$ra_dists_dir"
     message "拷贝 \"$1\" 依赖的运行库..."
-    for i in $(seq 3); do for dll in $(ntldd -R cores/$1 | grep -i msys64 | cut -d">" -f2 | cut -d" " -f2); do cp -v "$dll" . ; done; done
+    for i in $(seq 3); do for dll in $(ntldd -R cores/$core_file | grep -i msys64 | cut -d">" -f2 | cut -d" " -f2); do cp -v "$dll" . ; done; done
+    popd >/dev/null
     message "完成"
     echo
 }
@@ -50,9 +57,7 @@ if [ "$(echo "$1" | tr '[:upper:]' '[:lower:]')" = "all" ]; then
     for file in *.dll; do dist_core "$file"; done
 else
     while [ $# -gt 0 ]; do 
-       pushd . >/dev/null
        dist_core $1
-       popd >/dev/null
        shift
    done
 fi

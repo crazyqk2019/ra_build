@@ -265,14 +265,11 @@
 >
 > 可使用`scripts\dist_ra.sh`脚本自动执行以上步骤（在源代码根目录下运行）。
 
-### 5. 拷贝中文字体
+### 5. 中文字体
 
 目前 RA 的 assets 资源里自带一个中文字体`chinese-fallback-font.ttf`（在assets/pkg目录下），但是该字体仍然不完善，会有显示方块的问题。
 
-推荐使用[Maple Mono](chinese-fallback-font.ttf)字体。
-
-- 低分辨屏（1080p及以下）建议使用`MapleMonoNL-CN-unhinted`（不含控制台图形字符、无连字、含中文、有渲染提示）
-- 高分辨率屏（1080p以上）建议使用`MapleMonoNL-CN`（不含控制台图形字符、无连字、含中文、无渲染提示）
+推荐使用[Sarasa Term SC Nerd](https://github.com/laishulu/Sarasa-Term-SC-Nerd)字体。
 
 根据选择把下载好的字体 regular 版本更名为`chinese-fallback-font.ttf`，覆盖assets/pkg目录下同名文件。
 
@@ -759,27 +756,32 @@ cmake --build Build --config Release --target squirreljme_libretro
 
 ### Nintendo 系列
 
+#### GB 系列
+
 | 内核名称                                                    | 汉化仓库地址                                                 | 内核说明                                                     | 汉化时间和版本 |
 | ----------------------------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ | -------------- |
-| [SameBoy](https://docs.libretro.com/library/sameboy/)       | [libretro-sameboy](https://github.com/crazyqk2019/libretro-sameboy)<br />（分支为`buildbot`） | 开源版GB(DMG)和GBC(CGB)的模拟器。<br />追求极致精确模拟。    |                |
-| [Gearboy](https://docs.libretro.com/library/gearboy/)       | [libretro-gearboy](https://github.com/crazyqk2019/libretro-gearboy) | GB/GBC模拟器。                                               |                |
-| [TGB Dual](https://docs.libretro.com/library/tgb_dual/)     | [libretro-tgbdual](https://github.com/crazyqk2019/libretro-tgbdual) | GB/GBC模拟器。<br />支持联机对战线。                         |                |
-| [Gambatte](https://docs.libretro.com/library/gambatte/)     | [libretro-gambatte](https://github.com/crazyqk2019/libretro-gambatte) | GB/GBC模拟器。<br />致力于高精度模拟。                       |                |
-| [mGBA](https://docs.libretro.com/library/mgba/)             | [libretro-mgba](https://github.com/crazyqk2019/libretro-mgba) | GBA模拟器。<br />设计目标是更快更精确的GBA模拟，同时也支持GB/GBC。 |                |
-| [gpSP](https://docs.libretro.com/library/gpsp/)             | [libretro-gpsp](https://github.com/crazyqk2019/libretro-gpsp) | GBA模拟器。<br />支持动态重编译，最初是为PSP编写的模拟器，为ARM Linux优化。 |                |
-| [Beetle GBA](https://docs.libretro.com/library/beetle_gba/) | [libretro-mednafen_gba](https://github.com/crazyqk2019/libretro-mednafen_gba) | GBA模拟器。<br />Mednafen多机种模拟器中的GBA内核。<br />其自身基于VBA-M。 |                |
-| [Meteor](https://docs.libretro.com/library/meteor/)         | [libretro-meteor](https://github.com/crazyqk2019/libretro-meteor) | GBA模拟器。                                                  |                |
-| [VBA-M](https://docs.libretro.com/library/vba_m/)           | [libretro-vbam](https://github.com/crazyqk2019/libretro-vbam) | GBA模拟器。<br />VisualBoyAdvance的增强版，集成了更多功能和改进，<br />同时也支持GB/GBC/SGB（边框和调色板）。 |                |
-| [VBA Next](https://docs.libretro.com/library/vba_next/)     | [libretro-vba_next](https://github.com/crazyqk2019/libretro-vba_next) | GBA模拟器。<br />基于VBA-M 2011版，融合了一些性能和兼容性增强补丁。 |                |
-| [Beetle VB](https://docs.libretro.com/library/beetle_vb/)   | [libretro-mednafen_vb](https://github.com/crazyqk2019/libretro-mednafen_vb) | VB 模拟器。<br />Mednafen多机种模拟器中的 VB 内核。          |                |
-| [PokeMini](https://docs.libretro.com/library/pokemini/)     | [libretro-pokemini](https://github.com/crazyqk2019/libretro-pokemini) | [Pokémon Mini](https://en.wikipedia.org/wiki/Pokémon_Mini) 掌机模拟器。 |                |
-|                                                             |                                                              |                                                              |                |
+| [SameBoy](https://docs.libretro.com/library/sameboy/)       | [libretro-sameboy](https://github.com/crazyqk2019/libretro-sameboy)<br />（分支为`buildbot`） | GB和GBC模拟器。<br />追求极致精确模拟。                      | 2024/04/25     |
+| [Gearboy](https://docs.libretro.com/library/gearboy/)       | [libretro-gearboy](https://github.com/crazyqk2019/libretro-gearboy) | GB/GBC模拟器。                                               | 2024/04/25     |
+| [TGB Dual](https://docs.libretro.com/library/tgb_dual/)     | [libretro-tgbdual](https://github.com/crazyqk2019/libretro-tgbdual) | GB/GBC模拟器。<br />支持联机对战线。                         | 2024/04/25     |
+| [Gambatte](https://docs.libretro.com/library/gambatte/)     | [libretro-gambatte](https://github.com/crazyqk2019/libretro-gambatte) | GB/GBC模拟器（内置大量调色板）。<br />致力于高精度模拟。     | 2025/04/28     |
+| [mGBA](https://docs.libretro.com/library/mgba/)             | [libretro-mgba](https://github.com/crazyqk2019/libretro-mgba) | GBA模拟器。<br />设计目标是更快更精确的GBA模拟，同时也支持GB/GBC。 | 2024/04/25     |
+| [gpSP](https://docs.libretro.com/library/gpsp/)             | [libretro-gpsp](https://github.com/crazyqk2019/libretro-gpsp) | GBA模拟器。<br />支持动态重编译，最初是为PSP编写的模拟器，为ARM Linux优化。 | 2025/04/25     |
+| [Beetle GBA](https://docs.libretro.com/library/beetle_gba/) | [libretro-mednafen_gba](https://github.com/crazyqk2019/libretro-mednafen_gba) | GBA模拟器。<br />Mednafen多机种模拟器中的GBA内核。<br />其自身基于VBA-M。 | 2025/04/25     |
+| [Meteor](https://docs.libretro.com/library/meteor/)         | [libretro-meteor](https://github.com/crazyqk2019/libretro-meteor) | GBA模拟器。                                                  | 2025/04/29     |
+| [VBA-M](https://docs.libretro.com/library/vba_m/)           | [libretro-vbam](https://github.com/crazyqk2019/libretro-vbam) | GBA模拟器。<br />VisualBoyAdvance的增强版，集成了更多功能和改进，<br />同时也支持GB/GBC/SGB（边框和调色板）。 | 2025/04/25     |
+| [VBA Next](https://docs.libretro.com/library/vba_next/)     | [libretro-vba_next](https://github.com/crazyqk2019/libretro-vba_next) | GBA模拟器。<br />基于VBA-M 2011版，融合了一些性能和兼容性增强补丁。 | 2025/04/25     |
+| [Beetle VB](https://docs.libretro.com/library/beetle_vb/)   | [libretro-mednafen_vb](https://github.com/crazyqk2019/libretro-mednafen_vb) | VB 模拟器。<br />Mednafen多机种模拟器中的 VB 内核。          | 2025/04/28     |
+| [PokeMini](https://docs.libretro.com/library/pokemini/)     | [libretro-pokemini](https://github.com/crazyqk2019/libretro-pokemini) | [Pokémon Mini](https://en.wikipedia.org/wiki/Pokémon_Mini) 掌机模拟器。 | 2025/04/28     |
+
+#### FC 系列
 
 | 内核名称                                                | 汉化仓库地址                                                 | 内核说明                                                     | 汉化时间和版本 |
 | ------------------------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ | -------------- |
-| [FCEUmm](https://docs.libretro.com/library/fceumm/)     | [libretro-fceumm](https://github.com/crazyqk2019/libretro-fceumm) | FC模拟器。<br />FCEU Ultra模拟器的mapper修改版，<br />支持大量新的mapper以及未授权游戏的mapper。 |                |
-| [Nestopia](https://docs.libretro.com/library/nestopia/) | [libretro-nestopia](https://github.com/crazyqk2019/libretro-nestopia) | FC模拟器。<br />精确时钟周期模拟的FC模拟器。<br />libretro版本包含了超频功能。 |                |
-| [QuickNES](https://docs.libretro.com/library/quicknes/) | [libretro-quicknes](https://github.com/crazyqk2019/libretro-quicknes) | FC模拟器。                                                   |                |
+| [FCEUmm](https://docs.libretro.com/library/fceumm/)     | [libretro-fceumm](https://github.com/crazyqk2019/libretro-fceumm) | FC模拟器。<br />FCEU Ultra模拟器的mapper修改版，<br />支持大量新的mapper以及未授权游戏的mapper。 | 2025/04/29     |
+| [Nestopia](https://docs.libretro.com/library/nestopia/) | [libretro-nestopia](https://github.com/crazyqk2019/libretro-nestopia) | FC模拟器。<br />精确时钟周期模拟的FC模拟器。<br />libretro版本包含了超频功能。 | 2025/04/30     |
+| [QuickNES](https://docs.libretro.com/library/quicknes/) | [libretro-quicknes](https://github.com/crazyqk2019/libretro-quicknes) | FC模拟器。                                                   | 2025/04/30     |
+
+#### SFC 系列
 
 | 内核名称                                                     | 汉化仓库地址                                                 | 内核说明                                                     | 汉化时间和版本 |
 | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | -------------- |
@@ -790,14 +792,20 @@ cmake --build Build --config Release --target squirreljme_libretro
 | [bsnes jg](https://docs.libretro.com/library/bsnes-jg/)      | [libretro-bsnes_jg](https://github.com/crazyqk2019/libretro-bsnes_jg) | SFC模拟器。<br />bsnes v115的分支版本，做了一些其他改进。    |                |
 | [Snes9x](https://docs.libretro.com/library/snes9x/)          | [libretro-snes9x](https://github.com/crazyqk2019/libretro-snes9x) | SFC模拟器。<br />和最新的Snes9x的主线版本同步。              |                |
 
+#### N64 系列
+
 | 内核名称                                                     | 汉化仓库地址                                                 | 内核说明                                                | 汉化时间和版本 |
 | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------- | -------------- |
 | [Mupen64Plus-Next](https://docs.libretro.com/library/mupen64plus/) | [libretro-mupen64plus_next](https://github.com/crazyqk2019/libretro-mupen64plus_next)<br />（分支为`develop`） | N64模拟器。<br />和最新的Mupen64Plus-Next主线版本同步。 |                |
 | ParaLLEl N64                                                 | [libretro-parallel_n64](https://github.com/crazyqk2019/libretro-parallel_n64) | N64模拟器。<br />基于Mupen64Plus，做了优化和重写。      |                |
 
+#### GC/Wii 系列
+
 | 内核名称                                              | 汉化仓库地址                                                 | 内核说明         | 汉化时间和版本 |
 | ----------------------------------------------------- | ------------------------------------------------------------ | ---------------- | -------------- |
 | [Dolphin](https://docs.libretro.com/library/dolphin/) | [libretro-dolphin](https://github.com/crazyqk2019/libretro-dolphin) | NGC/Wii 模拟器。 |                |
+
+#### DS 系列
 
 | 内核名称                                                    | 汉化仓库地址                                                 | 内核说明                    | 汉化时间和版本 |
 | ----------------------------------------------------------- | ------------------------------------------------------------ | --------------------------- | -------------- |

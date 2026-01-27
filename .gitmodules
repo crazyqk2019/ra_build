@@ -1,3 +1,3 @@
 [submodule "scripts/mingw_dev_env"]
-	path = scripts/mingw_dev_env
+	path = scripts/prepare_env/mingw_dev_env
 	url = https://gitee.com/crazyq2023/mingw_dev_env

@@ -1,33 +1,37 @@
-# Windows 下 RetroArch 编译环境
+# Windows 下 RetroArch 编译环境搭建
 
-## MinGW 编译环境安装
+## MSys2/MinGW 编译环境安装
 
-1. 安装[Git for Windows](https://gitforwindows.org/)和[TortoiseGit](https://tortoisegit.org/)，把路径加入PATH环境变量。
+1. 安装[Git for Windows](https://gitforwindows.org/)和[TortoiseGit](https://tortoisegit.org/)，把路径加入编译环境的PATH变量。
 
-2. 从 https://www.msys2.org/ 下载msys2安装器进行安装，**安装路径不要有中文，空格和特殊符号，不要安装在FAT格式硬盘上。**
+2. 从 https://www.msys2.org/ 下载msys2进行安装。
 
-     最新版下载地址：
+     > [!CAUTION]
+     >
+     > 安装路径不要有中文、空格和特殊符号，不要安装在FAT格式硬盘上。
+
+     绿色版本自解压最新版下载地址：https://repo.msys2.org/distrib/msys2-x86_64-latest.sfx.exe
 
      建议下载自解压版本`msys2-base-x86_64-*.sfx.exe`，使用以下命令解压安装：
 
      ```cmd
-     msys2-base-x86_64-latest.sfx.exe -y -oC:\
+     msys2-x86_64-latest.sfx.exe -y -oC:\
      ```
 
-     此命令会安装msys2到`C:\msys2`。
+     此命令会安装到`C:\msys2`。
 
-     自解压版本是绿色版本，不会生成快捷方式，不会生成卸载注册表项，其他功能和安装版完全一样。
+     绿色版本不会生成快捷方式，不会生成注册表项，其他功能和安装版完全一样。
 
-3. （可选）修改配置（之前版本msys2使用curl下载有bug），以使用wget下载安装包
+3. （可选）修改配置使用wget下载安装包（老版本msys2使用curl下载有bug，貌似新版已经修复）。
      编辑 /etc/pacman.conf 去掉此行注释：
 
      ```bash
      XferCommand = /usr/bin/wget --passive-ftp -c -O %o %u
      ```
 
-4. （可选）使用清华大学服务器镜像
+4. （可选）使用清华大学服务器镜像以加快国内下载速度
      编辑 /etc/pacman.d下的mirrorlist.*文件
-       把 https://mirrors.tuna.tsinghua.edu.cn 服务器地址移到最前面
+     把 https://mirrors.tuna.tsinghua.edu.cn 服务器地址移到最前面
 
 5. 进入msys2 shell环境。
 
@@ -35,7 +39,7 @@
 
 7. 运行`scripts/inst_pkgs.sh`脚本，安装编译所需工具和依赖包。(默认使用ucrt64工具链)
 
-8. ~~安装pkgs目录中的包，直接解压到对应目录，无须用pacman命令安装~~（已删除，这些包已经可以在第6步使用pacman直接下载）
+8. ~~安装pkgs目录中的包，直接解压到对应目录，无须用pacman命令安装~~（已不需要此步骤，这些包已经可以在第6步使用pacman直接下载）
 
 > [!TIP]
 >

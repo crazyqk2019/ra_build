@@ -17,7 +17,6 @@ else
     print_usage
 fi
 
-echo "安装工具和库for：\"$compiler_var\"..."
 if [ "$compiler_var" == "mingw64" ]; then
     compiler_var="x86_64"
 elif [ "$compiler_var" == "ucrt64" ]; then

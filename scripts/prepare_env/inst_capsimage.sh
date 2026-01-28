@@ -71,7 +71,7 @@ inst_4.2() {
 }
 
 cd "$(dirname "$0")"
-cd ../libs
+cd ./libs
 pushd . >/dev/null
 inst_5.1 || die "安装出错！"
 popd >/dev/null

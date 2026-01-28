@@ -1,51 +1,20 @@
-# Windows 下 RetroArch 编译环境搭建
+# Windows 下 RetroArch 编译方法
 
-## MSys2/MinGW 编译环境安装
+## 一、编译环境搭建
 
-1. 安装[Git for Windows](https://gitforwindows.org/)和[TortoiseGit](https://tortoisegit.org/)，把路径加入编译环境的PATH变量。
+在Windows下编译RetroArch同时需要MSys2/MinGW编译环境和VS2022编译环境。
 
-2. 从 https://www.msys2.org/ 下载msys2进行安装。
+### MSys2/MinGW 编译环境搭建
 
-     > [!CAUTION]
-     >
-     > 安装路径不要有中文、空格和特殊符号，不要安装在FAT格式硬盘上。
+参见子模块说明：[MSys2/MinGW 编译环境安装](.\scripts\prepare_env\mingw_dev_env\README.md)
 
-     绿色版本自解压最新版下载地址：https://repo.msys2.org/distrib/msys2-x86_64-latest.sfx.exe
-
-     建议下载自解压版本`msys2-base-x86_64-*.sfx.exe`，使用以下命令解压安装：
-
-     ```cmd
-     msys2-x86_64-latest.sfx.exe -y -oC:\
-     ```
-
-     此命令会安装到`C:\msys2`。
-
-     绿色版本不会生成快捷方式，不会生成注册表项，其他功能和安装版完全一样。
-
-3. （可选）修改配置使用wget下载安装包（老版本msys2使用curl下载有bug，貌似新版已经修复）。
-     编辑 /etc/pacman.conf 去掉此行注释：
-
-     ```bash
-     XferCommand = /usr/bin/wget --passive-ftp -c -O %o %u
-     ```
-
-4. （可选）使用清华大学服务器镜像以加快国内下载速度
-     编辑 /etc/pacman.d下的mirrorlist.*文件
-     把 https://mirrors.tuna.tsinghua.edu.cn 服务器地址移到最前面
-
-5. 进入msys2 shell环境。
-
-6. 升级msys2：运行 `pacman -Syu` 数次，直到无更新
-
-7. 运行`scripts/inst_pkgs.sh`脚本，安装编译所需工具和依赖包。(默认使用ucrt64工具链)
-
-8. ~~安装pkgs目录中的包，直接解压到对应目录，无须用pacman命令安装~~（已不需要此步骤，这些包已经可以在第6步使用pacman直接下载）
+使用ucrt64工具链进行编译。
 
 > [!TIP]
 >
-> 命令行下使用 `msys2_shell.cmd -msys2 -defterm -no-start`命令可以在不打开新窗口的情况下，在当前终端进入msys环境。运行 `msys2_shell.cmd --help`可查看帮助。
+> 运行`scripts\prepare_env\mingw_dev_env\setup_msys2.cmd`可自动完成MSys2/MinGW编译环境搭建。
 
-## VS2022 编译环境安装
+### VS2022 编译环境搭建
 
 1. 安装VS2022，Community版本即可，安装时注意选中VC开发。
 
@@ -77,9 +46,9 @@
 >
 > tools目录下python.7z为已经安装好pip和setuptools的embedded版本python，解压即可使用。
 
-## 需要单独编译安装的第三方库
+### 需要单独编译安装的第三方库
 
-### capsimage
+#### capsimage
 
 读取IPF磁盘镜像格式的API，这是由[Software Preservation Society (SPS)](http://www.softpres.org/)设计推出的一种老式计算机软件和游戏的磁盘镜像格式。部分模拟器要支持IPF镜像读取的话，需要这个API。
 
@@ -125,7 +94,7 @@
 
    暂无
 
-## 如何完整编译和分发 RA
+## 二、完整编译和分发 RA
 
 ###  1. 拉取 RA 源代码
 

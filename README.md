@@ -20,6 +20,10 @@
 
    下载地址：<https://visualstudio.microsoft.com/zh-hans/vs/>
 
+   最新版Visual Studio Community版本安装文件下载地址：https://aka.ms/vs/stable/vs_community.exe
+
+   Visual Studio 2022 Community版本安装文件下载地址：https://aka.ms/vs/17/release/vs_community.exe
+
 2. 部分内核编译需要python，可使用embedded版本的python，手动安装pip和setuptools包。方法如下：
 
    1. 解压embedded版本python压缩包，编辑python313._pth文件，去掉`#import site`前的注释。313为当前python的版本号，文件名根据版本号不同。

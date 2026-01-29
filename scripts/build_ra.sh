@@ -3,6 +3,9 @@
 SETCOLOR_GREEN="echo -en \\E[1;32m"
 SETCOLOR_NORMAL="echo -en \\E[0;39m"
 
+pushd $(dirname "$0") >/dev/null
+cd ../retroarch >/dev/null || exit $?
+
 $SETCOLOR_GREEN && echo "Configuring RetroArch..." && $SETCOLOR_NORMAL
 ./configure
 echo

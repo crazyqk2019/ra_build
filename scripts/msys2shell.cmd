@@ -35,11 +35,12 @@ IF NOT DEFINED COMPILER_ENV SET "COMPILER_ENV=msys2"
 ECHO msys2 mingw64 ucrt64 clang64 | findstr /i "\<%COMPILER_ENV%\>" >NUL
 IF NOT %ERRORLEVEL% == 0 GOTO :showUsage
 
-SET "msys2_shell_cmd=%MSYS2_HOME%\msys2_shell.cmd -no-start -full-path -defterm -%COMPILER_ENV% -where "%CD%""
+SET "msys2_shell_cmd=%MSYS2_HOME%\msys2_shell.cmd -no-start -defterm -%COMPILER_ENV% -where "%CD%""
 IF DEFINED SCRIPT_FILE (SET "msys2_shell_cmd=%msys2_shell_cmd% "%SCRIPT_FILE%"")
 IF DEFINED SCRIPT_PARAMS (SET "msys2_shell_cmd=%msys2_shell_cmd% %SCRIPT_PARAMS%")
 REM ECHO msys2_shell_cmd=[%msys2_shell_cmd%]
 CMD /C %msys2_shell_cmd%
+ECHO ERRORLEVEL=%ERRORLEVEL%
 EXIT /B %ERRORLEVEL%
 
 :addScriptParams
@@ -48,7 +49,7 @@ EXIT /B 0
 
 :showUsage
 ECHO 参数错误！使用方法：
-ECHO msys2shell.cmd [/m ^msys2_home_dir^] [/e msys2^|mingw64^|ucrt64^|clang64] [script] [script params]
+ECHO msys2shell.cmd [/m msys2_home_dir] [/e msys2^|mingw64^|ucrt64^|clang64] [script] [script params]
 
 :error
 PAUSE & IF %ERRORLEVEL% == 0 (EXIT /B 1) ELSE (EXIT /B %ERRORLEVEL%)

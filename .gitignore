@@ -12,3 +12,5 @@
 /scripts/python
 /scripts/msys2_build_env
 /scripts/vc_build_env
+/scripts/vc_env
+/scripts/msys2_env

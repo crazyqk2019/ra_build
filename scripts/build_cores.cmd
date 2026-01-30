@@ -57,7 +57,7 @@ IF NOT DEFINED NO_CLEAN (
     IF EXIST "%build_dir%" RD /S /Q "%build_dir%"
     ECHO.
 )
-SET "cmake_commad_line=cmake -Wno-dev -DCMAKE_BUILD_TYPE=Release -A x64"
+SET "cmake_commad_line=cmake -Wno-dev -DCMAKE_BUILD_TYPE=Release -A x64 -DCMAKE_POLICY_VERSION_MINIMUM=3.5"
 IF DEFINED cmake_vcpkg_params SET "cmake_commad_line=%cmake_commad_line% %cmake_vcpkg_params% -DVCPKG_INSTALLED_DIR=vcpkg_installed -DCMAKE_TOOLCHAIN_FILE=%VCPKG_ROOT%\scripts\buildsystems\vcpkg.cmake"
 IF DEFINED cmake_params SET "cmake_commad_line=%cmake_commad_line% %cmake_params%"
 SET "cmake_commad_line=%cmake_commad_line% . -B %build_dir%"
@@ -140,8 +140,7 @@ FOR %%# IN (%CORES_LIST%) DO (
     IF NOT EXIST "%CORES_DIR%\libretro-%%#" (
         ECHO 内核目录不存在，请先拉取内核源代码："%%#" & ECHO.
     ) ELSE (
-        CALL :build_%%#
-        EXIT /B %ERRORLEVEL%
+        CALL :build_%%# || EXIT /B !ERRORLEVEL!
     )
 )
 EXIT /B 0

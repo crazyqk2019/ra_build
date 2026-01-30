@@ -3,7 +3,7 @@ SETLOCAL
 
 PUSHD "%~dp0"
 
-PUSHD ..
+PUSHD ..\..\
 SET "INST_DEST=%CD%"
 POPD
 

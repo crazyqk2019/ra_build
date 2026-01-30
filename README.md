@@ -8,7 +8,7 @@
 
 参见子模块说明：[MSys2/MinGW 编译环境安装](.\scripts\prepare_env\mingw_dev_env\README.md)
 
-使用ucrt64工具链进行编译。
+默认使用ucrt64编译器工具链进行编译。
 
 > [!TIP]
 >
@@ -20,9 +20,9 @@
 
    下载地址：<https://visualstudio.microsoft.com/zh-hans/vs/>
 
-   最新版Visual Studio Community版本安装文件下载地址：https://aka.ms/vs/stable/vs_community.exe
+   Visual Studio 最新Community版本安装文件下载地址：https://aka.ms/vs/stable/vs_community.exe
 
-   Visual Studio 2022 Community版本安装文件下载地址：https://aka.ms/vs/17/release/vs_community.exe
+   Visual Studio 2022 版本Community安装文件下载地址：https://aka.ms/vs/17/release/vs_community.exe
 
 2. 部分内核编译需要python，可使用embedded版本的python，手动安装pip和setuptools包。方法如下：
 

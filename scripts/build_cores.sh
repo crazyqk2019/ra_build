@@ -589,7 +589,7 @@ build_dosbox_pure() {
 # Cores built using cmake
 build_dolphin() {
     (
-        cd "cores_dir/libretro-dolphin"
+        cd "$cores_dir/libretro-dolphin"
         if [ -z "$no_clean" ]; then
             message "清理 \"dxsdk\"..."
             rm -f Externals/dxsdk/lib/x86/*.a

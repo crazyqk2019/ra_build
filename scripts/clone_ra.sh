@@ -1,20 +1,44 @@
 #!/bin/bash
 
 SETCOLOR_GREEN="echo -en \\E[1;32m"
+SETCOLOR_RED="echo -en \\E[1;31m"
 SETCOLOR_NORMAL="echo -en \\E[0;39m"
+die()
+{
+    if [ $# -gt 0 ]; then
+        $SETCOLOR_RED && echo "$@" && $SETCOLOR_NORMAL
+    fi
+    exit 1
+}
+
+error_message()
+{
+    $SETCOLOR_RED && echo "$@" && $SETCOLOR_NORMAL
+}
+
+message()
+{
+   $SETCOLOR_GREEN && echo "$@" && $SETCOLOR_NORMAL
+}
 
 pushd $(dirname "$0") >/dev/null
 
-$SETCOLOR_GREEN && echo "Cloning RetroArch..." && $SETCOLOR_NORMAL
-git clone https://github.com/crazyqk2019/RetroArch ../retroarch
+message "克隆 RetroArch ……"
+git clone --recursive https://github.com/crazyqk2019/RetroArch ../retroarch || die "克隆出错！"
+message "完成。"
 echo
 
 cd ../retroarch
 
-$SETCOLOR_GREEN && echo "Adding upstream repository..." && $SETCOLOR_NORMAL
-git remote add upstream https://github.com/libretro/RetroArch
+message "添加上游仓库……"
+git remote add upstream https://github.com/libretro/RetroArch || die "添加上游仓库出错！"
+message "完成。"
 echo
+
+message "克隆 RetroArch 完成。"
 
 popd >/dev/null
 
-$SETCOLOR_GREEN && echo "Done." && $SETCOLOR_NORMAL
+exit 0
+
+

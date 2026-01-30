@@ -3,7 +3,6 @@
 SETCOLOR_GREEN="echo -en \\E[1;32m"
 SETCOLOR_RED="echo -en \\E[1;31m"
 SETCOLOR_NORMAL="echo -en \\E[0m"
-
 die()
 {
     if [ $# -gt 0 ]; then

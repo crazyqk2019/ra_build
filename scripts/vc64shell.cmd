@@ -2,17 +2,12 @@
 SETLOCAL
 
 PUSHD "%~dp0"
-SET "PATH=%CD%\cmake\bin;%CD%\MinGit\cmd\;%CD%\python;%PATH%"
 
+SET "VC_ENV_PATH=%CD%\vc_env"
+SET "PATH=%VC_ENV_PATH%\cmake\bin;%VC_ENV_PATH%\git\cmd;%VC_ENV_PATH%\python;%PATH%"
 
-git config --global core.autocrlf false
-git config --global core.safecrlf true
-git config --global http.sslBackend schannel
-git config --system core.autocrlf false
-git config --system core.safecrlf true
-git config --system http.sslBackend schannel
+CMD /K "%VC_ENV_PATH%\vc_build_tools\devcmd.bat"
 
-CMD /K C:\BuildTools\devcmd.bat
 GOTO :end
 
 SET "VCVARS64_BAT="

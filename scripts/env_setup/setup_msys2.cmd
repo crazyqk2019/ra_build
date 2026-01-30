@@ -4,11 +4,11 @@ SETLOCAL
 PUSHD "%~dp0"
 
 PUSHD ..
-SET "INST_DEST=%CD%"
+SET "INST_DEST=%CD%\msys2_env"
 POPD
 
-CALL mingw_dev_env\scripts\setup_msys2.cmd "%INST_DEST%" || GOTO :err
-CALL mingw_dev_env\scripts\setup_toolchain.cmd "%INST_DEST%\msys64" ucrt64 || GOTO :err
+CALL msys2_dev_env\scripts\setup_msys2.cmd "%INST_DEST%" || GOTO :err
+CALL msys2_dev_env\scripts\setup_toolchain.cmd "%INST_DEST%\msys64" ucrt64 || GOTO :err
 
 SET "msys2_shell_cmd=%INST_DEST%\msys64\msys2_shell.cmd -no-start -defterm -ucrt64 -where "%CD%"" 
 
@@ -28,7 +28,7 @@ ECHO COMPILER_ENV=ucrt64>>..\msys2shell.ini
 ECHO 写入完成。& ECHO.
 
 ECHO 全部工作完成！
-POPD & EXIT /B %ERRORLEVEL%
+POPD & EXIT /B 0
 
 :err
 POPD & PAUSE & IF %ERRORLEVEL% == 0 (EXIT /B 1) ELSE (EXIT /B %ERRORLEVEL%)

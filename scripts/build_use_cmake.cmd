@@ -3,9 +3,7 @@ SETLOCAL
 
 PUSHD "%~dp0"
 
-IF "%~1" == "" (ECHO 参数错误！& EXIT /B 1)
-
-
+IF "%~2" == "" (ECHO 参数错误！& EXIT /B 1)
 
 PUSHD ..
 IF NOT EXIST cores MKDIR cores
@@ -63,7 +61,7 @@ cmake --build "%build_dir%" --target %core%_libretro --config Release --parallel
 IF NOT %ERRORLEVEL% == 0  GOTO :err
 ECHO.
 COPY /Y "%core_dest%\%core_output%" "%DISTS_DIR%\%core_output%"
-IF NOT %ERRORLEVEL% == 0 (ECHO 拷贝编译输出dll文件出错！& GOTO :err)
+IF NOT %ERRORLEVEL% == 0 (ECHO 拷贝内核到分发目录出错！& GOTO :err)
 GOTO :end
 
 

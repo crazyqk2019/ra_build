@@ -1,25 +1,10 @@
 #!/bin/bash
 
-SETCOLOR_GREEN="echo -en \\E[1;32m"
-SETCOLOR_RED="echo -en \\E[1;31m"
-SETCOLOR_NORMAL="echo -en \\E[0;39m"
-die()
-{
-    if [ $# -gt 0 ]; then
-        $SETCOLOR_RED && echo "$@" && $SETCOLOR_NORMAL
-    fi
-    exit 1
-}
+SETCOLOR_GREEN="echo -en \\E[1;32m"; SETCOLOR_RED="echo -en \\E[1;31m"; SETCOLOR_NORMAL="echo -en \\E[0;39m"
+message(){ $SETCOLOR_GREEN; echo "$@"; $SETCOLOR_NORMAL; }
+error_message() { $SETCOLOR_RED; echo "$@"; $SETCOLOR_NORMAL; }
+die() { if [ $# -gt 0 ]; then error_message "$@"; fi; exit 1; }
 
-error_message()
-{
-    $SETCOLOR_RED && echo "$@" && $SETCOLOR_NORMAL
-}
-
-message()
-{
-   $SETCOLOR_GREEN && echo "$@" && $SETCOLOR_NORMAL
-}
 
 pushd $(dirname "$0") >/dev/null
 

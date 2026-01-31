@@ -1,66 +1,39 @@
 #!/bin/bash
 
-SETCOLOR_GREEN="echo -en \\E[1;32m"
-SETCOLOR_RED="echo -en \\E[1;31m"
-SETCOLOR_NORMAL="echo -en \\E[0m"
-die()
-{
-    if [ $# -gt 0 ]; then
-        $SETCOLOR_RED && echo "$@" && $SETCOLOR_NORMAL
-    fi
-    popd &>/dev/null
-    exit 1
-}
-
-error_message()
-{
-    if [ $# -gt 0 ]; then
-        $SETCOLOR_RED && echo "$@" && $SETCOLOR_NORMAL
-    fi
-}
-
-message()
-{
-   #echo ""
-   #$SETCOLOR_GREEN && echo "================================" && $SETCOLOR_NORMAL
-   $SETCOLOR_GREEN && echo "$@" && $SETCOLOR_NORMAL
-   #$SETCOLOR_GREEN && echo "================================" && $SETCOLOR_NORMAL
-}
-
-function_exists() {
-    declare -F "$1" > /dev/null
-    return $?
-}
+SETCOLOR_GREEN="echo -en \\E[1;32m"; SETCOLOR_RED="echo -en \\E[1;31m"; SETCOLOR_NORMAL="echo -en \\E[0;39m"
+message(){ $SETCOLOR_GREEN; echo "$@"; $SETCOLOR_NORMAL; }
+error_message() { $SETCOLOR_RED; echo "$@"; $SETCOLOR_NORMAL; }
+die() { if [ $# -gt 0 ]; then error_message "$@"; fi; exit 1; }
 
 common_clone_core() {
-    local core_name=$1
-    local core=$2
-    local core_upstream=$3
-    local core_branch=$4
+    if [[ $# -lt 3 ]]; then error_message "参数错误！"; return 1; fi
+    local core_name=$1; local core=$2; local core_upstream=$3; local core_branch=$4;
+
     message "克隆仓库 \"$core_name\" (https://github.com/crazyqk2019/libretro-$core)..."
     git clone --recursive https://github.com/crazyqk2019/libretro-$core
-    if [ $? -ne 0 ]; then error_message "克隆仓库出错！"; return 1; fi
+    if [[ $? -ne 0 ]]; then error_message "克隆仓库出错！\"$core_name\""; return 1; fi
     echo
-    cd libretro-$core
+
+    cd "$cores_dir/libretro-$core"
+    git config --local user.name crazyq
+    git config --local user.email crazyq@gmail.com
+
     message "添加上游仓库 \"$core_name\" (https://github.com/libretro/$core_upstream)..."
     if [[ "$core_upstream" =~ ^https?:// ]]; then
         git remote add upstream $core_upstream
     else
         git remote add upstream https://github.com/libretro/$core_upstream
     fi
-    if [ $? -ne 0 ]; then error_message "添加上游仓库出错！"; return 1; fi
+    if [[ $? -ne 0 ]]; then error_message "添加上游仓库出错！\"$core_name\""; return 1; fi
     echo
-    git config --local user.name crazyqk2019
-    git config --local user.email crazyq@gmail.com
-    if [ -n "$core_branch" ]; then
+
+    if [[ -n "$core_branch" ]]; then
         message "切换到分支 \"$core_branch\"..."
-        git checkout $core_branch
-        if [ $? -ne 0 ]; then error_message "切换分支出错！"; return 1; fi
+        git checkout $core_branch || { error_message "切换到分支 \"$core_branch\" 出错！"; return 1; }
         echo
     fi
-    cd ..
-    message "克隆仓库 \"$core_name\" 完成。"
-    echo
+
+    message "克隆仓库 \"$core_name\" 完成。"; echo
     return 0
 }
 
@@ -484,57 +457,61 @@ clone_x1() {
     common_clone_core "Sharp X1" "x1" "xmil-libretro"
 }
 
-if [ $# -lt 1 ]; then
-    echo "需要指定内核名称！可用内核："
+# 判断一个函数是否存在
+function_exist() {
+    declare -F "$1" > /dev/null
+    return $?
+}
+
+cloneCores() {
+    local cores_list=()
+    while [[ $# -gt 0 ]]; do
+        local core=$1; shift
+        if ! function_exist "clone_$core"; then error_message "参数错误，内核 \"$core\" 不存在！"; return 1; fi
+        if [[ -d "$cores_dir/libretro-$core" ]]; then message "内核 \"$core\" 目录已存在，跳过。"; continue; fi
+        cores_list+=($core)
+    done
+    for core in "${cores_list[@]}"; do
+        clone_$core || { error_message "克隆内核 \"$core\" 出错！"; return 1; }
+    done    
+    return 0
+}
+
+cloneAllCores() {
+    for core in $(declare -F | grep -i "\-f clone_" | cut -d" " -f3 | cut -d"_" -f2-); do
+        cloneCores $core || { error_message "克隆内核 \"$core\" 出错！"; return 1; }
+    done
+}
+
+
+if [[ $# -lt 1 ]]; then
+    message "需要指定内核名称！可用内核列表："
     # declare -F | grep -i "\-f clone_" | cut -d" " -f3
     declare -F | grep -i "\-f clone_" | cut -d" " -f3 | cut -d"_" -f2-
     echo
     echo "示例："
-    echo "# 拉取指定内核："
-    echo "./clone_cores.sh 内核名称1 内核名称2"
-    echo "# 拉取所有内核："
-    echo "./clone_cores.sh all"
-    exit 1
+    echo "拉取指定内核：./clone_cores.sh core1 core2"
+    echo "拉取所有内核：./clone_cores.sh all"
+    exit 0
 fi
 
 pushd $(dirname "$0") >/dev/null
-cd ..
-if [ ! -d cores ]; then
-    mkdir cores &>/dev/null
-fi
-cores_dir="$PWD/cores"
-cd cores
 
-if [ "$(echo "$1" | tr '[:upper:]' '[:lower:]')" = "all" ]; then
-    for core in $(declare -F | grep -i "\-f clone_" | cut -d" " -f3 | cut -d"_" -f2-); do 
-        cd "$cores_dir"
-        if [ -d "libretro-$core" ]; then
-            message "内核目录已存在，跳过：\"$1\""
-            echo
-        else
-            clone_$core || die
-        fi
-    done
-else
-    while [ $# -gt 0 ]; do
-        if function_exists "clone_$1"; then
-            cd "$cores_dir"
-            if [ -d "libretro-$1" ]; then
-                message "内核目录已存在，跳过：\"$1\""
-                echo
-            else
-                clone_$1 || die
-            fi
-        else
-            die "参数错误，内核不存在：\"$1\""
-            echo
-        fi
-        shift
-    done
+cd ..
+if [[ ! -d cores ]]; then
+    mkdir cores &>/dev/null || die "创建内核目录出错！"
 fi
+cores_dir="$PWD\cores"
+
+if [[ "$(echo "$1" | tr '[:upper:]' '[:lower:]')" = "all" ]]; then
+    cloneAllCores
+else
+    cloneCores $@
+fi
+if [[ $? -ne 0 ]]; then die; fi
 
 popd &>/dev/null
-message "All done."
+message "全部克隆完成。"
 exit 0
 
 

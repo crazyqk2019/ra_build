@@ -2,16 +2,8 @@
 /retroarch
 /retroarch_orig
 /retroarch_dist
-/tools/python
-/msys64
-/scripts/msys2-x86_64-latest.sfx.exe
 /scripts/msys2shell.ini
-/scripts/msys64
-/scripts/cmake
-/scripts/MinGit
-/scripts/python
-/scripts/msys2_build_env
-/scripts/vc_build_env
 /scripts/vc_env
 /scripts/msys2_env
 /scripts/env_setup/temp
+/.vscode

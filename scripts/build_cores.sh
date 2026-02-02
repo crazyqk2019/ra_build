@@ -462,21 +462,21 @@ build_dolphin() {
     if [[ $? -ne 0 ]]; then error_message "编译 \"dxsdk\" 出错！"; return 1; fi
     
     local cmake_params="-DLIBRETRO=ON"
-    no_clean=$no_clean cmake_params=$cmake_params ./build_use_cmake.sh "Dolphin" "dolphin" "." "Binary"
+    no_clean=$no_clean no_regen=$no_regen cmake_params=$cmake_params ./build_use_cmake.sh "Dolphin" "dolphin" "." "Binary"
 }
 
 build_melondsds() {
-    no_clean=$no_clean ./build_use_cmake.sh "melonDS DS" "melondsds" "." "Build/src/libretro"
+    no_clean=$no_clean no_regen=$no_regen  cmake_params=-DENABLE_LTO_RELEASE=OFF ./build_use_cmake.sh "melonDS DS" "melondsds" "." "${MSYSTEM,,}_build/src/libretro"
 }
 
 build_citra() {
     local cmake_params="-DENABLE_LIBRETRO=ON -DENABLE_SDL2=OFF -DENABLE_QT=OFF -DENABLE_WEB_SERVICE=OFF -DCITRA_WARNINGS_AS_ERRORS=OFF"
-    no_clean=$no_clean cmake_params=$cmake_params ./build_use_cmake.sh "Citra" "citra" "." "Build/bin/Release"
+    no_clean=$no_clean no_regen=$no_regen cmake_params=$cmake_params ./build_use_cmake.sh "Citra" "citra" "." "${MSYSTEM,,}_build/bin/Release"
 }
 
 build_flycast() {
     local cmake_params="-DLIBRETRO=ON"
-    no_clean=$no_clean cmake_params=$cmake_params ./build_use_cmake.sh "PPSSPP" "ppsspp" "." "Build"
+    no_clean=$no_clean no_regen=$no_regen cmake_params=$cmake_params ./build_use_cmake.sh "PPSSPP" "ppsspp" "." "${MSYSTEM,,}_build"
 }
 
 build_ppsspp() {
@@ -499,17 +499,17 @@ build_ppsspp() {
     
     # local cmake_params="-DLIBRETRO=ON -DUSE_SYSTEM_SNAPPY=ON -DUSE_SYSTEM_FFMPEG=ON -DUSE_SYSTEM_LIBZIP=ON -DUSE_SYSTEM_LIBSDL2=ON -DUSE_SYSTEM_LIBPNG=ON -DUSE_SYSTEM_ZSTD=ON -DUSE_SYSTEM_MINIUPNPC=ON"
     local cmake_params="-DLIBRETRO=ON"
-    no_clean=$no_clean cmake_params=$cmake_params ./build_use_cmake.sh "PPSSPP" "ppsspp" "." "Build"
+    no_clean=$no_clean no_regen=$no_regen cmake_params=$cmake_params ./build_use_cmake.sh "PPSSPP" "ppsspp" "." "Build"
 }
 
 build_squirreljme() {
     local cmake_params="-DRETROARCH=ON -DSQUIRRELJME_ENABLE_TESTING=OFF"
-    no_clean=$no_clean cmake_params=$cmake_params ./build_use_cmake.sh "SquirrelJME" "squirreljme" "nanocoat" "Build"
+    no_clean=$no_clean no_regen=$no_regen cmake_params=$cmake_params ./build_use_cmake.sh "SquirrelJME" "squirreljme" "nanocoat" "Build"
 }
 
 build_tic80() {
     local cmake_params="-DBUILD_SDLGPU=On -DBUILD_WITH_ALL=On -DBUILD_LIBRETRO=ON -DPREFER_SYSTEM_LIBRARIES=ON"
-    no_clean=$no_clean cmake_params=$cmake_params ./build_use_cmake.sh "TIC-80" "tic80" "." "Build1/lib" "" "Build1"
+    no_clean=$no_clean no_regen=$no_regen cmake_params=$cmake_params ./build_use_cmake.sh "TIC-80" "tic80" "." "Build1/lib" "" "Build1"
 }
 
 # Cores built using other tools
@@ -527,14 +527,9 @@ build_holani() {
 function_exist() { declare -F "$1" > /dev/null; return $?; }
 
 buildCores() {
-    local cores_list=()
-    while [[ $# -gt 0 ]]; do
-        local core=$1; shift
+     for core in "${build_cores_list[@]}"; do
         if ! function_exist "build_$core"; then error_message "参数错误，内核 \"$core\" 不存在！"; return 1; fi
         if [[ ! -d "$cores_dir/libretro-$core" ]]; then error_message "内核 \"$core\" 源代码目录不存在！"; return 1; fi
-        cores_list+=($core)
-    done
-    for core in "${cores_list[@]}"; do
         build_$core || { error_message "编译内核 \"$core\" 出错！"; return 1; }
     done
     return 0
@@ -548,28 +543,34 @@ buildAllCores() {
 
 unset no_clean
 unset no_ccache
-if [[ "$(echo "$1" | tr '[:upper:]' '[:lower:]')" = "-noclean" ]]; then
-    no_clean=1; shift
-elif  [[ "$(echo "$1" | tr '[:upper:]' '[:lower:]')" = "-noccache" ]]; then
-    no_ccache=1 shift
-fi
-if [[ "$(echo "$1" | tr '[:upper:]' '[:lower:]')" = "-noclean" ]]; then
-    no_clean=1; shift
-elif  [[ "$(echo "$1" | tr '[:upper:]' '[:lower:]')" = "-noccache" ]]; then
-    no_ccache=1 shift
-fi
+unset no_regen
+unset build_all
+build_cores_list=()
+while [[ $# -gt 0 ]]; do
+    if [[ ${1,,} = "-noclean" ]]; then no_clean=1;
+    elif [[ ${1,,} = "-noccache" ]]; then no_ccache=1;
+    elif [[ ${1,,} = "-noregen" ]]; then no_regen=1;
+    elif [[ ${1,,} = "all" ]]; then build_all=1;
+    else build_cores_list+=(${1,,});
+    fi
+    shift
+done
 
-if [ $# -lt 1 ]; then
-    message "需要指定内核名称！可用内核列表："
+echo "build_all=$build_all"
+echo "build_cores_list=${build_cores_list[@]}"
+
+if [[ ! -v $build_all && ${#build_cores_list[@]} -eq 0 ]]; then
+    message "需要指定编译内核，或指定 \"all\" 编译所有内核。可用内核列表："
     declare -F | grep -i "\-f build_" | cut -d" " -f3 | cut -d"_" -f2-
     echo
     echo "示例："
-    echo "编译指定内核：./build_cores.sh [-noclean] [-noccache] core1 core2"
-    echo "编译所有内核：./build_cores.sh [-noclean] [-noccache] all"
+    echo "编译指定内核：./build_cores.sh [-noclean] [-noregen] [-noccache] core1 core2"
+    echo "编译所有内核：./build_cores.sh [-noclean] [-noregen] [-noccache] all"
+    echo "-noclean: 编译前不要执行清理操作"
+    echo "-noregen: 对于使用CMake编译的内核，不要重新创建编译配置文件"
+    echo "-noccache: 对于使用make编译的内核，不要使用ccache加速编译"
     exit 0
 fi
-
-export PATH=/ucrt/lib/ccache/bin:$PATH
 
 pushd "$(dirname "$0")" >/dev/null
 
@@ -579,10 +580,10 @@ dists_dir="$PWD/cores/dists"
 popd >/dev/null
 if [[ ! -d $dists_dir ]]; then mkdir -p $dists_dir >/dev/null; die "创建分发目录出错！"; fi
 
-if [[ "$(echo "$1" | tr '[:upper:]' '[:lower:]')" = "all" ]]; then
+if [[ -v $build_all ]]; then
     buildAllCores
 else
-    buildCores $@
+    buildCores
 fi
 if [[ $? -ne 0 ]]; then die; fi
 

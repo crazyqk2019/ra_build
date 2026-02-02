@@ -8,6 +8,7 @@ die() { if [ $# -gt 0 ]; then error_message "$@"; fi; exit 1; }
 if [[ $# -lt 2 ]]; then die "参数错误！"; fi
 
 pushd "$(dirname "$0")" >/dev/null
+
 pushd .. >/dev/null
 cores_dir="$PWD/cores"
 dists_dir="$PWD/cores/dists"
@@ -30,14 +31,14 @@ core_src=${3:-"."}
 core_dest=${4:-"."}
 core_output=${5:-$core"_libretro.dll"}
 
-cd "$cores_dir/libretro-$core/$core_src"
+cd "$cores_dir/libretro-$core/$core_src" >/dev/null || die "进入内核 \"$core_name\" 源代码目录失败！"
     
 make_file="Makefile"
 if [ -f "Makefile.libretro" ]; then
     make_file="Makefile.libretro"
 elif [ -f "GNUmakefile" ]; then
     make_file="GNUmakefile"
- fi
+fi
     
 if [ -z "$CXXFLAGS" ]; then CXXFLAGS="$cxx_disable_warnings"; else CXXFLAGS+=" $cxx_disable_warnings"; fi
 if [ -z "$CFLAGS" ]; then CFLAGS="$c_disabled_warnings"; else CFLAGS+=" $c_disabled_warnings"; fi
@@ -45,26 +46,30 @@ if [ -z "$CPPFLAGS" ]; then CPPFLAGS="$cpp_disabled_warnings"; else CPPFLAGS+=" 
 export CFLAGS
 export CXXFLAGS
 export CPPFLAGS
-        
+
+make_clean="make -f $make_file -j`nproc` $make_params clean"
+make_build="make -f $make_file -j`nproc` $make_params"
+
 if [[ ! -v $no_clean ]]; then
-    message "清理 \"$core_name\" (make -f $make_file -j`nproc` $make_params clean)..."
-    make -f $make_file -j`nproc` $make_params clean
+    message "清理内核 \"$core_name\" ($make_clean)..."
+    $make_clean
     echo
 fi
 
 if [[ ! -v $no_ccache ]]; then
-    message "编译 \"$core_name\" (ccache make -f $make_file -j`nproc` $make_params)..."
-    ccache make -f $make_file -j`nproc` $make_params || die "编译 \"$core_name\" 出错！"
+    message "编译内核 \"$core_name\" (ccache $make_build)..."
+    ccache $make_build || die "编译 \"$core_name\" 出错！"
 else
-    message "编译 \"$core_name\" (make -f $make_file -j`nproc` $make_params)..."
-    make -f $make_file -j`nproc` $make_params || die "编译 \"$core_name\" 出错！"
+    message "编译内核 \"$core_name\" ($make_build)..."
+    $make_build || die "编译 \"$core_name\" 出错！"
 fi
 echo
-        
-strip -s "$core_dest/$core_output" || die "strip 出错！"
-cp -v "$core_dest/$core_output" "$dists_dir/" || die "拷贝内核到分发目录出错！"
+
+cd "$cores_dir/libretro-$core/$core_src"
+strip -s "$core_dest/$core_output" || die "裁剪内核 \"$core_name\" dll文件出错！"
+cp -v "$core_dest/$core_output" "$dists_dir/" || die "拷贝内核 \"$core_name\" dll文件到分发目录出错！"
 echo
 
-message "\"$core_name\" 编译内核 \"$core_name\" 完成。"
+message "编译内核 \"$core_name\" 完成。"
 echo
 exit 0

@@ -1,9 +1,9 @@
 @ECHO OFF
 SETLOCAL
 
-PUSHD "%~dp0"
-
 IF "%~2" == "" (ECHO 参数错误！& EXIT /B 1)
+
+PUSHD "%~dp0"
 
 PUSHD ..
 IF NOT EXIST cores MKDIR cores
@@ -24,56 +24,58 @@ SET core=%~2
 IF "%~3" == "" (SET "core_src=.") ELSE (SET "core_src=%~3")
 IF "%~4" == "" (SET "core_dest=.") ELSE (SET "core_dest=%~4")
 IF "%~5" == "" (SET "core_output=%core%_libretro.dll") ELSE (SET "core_output=%~5")
-IF "%~6" == "" (SET "build_dir=Build") ELSE (SET "build_dir=%~6")
+IF "%~6" == "" (SET "build_dir=vc_build") ELSE (SET "build_dir=%~6")
 
-REM ECHO core_output=%core_output%
-REM ECHO build_dir=%build_dir%
 IF NOT EXIST "%CORES_DIR%\libretro-%core%\%core_src%" (
-    ECHO 内核目录不存在，请先拉取内核源代码："%core_name%"
-    GOTO :err
+    ECHO 内核目录不存在，请先拉取内核源代码："%core_name%" & GOTO :err
 )
+
+REM IF DEFINED cmake_vcpkg_params (
+REM    SET "cmake_commad_line=%cmake_commad_line% %cmake_vcpkg_params% -DVCPKG_INSTALLED_DIR=vcpkg_installed -DCMAKE_TOOLCHAIN_FILE=%VCPKG_ROOT%\scripts\buildsystems\vcpkg.cmake"
+REM )
+REM -DCMAKE_POLICY_VERSION_MINIMUM=3.5
+SET "cmake_clean=cmake --build %build_dir% --target clean --parallel"
+SET "cmake_gen=cmake -Wno-dev -DCMAKE_BUILD_TYPE=Release -G Ninja"
+REM  -A x64
+IF DEFINED cmake_params (SET "cmake_gen=%cmake_gen% %cmake_params%")
+SET "cmake_gen=%cmake_gen% . -B %build_dir%"
+SET "cmake_build=cmake --build "%build_dir%" --target %core%_libretro --config Release --parallel"
+REM -- /p:Platform=x64
+
 CD "%CORES_DIR%\libretro-%core%\%core_src%"
-IF NOT DEFINED NO_CLEAN (
-REM    IF EXIST "%build_dir%" (
-REM        ECHO 清理 "%core_name%" ^(cmake --build %build_dir% --target clean --parallel^)...
-REM        cmake --build %build_dir% --target clean --parallel
-REM        ECHO.
-REM    )
-    ECHO 清理 "%core_name%"，删除编译目录 ^(RD /S /Q "%build_dir%"^)...
-    IF EXIST "%build_dir%" RD /S /Q "%build_dir%"
+
+IF NOT DEFINED NO_REGEN IF EXIST "%build_dir%" (
+    ECHO 删除内核 "%core_name%" 编译目录 ^(RD /S /Q "%build_dir%"^)……
+    IF EXIST "%build_dir%" RD /S /Q "%build_dir%" || (ECHO 删除 "%core_name%" 编译目录出错！& GOTO :err)
     ECHO.
 )
-SET "cmake_commad_line=cmake -Wno-dev -DCMAKE_BUILD_TYPE=Release -A x64"
-REM -DCMAKE_POLICY_VERSION_MINIMUM=3.5
-IF DEFINED cmake_vcpkg_params (
-    SET "cmake_commad_line=%cmake_commad_line% %cmake_vcpkg_params% -DVCPKG_INSTALLED_DIR=vcpkg_installed -DCMAKE_TOOLCHAIN_FILE=%VCPKG_ROOT%\scripts\buildsystems\vcpkg.cmake"
-)
-IF DEFINED cmake_params (
-    SET "cmake_commad_line=%cmake_commad_line% %cmake_params%"
-)
-SET "cmake_commad_line=%cmake_commad_line% . -B %build_dir%"
-ECHO 生成编译配置文件 ^(%cmake_commad_line%^)...
-%cmake_commad_line% 
-IF NOT %ERRORLEVEL% == 0 GOTO :err
-ECHO.
-ECHO 编译 "%core_name%" ^(cmake --build "%build_dir%" --target %core%_libretro --config Release --parallel -- /p:Platform=x64^)...
-cmake --build "%build_dir%" --target %core%_libretro --config Release --parallel -- /p:Platform=x64
-IF NOT %ERRORLEVEL% == 0  GOTO :err
-ECHO.
-COPY /Y "%core_dest%\%core_output%" "%DISTS_DIR%\%core_output%"
-IF NOT %ERRORLEVEL% == 0 (ECHO 拷贝内核到分发目录出错！& GOTO :err)
-GOTO :end
 
+IF NOT DEFINED NO_CLEAN IF EXIST "%build_dir%" (
+   ECHO 清理内核 "%core_name%" ^(%cmake_clean%^)...
+   %cmake_clean%
+   ECHO.
+)
+pause
+
+ECHO 生成内核 "%core_name%" 编译配置文件 ^(%cmake_gen%^)...
+%cmake_gen% || (ECHO 生成内核 %core_name% 编译配置文件出错！& GOTO :err)
+ECHO.
+
+ECHO 编译内核 "%core_name%" ^(%cmake_build%^)...
+%cmake_build% || (ECHO 编译内核 "%core_name%" 出错！& GOTO :err)
+ECHO.
+
+COPY /Y "%core_dest%\%core_output%" "%DISTS_DIR%\%core_output%" ||(ECHO 拷贝内核 "%core_name%" dll文件到分发目录出错！& GOTO :err)
+ECHO.
+
+POPD
+ECHO "%core_name%" 编译内核 "%core_name%" 完成。
+ECHO.
+EXIT /B 0
 
 :err
 POPD
-ECHO "%core_name%" 编译出错！
+ECHO 编译内核 "%core_name%" 失败！
 ECHO.
 IF %ERRORLEVEL% == 0 (EXIT /B 1) ELSE (EXIT /B %ERRORLEVEL%)
-
-:end
-POPD
-ECHO "%core_name%" 编译完成。
-ECHO.
-EXIT /B %ERRORLEVEL%
 

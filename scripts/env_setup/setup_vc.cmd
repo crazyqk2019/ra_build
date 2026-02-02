@@ -10,6 +10,8 @@ SET "cmake_file=cmake-4.2.3-windows-x86_64.zip"
 
 SET "_7za_exe_=..\tools\7za.exe"
 SET "python_file=tools\python.7z"
+SET "ninjia_file=tools\ninja-1.13.2.7z"
+SET "vcxproj2cmake_file=tools\vcxproj2cmake-win-x64.7z"
 SET "_PortableBuildTools_exe_=tools\PortableBuildTools.exe"
 
 
@@ -19,6 +21,7 @@ PUSHD ..
 SET "INST_DEST=%CD%\vc_env"
 POPD
 
+REM 安装Visual C++
 ECHO 安装 VC 编译工具……
 IF NOT EXIST "%INST_DEST%\vc_build_tools" (
     %_PortableBuildTools_exe_% accept_license path="%INST_DEST%\vc_build_tools" || (CHCP 963>NUL & ECHO 安装 VC 编译工具出错！& GOTO :err)
@@ -27,6 +30,7 @@ CHCP 936>NUL
 ECHO 安装 VC 编译工具完成。
 ECHO.
 
+REM 安装CMake
 IF NOT EXIST "temp\%cmake_file%" (
     ECHO 下载 CMake ……
     wget -O "temp\%cmake_file%" "%cmake_download_url%\%cmake_file%" || (ECHO 下载 CMake 出错！& GOTO :err)
@@ -35,10 +39,11 @@ IF NOT EXIST "temp\%cmake_file%" (
 ECHO 解压 CMake ……
 %_7za_exe_% x -y -bso0 -o"%INST_DEST%" temp\%cmake_file% || (ECHO 解压 CMake 出错！& GOTO :err)
 IF EXIST "%INST_DEST%\cmake" (RD /S /Q "%INST_DEST%\cmake")
-MOVE /Y "%INST_DEST%\%cmake_file:~0,-4%" "%INST_DEST%\cmake"
+MOVE /Y "%INST_DEST%\%cmake_file:~0,-4%" "%INST_DEST%\cmake" >NUL
 ECHO 解压 CMake 完成。
 ECHO.
 
+REM 安装git
 IF NOT EXIST "temp\%git_file%" (
     ECHO 下载 Git for Windows ……
     wget -O "temp\%git_file%" "%git_download_url%\%git_file%" || (ECHO 下载 Git for Windows 出错！& GOTO :err)
@@ -49,9 +54,6 @@ ECHO 解压 Git for Windows ……
 ECHO 解压 Git for Windows 完成。
 ECHO 初始化 Git ……
 PUSHD "%INST_DEST%\git\cmd"
-git config --global core.autocrlf false
-git config --global core.safecrlf true
-git config --global http.sslBackend schannel
 git config --system core.autocrlf false
 git config --system core.safecrlf true
 git config --system http.sslBackend schannel
@@ -59,12 +61,26 @@ POPD
 ECHO 初始化 Git 完成。
 ECHO.
 
+REM 安装Ninja
+ECHO 解压 Ninja ……
+%_7za_exe_% x -y -bso0 -o"%INST_DEST%" "%ninjia_file%" || (ECHO 解压 Ninja 失败！& GOTO :err)
+ECHO 解压 Ninja 完成。
+ECHO.
+
+REM 安装vcxproj2cmake
+ECHO 解压 vcxproj2cmake ……
+%_7za_exe_% x -y -bso0 -o"%INST_DEST%" "%vcxproj2cmake_file%" || (ECHO 解压 vcxproj2cmake 失败！& GOTO :err)
+ECHO 解压 vcxproj2cmake 完成。
+ECHO.
+
+REM 安装Python
 ECHO 解压 Python ……
 %_7za_exe_% x -y -bso0 -o"%INST_DEST%" "%python_file%" || (ECHO 解压 Python 失败！& GOTO :err)
 ECHO 解压 Python 完成。
 ECHO.
 
 ECHO 全部工作完成！
+PAUSE
 POPD & EXIT /B 0
 
 :err

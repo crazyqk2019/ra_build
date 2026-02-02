@@ -4,7 +4,7 @@ SETLOCAL
 PUSHD "%~dp0"
 
 SET "VC_ENV_PATH=%CD%\vc_env"
-SET "PATH=%VC_ENV_PATH%\cmake\bin;%VC_ENV_PATH%\git\cmd;%VC_ENV_PATH%\python;%PATH%"
+SET "PATH=%VC_ENV_PATH%\cmake\bin;%VC_ENV_PATH%\git\cmd;%VC_ENV_PATH%\ninja;%VC_ENV_PATH%\ninja\vcxproj2cmake-win-x64;%VC_ENV_PATH%\python;%PATH%"
 
 CMD /K "%VC_ENV_PATH%\vc_build_tools\devcmd.bat"
 

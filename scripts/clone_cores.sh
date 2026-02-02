@@ -15,8 +15,10 @@ common_clone_core() {
     echo
 
     cd "$cores_dir/libretro-$core"
-    git config --local user.name crazyq
-    git config --local user.email crazyq@gmail.com
+    #git config --local user.name crazyq
+    #git config --local user.email crazyq@gmail.com
+    git config --local core.autocrlf false
+    git config --local core.safecrlf true
 
     message "添加上游仓库 \"$core_name\" (https://github.com/libretro/$core_upstream)..."
     if [[ "$core_upstream" =~ ^https?:// ]]; then

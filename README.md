@@ -1,32 +1,62 @@
 # Windows 下 RetroArch 的编译
 
+## 快速使用
+
+- 安装Msys2/MinGW编译环境：
+
+  ```cmd
+  scripts\env_setup\setup_msys2.cmd
+  ```
+
+- 安装Visual C++编译环境：
+
+  ```cmd
+  scripts\env_setup\setup_vc.cmd
+  ```
+
+  以上编译环境皆为绿色版，不会在系统目录和注册表写入文件和信息。
+
+- 拉取RA源代码：
+
+拉取RA内核源代码：
+
+编译RA：
+
+编译RA内核：
+
 ## 一、编译环境搭建
 
 在Windows下编译RetroArch同时需要MSys2/MinGW编译环境和Visual C++编译环境。
 
 ### MSys2/MinGW 编译环境搭建
 
-参见子模块说明：[MSys2/MinGW 编译环境安装](.\scripts\prepare_env\mingw_dev_env\README.md)
+参见子模块说明：[MSys2/MinGW 编译环境安装](.\scripts\env_setup\msys2_dev_env\README.md)
 
-默认使用ucrt64编译器工具链进行编译。
+默认使用ucrt64编译工具链进行编译。
 
 > [!TIP]
 >
-> 运行`scripts\prepare_env\mingw_dev_env\setup_msys2.cmd`可自动完成MSys2/MinGW编译环境搭建。
+> 运行`scripts\env_setup\setup_msys2.cmd`可自动完成MSys2/MinGW编译环境搭建。
 
 ### Visual C++ 编译环境搭建
 
-1. 安装VS2022，Community版本即可，安装时注意选中VC开发。
+1. 安装Visual C++编译工具
 
-   下载地址：<https://visualstudio.microsoft.com/zh-hans/vs/>
+- 可以安装Visual Studio完整版，Community版本即可，安装时注意选中VC开发和Windows SDK。
 
-   Visual Studio 最新Community版本安装文件下载地址：https://aka.ms/vs/stable/vs_community.exe
+  下载地址：<https://visualstudio.microsoft.com/zh-hans/vs/>
 
-   Visual Studio 2022 版本Community安装文件下载地址：https://aka.ms/vs/17/release/vs_community.exe
+  Visual Studio 最新Community版本安装文件下载地址：https://aka.ms/vs/stable/vs_community.exe
 
-2. 部分内核编译需要python，可使用embedded版本的python，手动安装pip和setuptools包。方法如下：
+  Visual Studio 2022 版本Community安装文件下载地址：https://aka.ms/vs/17/release/vs_community.exe
 
-   1. 解压embedded版本python压缩包，编辑python313._pth文件，去掉`#import site`前的注释。313为当前python的版本号，文件名根据版本号不同。
+- 也可以使用[PortableBuildTools](https://github.com/Data-Oriented-House/PortableBuildTools)创建绿色版VC编译器。由于绿色版VC不包含msbuild工具，无法直接编译.vcxproj文件和.sln文件，需要使用另一个工具[vcxproj2cmake](https://github.com/chausner/vcxproj2cmake)转换vcxproj文件或.sln为CMake文件（CMakeLists.txt），然后再用CMake编译。
+
+2. 安装git，自解压绿色busybox最小版版即可。
+3. 安装CMake，如果安装了完整版Visual Studio，VS自带的CMake不能用，必须要独立版本的CMake，同样可以使用绿色版本。
+4. 安装Python。部分内核编译需要Python，可使用embedded绿色版本的Python，手动安装pip和setuptools包。方法如下：
+
+   1. 解压embedded版本Python压缩包，编辑python313._pth文件，去掉`#import site`前的注释。313为当前python的版本号，文件名根据版本号不同。
 
    2. 下载get-pip.py脚本：
 
@@ -48,7 +78,7 @@
 
 > [!TIP]
 >
-> tools目录下python.7z为已经安装好pip和setuptools的embedded版本python，解压即可使用。
+> tools目录下python.7z为已经安装好pip和setuptools的embedded版本Python，解压即可使用。
 
 ### 需要单独编译安装的第三方库
 
@@ -509,12 +539,24 @@ cmake --build Build --config Release --target flycast_libretro
 
 MinGW下使用CMake编译：
 
+需要更新依赖工具[embed-binaries](https://github.com/andoalon/embed-binaries)到新版本，以解决和CMake 4.2及以上版本的兼容性问题。问题参考链接：
+
+[Fails to generate embedded source files in CMake 4.2](https://github.com/andoalon/embed-binaries/issues/1)
+
 ```bash
 # 在Build目录下生成创建ninja make文件
 cmake -Wno-dev -DCMAKE_BUILD_TYPE=Release . -B Build
 # 编译
-cmake --build Build --config Release --target flycast_libretro
+cmake --build Build --config Release --target melondsds_libretro
 ```
+
+> [!IMPORTANT]
+>
+> gcc 5.1 和 5.2 版本有一个bug，会导致编译器在最后连接阶段出错，错误是由于LTO（连接时优化器）引起的，临时解决方案就是额外添加一个CMake参数以关闭LTO：
+>
+> `-DENABLE_LTO_RELEASE=OFF`
+>
+> 该bug已经修复，等待 gcc 5.3 版本发布应该就可以解决这个问题，而不用添加以上参数了。
 
 #### Citra
 
@@ -735,7 +777,7 @@ cmake --build Build --config Release --target squirreljme_libretro
 
 ### Nintendo 系列机型内核
 
-#### GB 系列
+**GB 系列**
 
 | 内核名称                                                    | 汉化仓库地址                                                 | 内核说明                                                     | 汉化时间和版本 |
 | ----------------------------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ | -------------- |
@@ -752,7 +794,7 @@ cmake --build Build --config Release --target squirreljme_libretro
 | [Beetle VB](https://docs.libretro.com/library/beetle_vb/)   | [libretro-mednafen_vb](https://github.com/crazyqk2019/libretro-mednafen_vb) | VB 模拟器。<br />Mednafen多机种模拟器中的 VB 内核。          | 2025/04/28     |
 | [PokeMini](https://docs.libretro.com/library/pokemini/)     | [libretro-pokemini](https://github.com/crazyqk2019/libretro-pokemini) | [Pokémon Mini](https://en.wikipedia.org/wiki/Pokémon_Mini) 掌机模拟器。 | 2025/04/28     |
 
-#### FC 系列
+**FC/NES 系列**
 
 | 内核名称                                                | 汉化仓库地址                                                 | 内核说明                                                     | 汉化时间和版本 |
 | ------------------------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ | -------------- |
@@ -760,7 +802,7 @@ cmake --build Build --config Release --target squirreljme_libretro
 | [Nestopia](https://docs.libretro.com/library/nestopia/) | [libretro-nestopia](https://github.com/crazyqk2019/libretro-nestopia) | FC模拟器。<br />精确时钟周期模拟的FC模拟器。<br />libretro版本包含了超频功能。 | 2025/04/30     |
 | [QuickNES](https://docs.libretro.com/library/quicknes/) | [libretro-quicknes](https://github.com/crazyqk2019/libretro-quicknes) | FC模拟器。                                                   | 2025/04/30     |
 
-#### SFC 系列
+**SFC/SNES 系列**
 
 | 内核名称                                                     | 汉化仓库地址                                                 | 内核说明                                                     | 汉化时间和版本 |
 | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | -------------- |
@@ -771,20 +813,20 @@ cmake --build Build --config Release --target squirreljme_libretro
 | [bsnes jg](https://docs.libretro.com/library/bsnes-jg/)      | [libretro-bsnes_jg](https://github.com/crazyqk2019/libretro-bsnes_jg) | SFC模拟器。<br />bsnes v115的分支版本，做了一些其他改进。    |                |
 | [Snes9x](https://docs.libretro.com/library/snes9x/)          | [libretro-snes9x](https://github.com/crazyqk2019/libretro-snes9x) | SFC模拟器。<br />和最新的Snes9x的主线版本同步。              |                |
 
-#### N64 系列
+**N64 系列**
 
 | 内核名称                                                     | 汉化仓库地址                                                 | 内核说明                                                | 汉化时间和版本 |
 | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------- | -------------- |
 | [Mupen64Plus-Next](https://docs.libretro.com/library/mupen64plus/) | [libretro-mupen64plus_next](https://github.com/crazyqk2019/libretro-mupen64plus_next)<br />（分支为`develop`） | N64模拟器。<br />和最新的Mupen64Plus-Next主线版本同步。 |                |
 | ParaLLEl N64                                                 | [libretro-parallel_n64](https://github.com/crazyqk2019/libretro-parallel_n64) | N64模拟器。<br />基于Mupen64Plus，做了优化和重写。      |                |
 
-#### GC/Wii 系列
+**GC/Wii 系列**
 
 | 内核名称                                              | 汉化仓库地址                                                 | 内核说明         | 汉化时间和版本 |
 | ----------------------------------------------------- | ------------------------------------------------------------ | ---------------- | -------------- |
 | [Dolphin](https://docs.libretro.com/library/dolphin/) | [libretro-dolphin](https://github.com/crazyqk2019/libretro-dolphin) | NGC/Wii 模拟器。 |                |
 
-#### DS 系列
+**DS 系列**
 
 | 内核名称                                                    | 汉化仓库地址                                                 | 内核说明                    | 汉化时间和版本 |
 | ----------------------------------------------------------- | ------------------------------------------------------------ | --------------------------- | -------------- |

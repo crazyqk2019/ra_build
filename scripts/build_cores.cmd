@@ -3,33 +3,49 @@ SETLOCAL
 
 PUSHD "%~dp0"
 
-SET "CORES_LIST=dolphin citra ppsspp play pcsx2 swanstation tic80"
-
-IF "%~1" == "" GOTO :showUsage
-
-SET "NO_CLEAN="
-SET "_param_=%~1"
-IF "%_param_:~0,1%" == "/" (
-    IF /I "%~1" == "/noclean" (SET "NO_CLEAN=1") ELSE (GOTO :showUsage)
-    SHIFT /1
-)
-
-CALL :check_cores %* || GOTO :showUsage
-
 PUSHD ..
-IF NOT EXIST cores MKDIR cores
-IF NOT EXIST cores\dists MKDIR cores\dists
 SET "CORES_DIR=%CD%\cores"
 SET "DISTS_DIR=%CD%\cores\dists"
 POPD
 
+SET "CORES_LIST=dolphin citra ppsspp play pcsx2 swanstation tic80"
 
-IF /I "%~1" == "all" (
-    CALL :build_all
-) ELSE (
-    CALL :build_cores %*
+SET "NO_CLEAN="
+SET "NO_REGEN="
+SET "BUILD_ALL="
+SET "BUILD_CORES_LIST="
+
+:parseParamsBegin
+IF "%~1" == "" GOTO :parseParamsEnd
+IF /I "%~1" == "-noclean" (SET "NO_CLEAN=1" & SHIFT & GOTO :parseParamsBegin)
+IF /I "%~1" == "/noclean" (SET "NO_CLEAN=1" & SHIFT & GOTO :parseParamsBegin)
+IF /I "%~1" == "-noregen" (SET "NO_REGEN=1" & SHIFT & GOTO :parseParamsBegin)
+IF /I "%~1" == "/noregen" (SET "NO_REGEN=1" & SHIFT & GOTO :parseParamsBegin)
+IF /I "%~1" == "all" (SET "BUILD_ALL=1" & SHIFT & GOTO :parseParamsBegin)
+ECHO %CORES_LIST% | findstr /i "\<%~1\>" >NUL || (ECHO 参数错误，内核 "%~1" 不存在! & GOTO :err)
+IF NOT EXIST "%CORES_DIR%\libretro-%~1" (ECHO 内核 "%~1" 源代码目录不存在！& GOTO :err)
+IF NOT DEFINED BUILD_CORES_LIST (SET "BUILD_CORES_LIST=%~1") ELSE (SET "BUILD_CORES_LIST=%BUILD_CORES_LIST% %~1")
+:parseParamsEnd
+
+IF DEFINED BUILD_ALL (SET "BUILD_CORES_LIST=%CORES_LIST%")
+
+IF NOT DEFINED BUILD_ALL IF NOT DEFINED BUILD_CORES_LIST (
+    ECHO "需要指定编译内核，或指定 "all" 编译所有内核。可用内核列表："
+    FOR %%# IN (%CORES_LIST%) DO ECHO   %%#
+    ECHO
+    ECHO "示例："
+    ECHO "编译指定内核：build_cores.cmd [-noclean] [-noregen] [-noccache] core1 core2"
+    ECHO "编译所有内核：build_cores.cmd [-noclean] [-noregen] [-noccache] all"
+    ECHO "-noclean: 编译前不要执行清理操作"
+    ECHO "-noregen: 对于使用CMake编译的内核，不要重新创建编译配置文件"
+    GOTO :end
 )
-IF %ERRORLEVEL% == 0 (GOTO :end) ELSE (GOTO :err)
+
+IF NOT EXIST "%DISTS_DIR%" MD "%DISTS_DIR%" || (ECHO 创建内核分发目录出错！& GOTO :err)
+
+CALL :buildCores || GOTO :err
+ECHO 全部编译完成。
+GOTO :end
 
 
 :build_dolphin
@@ -92,36 +108,11 @@ IF %ERRORLEVEL% == 0 (COPY /Y "build\Release_64bit\dosbox_pure_libretro.dll" "%D
 IF NOT %ERRORLEVEL% == 0 (ECHO "DOSBox Pure" 编译出错！)
 POPD & EXIT /B %ERRORLEVEL%
 
-:build_all
-FOR %%# IN (%CORES_LIST%) DO (CALL :build_%%# || EXIT /B 1)
-EXIT /B 0
-
-:build_cores
-FOR %%# IN (%*) DO (
-    IF /I "%%~#" NEQ "/noclean" (CALL :build_%%~# || EXIT /B 1)
+:buildCores
+FOR %%# IN (%BUILD_CORES_LIST%) DO (
+    ECHO "CALL :build_%%~# || EXIT /B 1"
 )
 EXIT /B 0
-
-:check_cores
-IF /I "%~1" == "/noclean" SHIFT /1
-IF /I "%~1" == "" EXIT /B 1
-IF /I "%~1" == "all" EXIT /B 0
-:check_core
-IF /I "%~1" == "" EXIT /B 0
-ECHO %CORES_LIST% | findstr /i "\<%~1\>" >NUL || (ECHO 内核不存在："%~1" & EXIT /B 1)
-SHIFT & GOTO :check_core
-
-:showUsage
-ECHO 参数错误。使用方法：
-ECHO %~nx0 [/noclean] all ^| core1 [core2]...
-ECHO.
-ECHO   /noclean         - 编译之前不要执行清理。
-ECHO   all              - 编译所有内核。
-ECHO   core1 [core2]... -  编译指定的内核。
-ECHO. 
-ECHO 可用内核：
-FOR %%# IN (%CORES_LIST%) DO ECHO   %%#
-ECHO.
 
 :err
 POPD & PAUSE & IF %ERRORLEVEL% == 0 (EXIT /B 1) ELSE (EXIT /B %ERRORLEVEL%)

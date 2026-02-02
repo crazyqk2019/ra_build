@@ -28,25 +28,27 @@ core_src=${3:-"."}
 core_dest=${4:-"."}
 core_output=${5:-${core}_libretro.dll}
 build_dir=${6:-${MSYSTEM,,}_build}
-cmake_clean="cmake --build $build_dir --target clean -j`nproc`"
-cmake_gen="cmake -Wno-dev -DCMAKE_BUILD_TYPE=Release -DCMAKE_POLICY_VERSION_MINIMUM=3.5 $cmake_params -B $build_dir" # -DCMAKE_POLICY_DEFAULT_CMP0198=NEW
-cmake_build="cmake --build $build_dir --target ${core}_libretro --config Release -j`nproc`"
 
-cd "$cores_dir/libretro-$core/$core_src" >/dev/null || die "进入内核 \"$core_name\" 源代码目录失败！"
+cmake_clean="cmake --build $build_dir --target clean -j"
+cmake_gen="cmake -Wno-dev -DCMAKE_BUILD_TYPE=Release $cmake_params -G Ninja -B $build_dir" # -DCMAKE_POLICY_DEFAULT_CMP0198=NEW -DCMAKE_POLICY_VERSION_MINIMUM=3.5
+cmake_build="cmake --build $build_dir --target ${core}_libretro --config Release -j"
 
-if [[ ! -v no_regen && -d "$build_dir" ]]; then
+if [[ -d "$cores_dir/libretro-$core/$core_src" ]]; then die "内核 \"$core_name\" 目录 \"$cores_dir/libretro-$core/$core_src\" 不存在，请先拉取内核源代码！"
+cd "$cores_dir/libretro-$core/$core_src" >/dev/null
+
+if [[ ! -v $no_regen && -d "$build_dir" ]]; then
    message "删除内核 \"$core_name\" 编译目录 (rm -r -f \"$build_dir\")..."
    rm -r -f "$build_dir" || die "删除 \"$core_name\" 编译目录出错！"
    echo
 fi
     
-if [[ ! -v $no_clean && -f "$build_dir\build.ninja" ]]; then
+if [[ ! -v $no_clean && -f "$build_dir/build.ninja" ]]; then
     message "清理内核 \"$core_name\" ($cmake_clean)..."            
     $cmake_clean
     echo
 fi
 
-if [[ ! -f "$build_dir\build.ninja" ]]; then
+if [[ ! -f "$build_dir/build.ninja" ]]; then
     message "生成内核 \"$core_name\" 编译配置文件 ($cmake_gen)..."
     $cmake_gen || die "生成内核 \"$core_name\" 编译配置文件出错！"
     echo
@@ -58,7 +60,7 @@ echo
 
 cd "$cores_dir/libretro-$core/$core_src"
 strip -s "$core_dest/$core_output" || die "裁剪内核 \"$core_name\" dll文件出错！"
-cp -v "$core_dest/$core_output" "$dists_dir/" || die "拷贝内核 \"$core_name\" dll文件到分发目录出错！"
+cp -v "$core_dest/$core_output" "$dists_dir/$core_output" || die "拷贝内核 \"$core_name\" dll文件到分发目录出错！"
 echo
 
 message "编译内核 \"$core_name\" 完成。"

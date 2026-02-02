@@ -26,56 +26,53 @@ IF "%~4" == "" (SET "core_dest=.") ELSE (SET "core_dest=%~4")
 IF "%~5" == "" (SET "core_output=%core%_libretro.dll") ELSE (SET "core_output=%~5")
 IF "%~6" == "" (SET "build_dir=vc_build") ELSE (SET "build_dir=%~6")
 
-IF NOT EXIST "%CORES_DIR%\libretro-%core%\%core_src%" (
-    ECHO 内核目录不存在，请先拉取内核源代码："%core_name%" & GOTO :err
-)
+SET "cmake_clean=cmake --build %build_dir% --target clean -j"
+SET "cmake_gen=cmake -Wno-dev -DCMAKE_BUILD_TYPE=Release -G Ninja"
+IF DEFINED cmake_params (SET "cmake_gen=%cmake_gen% %cmake_params%")
+SET "cmake_gen=%cmake_gen% -B %build_dir%"
+SET "cmake_build=cmake --build "%build_dir%" --target %core%_libretro --config Release -j"
 
 REM IF DEFINED cmake_vcpkg_params (
 REM    SET "cmake_commad_line=%cmake_commad_line% %cmake_vcpkg_params% -DVCPKG_INSTALLED_DIR=vcpkg_installed -DCMAKE_TOOLCHAIN_FILE=%VCPKG_ROOT%\scripts\buildsystems\vcpkg.cmake"
 REM )
 REM -DCMAKE_POLICY_VERSION_MINIMUM=3.5
-SET "cmake_clean=cmake --build %build_dir% --target clean --parallel"
-SET "cmake_gen=cmake -Wno-dev -DCMAKE_BUILD_TYPE=Release -G Ninja"
-REM  -A x64
-IF DEFINED cmake_params (SET "cmake_gen=%cmake_gen% %cmake_params%")
-SET "cmake_gen=%cmake_gen% . -B %build_dir%"
-SET "cmake_build=cmake --build "%build_dir%" --target %core%_libretro --config Release --parallel"
-REM -- /p:Platform=x64
 
+IF NOT EXIST "%CORES_DIR%\libretro-%core%\%core_src%" (ECHO 内核 "%core_name%" 目录 "%CORES_DIR%\libretro-%core%\%core_src%" 不存在，请先拉取内核源代码！& GOTO :err)
 CD "%CORES_DIR%\libretro-%core%\%core_src%"
 
 IF NOT DEFINED NO_REGEN IF EXIST "%build_dir%" (
     ECHO 删除内核 "%core_name%" 编译目录 ^(RD /S /Q "%build_dir%"^)……
-    IF EXIST "%build_dir%" RD /S /Q "%build_dir%" || (ECHO 删除 "%core_name%" 编译目录出错！& GOTO :err)
+    RD /S /Q "%build_dir%" || (ECHO 删除 "%core_name%" 编译目录出错！& GOTO :err)
     ECHO.
 )
 
-IF NOT DEFINED NO_CLEAN IF EXIST "%build_dir%" (
+IF NOT DEFINED NO_CLEAN IF EXIST "%build_dir%\build.ninja" (
    ECHO 清理内核 "%core_name%" ^(%cmake_clean%^)...
    %cmake_clean%
    ECHO.
 )
-pause
 
-ECHO 生成内核 "%core_name%" 编译配置文件 ^(%cmake_gen%^)...
-%cmake_gen% || (ECHO 生成内核 %core_name% 编译配置文件出错！& GOTO :err)
-ECHO.
+IF NOT EXIST "%build_dir%\build.ninja" (
+    ECHO 生成内核 "%core_name%" 编译配置文件 ^(%cmake_gen%^)...
+    %cmake_gen% || (ECHO 生成内核 %core_name% 编译配置文件出错！& GOTO :err)
+    ECHO.
+)
 
 ECHO 编译内核 "%core_name%" ^(%cmake_build%^)...
 %cmake_build% || (ECHO 编译内核 "%core_name%" 出错！& GOTO :err)
 ECHO.
 
+CD "%CORES_DIR%\libretro-%core%\%core_src%"
 COPY /Y "%core_dest%\%core_output%" "%DISTS_DIR%\%core_output%" ||(ECHO 拷贝内核 "%core_name%" dll文件到分发目录出错！& GOTO :err)
 ECHO.
 
-POPD
-ECHO "%core_name%" 编译内核 "%core_name%" 完成。
+ECHO 编译内核 "%core_name%" 完成。
 ECHO.
+POPD
 EXIT /B 0
 
 :err
-POPD
-ECHO 编译内核 "%core_name%" 失败！
 ECHO.
+POPD
 IF %ERRORLEVEL% == 0 (EXIT /B 1) ELSE (EXIT /B %ERRORLEVEL%)
 

@@ -21,10 +21,15 @@ PUSHD ..
 SET "INST_DEST=%CD%\vc_env"
 POPD
 
+IF NOT EXIST "%INST_DEST%" MD "%INST_DEST%" || (ECHO 创建安装目录出错！& GOTO :err)
+IF NOT EXIST temp MD temp || (ECHO 创建下载临时目录出错！& GOTO :err)
+
+
 REM 安装Visual C++
 ECHO 安装 VC 编译工具……
 IF NOT EXIST "%INST_DEST%\vc_build_tools" (
-    %_PortableBuildTools_exe_% accept_license path="%INST_DEST%\vc_build_tools" || (CHCP 963>NUL & ECHO 安装 VC 编译工具出错！& GOTO :err)
+    REM MD "%INST_DEST%\vc_build_tools" || (ECHO 创建安装目录出错！& GOTO :err)
+    %_PortableBuildTools_exe_% accept_license path="%INST_DEST%\vc_build_tools" || (CHCP 936>NUL & ECHO 安装 VC 编译工具出错！& GOTO :err)
 )
 CHCP 936>NUL
 ECHO 安装 VC 编译工具完成。
@@ -33,7 +38,7 @@ ECHO.
 REM 安装CMake
 IF NOT EXIST "temp\%cmake_file%" (
     ECHO 下载 CMake ……
-    wget -O "temp\%cmake_file%" "%cmake_download_url%\%cmake_file%" || (ECHO 下载 CMake 出错！& GOTO :err)
+    wget -O "temp\%cmake_file%" "%cmake_download_url%/%cmake_file%" || (ECHO 下载 CMake 出错！& GOTO :err)
     ECHO 下载完成。
 )
 ECHO 解压 CMake ……
@@ -46,7 +51,7 @@ ECHO.
 REM 安装git
 IF NOT EXIST "temp\%git_file%" (
     ECHO 下载 Git for Windows ……
-    wget -O "temp\%git_file%" "%git_download_url%\%git_file%" || (ECHO 下载 Git for Windows 出错！& GOTO :err)
+    wget -O "temp\%git_file%" "%git_download_url%/%git_file%" || (ECHO 下载 Git for Windows 出错！& GOTO :err)
     ECHO 下载完成。
 )
 ECHO 解压 Git for Windows ……

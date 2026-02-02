@@ -26,6 +26,7 @@ elif [ "$compiler_var" == "clang64" ]; then
 fi
 
 pacman -S --needed --noconfirm \
+    mingw-w64-$compiler_var-cmake \
     mingw-w64-$compiler_var-7zip \
     mingw-w64-$compiler_var-libxml2 \
     mingw-w64-$compiler_var-freetype \

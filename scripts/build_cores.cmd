@@ -56,8 +56,8 @@ ENDLOCAL & EXIT /B %ERRORLEVEL%
 
 :build_citra
 SETLOCAL
-SET "cmake_params=-DENABLE_LIBRETRO=ON -DENABLE_SDL2=OFF -DENABLE_QT=OFF -DENABLE_WEB_SERVICE=OFF -DCITRA_WARNINGS_AS_ERRORS=OFF"
-CALL build_use_cmake.cmd "Citra" "citra" "." "Build\bin\Release"
+SET "cmake_params=-DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DENABLE_LIBRETRO=ON -DENABLE_SDL2=OFF -DENABLE_QT=OFF -DENABLE_WEB_SERVICE=OFF -DCITRA_WARNINGS_AS_ERRORS=OFF"
+CALL build_use_cmake.cmd "Citra" "citra" "." "vc_build\bin\Release"
 ENDLOCAL & EXIT /B %ERRORLEVEL%
 
 :build_ppsspp
@@ -110,7 +110,7 @@ POPD & EXIT /B %ERRORLEVEL%
 
 :buildCores
 FOR %%# IN (%BUILD_CORES_LIST%) DO (
-    ECHO "CALL :build_%%~# || EXIT /B 1"
+    CALL :build_%%~# || EXIT /B 1
 )
 EXIT /B 0
 

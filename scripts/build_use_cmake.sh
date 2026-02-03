@@ -33,16 +33,16 @@ cmake_clean="cmake --build $build_dir --target clean -j"
 cmake_gen="cmake -Wno-dev -DCMAKE_BUILD_TYPE=Release $cmake_params -G Ninja -B $build_dir" # -DCMAKE_POLICY_DEFAULT_CMP0198=NEW -DCMAKE_POLICY_VERSION_MINIMUM=3.5
 cmake_build="cmake --build $build_dir --target ${core}_libretro --config Release -j"
 
-if [[ -d "$cores_dir/libretro-$core/$core_src" ]]; then die "内核 \"$core_name\" 目录 \"$cores_dir/libretro-$core/$core_src\" 不存在，请先拉取内核源代码！"
+if [[ ! -d "$cores_dir/libretro-$core/$core_src" ]]; then die "内核 \"$core_name\" 目录 \"$cores_dir/libretro-$core/$core_src\" 不存在，请先拉取内核源代码！"; fi
 cd "$cores_dir/libretro-$core/$core_src" >/dev/null
 
-if [[ ! -v $no_regen && -d "$build_dir" ]]; then
+if [[ -z $no_regen && -d "$build_dir" ]]; then
    message "删除内核 \"$core_name\" 编译目录 (rm -r -f \"$build_dir\")..."
    rm -r -f "$build_dir" || die "删除 \"$core_name\" 编译目录出错！"
    echo
 fi
     
-if [[ ! -v $no_clean && -f "$build_dir/build.ninja" ]]; then
+if [[ -z $no_clean && -f "$build_dir/build.ninja" ]]; then
     message "清理内核 \"$core_name\" ($cmake_clean)..."            
     $cmake_clean
     echo

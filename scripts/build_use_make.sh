@@ -50,13 +50,13 @@ export CPPFLAGS
 make_clean="make -f $make_file -j`nproc` $make_params clean"
 make_build="make -f $make_file -j`nproc` $make_params"
 
-if [[ ! -v no_clean ]]; then
+if [[ -z $no_clean ]]; then
     message "清理内核 \"$core_name\" ($make_clean)..."
     $make_clean
     echo
 fi
 
-if [[ ! -v no_ccache ]]; then
+if [[ -z no_ccache ]]; then
     message "编译内核 \"$core_name\" (ccache $make_build)..."
     ccache $make_build || die "编译 \"$core_name\" 出错！"
 else

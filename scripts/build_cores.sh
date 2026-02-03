@@ -34,7 +34,7 @@ build_mame() {
 }
 
 build_fbalpha2012() {
-    if [[ ! -v CFLAGS ]]; then
+    if [[ -z $CFLAGS ]]; then
         local MY_CFLAGS="-Wno-incompatible-pointer-types"
     else
         local MY_CFLAGS=$CFLAGS + " -Wno-incompatible-pointer-types"
@@ -55,7 +55,7 @@ build_fbalpha2012_cps3() {
 }
 
 build_fbalpha2012_neogeo() {
-    if [[ ! -v CFLAGS ]]; then
+    if [[ -z $CFLAGS ]]; then
         local MY_CFLAGS="-Wno-incompatible-pointer-types"
     else
         local MY_CFLAGS=$CFLAGS + " -Wno-incompatible-pointer-types"
@@ -100,7 +100,7 @@ build_bsnes_mercury() {
     local profiles_list=("accuracy" "balanced" "performance")
     for f in "${profiles_list[@]}"; do
         local make_params="PROFILE=$f"
-        no_clean=$no_clean no_ccache=$no_ccache make_params=$make_params ./build_use_make.sh "bsnes mercury %f" "bsnes_mercury" "." "." "bsnes_mercury_"$f"_libretro.dll" || return 1
+        no_clean=$no_clean no_ccache=$no_ccache make_params=$make_params ./build_use_make.sh "bsnes mercury $f" "bsnes_mercury" "." "." "bsnes_mercury_"$f"_libretro.dll" || return 1
     done
 }
 
@@ -108,7 +108,7 @@ build_bsnes2014() {
     local profiles_list=("accuracy" "balanced" "performance")
     for f in "${profiles_list[@]}"; do
         local make_params="PROFILE=$f"
-        no_clean=$no_clean no_ccache=$no_ccache make_params=$make_params ./build_use_make.sh "bsnes 2014 %f" "bsnes2014" "." "." "bsnes2014_"$f"_libretro.dll" || return 1
+        no_clean=$no_clean no_ccache=$no_ccache make_params=$make_params ./build_use_make.sh "bsnes 2014 $f" "bsnes2014" "." "." "bsnes2014_"$f"_libretro.dll" || return 1
     done
 }
 
@@ -322,7 +322,7 @@ build_meteor() {
 }
 
 build_np2kai() {
-    if [[ ! -v CFLAGS ]]; then
+    if [[ -z $CFLAGS ]]; then
         local MY_CFLAGS="-Wno-incompatible-pointer-types"
     else
         local MY_CFLAGS=$CFLAGS + " -Wno-incompatible-pointer-types"
@@ -424,7 +424,7 @@ build_dosbox_core() {
     local make_params="BUNDLED_AUDIO_CODECS=1 BUNDLED_LIBSNDFILE=1 STATIC_LIBCXX=1 STATIC_PACKAGES=1"
     (
         cd "$cores_dir/libretro-dosbox_core/libretro"
-        if [[ ! -v no_clean ]]; then
+        if [[ -z $no_clean ]]; then
             message "清理 \"DOSBox Core\" (make $make_params -j`nproc` clean)..."
             make $make_params -j`nproc` clean
             message "清理 \"DOSBox Core\" 完成。"
@@ -448,7 +448,7 @@ build_dosbox_pure() {
 build_dolphin() {
 #    (
 #        cd "$cores_dir/libretro-dolphin"
-#        if [[ ! -v no_clean ]]; then
+#        if [[ -z $no_clean ]]; then
 #            message "清理 \"dxsdk\"..."
 #            rm -f Externals/dxsdk/lib/x86/*.a
 #            rm -f Externals/dxsdk/lib/x64/*.a
@@ -470,7 +470,7 @@ build_melondsds() {
 }
 
 build_citra() {
-    local cmake_params="-DENABLE_LIBRETRO=ON -DENABLE_SDL2=OFF -DENABLE_QT=OFF -DENABLE_WEB_SERVICE=OFF -DCITRA_WARNINGS_AS_ERRORS=OFF"
+    local cmake_params="-DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DENABLE_LIBRETRO=ON -DENABLE_SDL2=OFF -DENABLE_QT=OFF -DENABLE_WEB_SERVICE=OFF -DCITRA_WARNINGS_AS_ERRORS=OFF"
     no_clean=$no_clean no_regen=$no_regen cmake_params=$cmake_params ./build_use_cmake.sh "Citra" "citra" "." "${MSYSTEM,,}_build/bin/Release"
 }
 
@@ -528,7 +528,7 @@ function_exist() { declare -F "$1" > /dev/null; return $?; }
 
 buildCores() {
      for core in "${build_cores_list[@]}"; do
-        "build_$core || return 1"
+        build_$core || return 1
     done
     return 0
 }

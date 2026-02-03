@@ -84,7 +84,8 @@ pacman -S --needed --noconfirm \
     mingw-w64-$compiler_var-gtk3 \
     mingw-w64-$compiler_var-lua \
     mingw-w64-$compiler_var-mruby \
-    mingw-w64-$compiler_var-squirrel
+    mingw-w64-$compiler_var-squirrel \
+    mingw-w64-$compiler_var-pulseaudio
     
 # 安装旧版cmake，以避免新版cmake引起的一些问题
 # pacman -U https://mirrors.tuna.tsinghua.edu.cn/msys2/mingw/ucrt64/mingw-w64-$compiler_var-cmake-4.1.2-1-any.pkg.tar.zst

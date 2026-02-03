@@ -7,26 +7,27 @@ die() { if [ $# -gt 0 ]; then error_message "$@"; fi; exit 1; }
 
 common_clone_core() {
     if [[ $# -lt 3 ]]; then error_message "参数错误！"; return 1; fi
-    local core_name=$1; local core=$2; local core_upstream=$3; local core_branch=$4;
+    local core_name=$1;
+    local core=$2;
+    local core_upstream=$3;
+    local core_branch=$4;
 
-    message "克隆仓库 \"$core_name\" (https://github.com/crazyqk2019/libretro-$core)..."
-    git clone --recursive https://github.com/crazyqk2019/libretro-$core
-    if [[ $? -ne 0 ]]; then error_message "克隆仓库出错！\"$core_name\""; return 1; fi
+    core_url=https://github.com/crazyqk2019/libretro-$core
+    if [[ ! "${core_upstream,,}" =~ ^https?:// ]]; then
+        core_upstream=https://github.com/libretro/$core_upstream
+    fi
+
+    message "克隆内核 \"$core_name\" ($core_url)..."
+    git clone --recursive "$core_url" "$cores_dir/libretro-$core" || { error_message "克隆内核 \"$core_name\" 出错！"; return 1; }
     echo
 
-    cd "$cores_dir/libretro-$core"
-    #git config --local user.name crazyq
-    #git config --local user.email crazyq@gmail.com
+    cd "$cores_dir/libretro-$core" >/dev/null
+
     git config --local core.autocrlf false
     git config --local core.safecrlf true
-
-    message "添加上游仓库 \"$core_name\" (https://github.com/libretro/$core_upstream)..."
-    if [[ "$core_upstream" =~ ^https?:// ]]; then
-        git remote add upstream $core_upstream
-    else
-        git remote add upstream https://github.com/libretro/$core_upstream
-    fi
-    if [[ $? -ne 0 ]]; then error_message "添加上游仓库出错！\"$core_name\""; return 1; fi
+    
+    message "添加上游仓库 \"$core_name\" ($core_upstream)..."
+    git remote add upstream $core_upstream || { error_message "添加上游仓库出错！\"$core_name\""; return 1; }
     echo
 
     if [[ -n "$core_branch" ]]; then
@@ -35,7 +36,8 @@ common_clone_core() {
         echo
     fi
 
-    message "克隆仓库 \"$core_name\" 完成。"; echo
+    message "克隆内核 \"$core_name\" 完成。"
+    echo
     return 0
 }
 
@@ -459,36 +461,45 @@ clone_x1() {
     common_clone_core "Sharp X1" "x1" "xmil-libretro"
 }
 
-# 判断一个函数是否存在
-function_exist() {
-    declare -F "$1" > /dev/null
-    return $?
-}
+function_exist() { declare -F "$1" > /dev/null; return $?; }
 
 cloneCores() {
-    local cores_list=()
-    while [[ $# -gt 0 ]]; do
-        local core=$1; shift
-        if ! function_exist "clone_$core"; then error_message "参数错误，内核 \"$core\" 不存在！"; return 1; fi
-        if [[ -d "$cores_dir/libretro-$core" ]]; then message "内核 \"$core\" 目录已存在，跳过。"; continue; fi
-        cores_list+=($core)
+    for core in "${clone_cores_list[@]}"; do
+        if [[ -d "$cores_dir/libretro-$core" ]]; then message "内核 \"$core\" 目录 \"$cores_dir/libretro-$core\" 已存在，跳过。"; continue; fi
+        cd "$(dirname "$0")" >/dev/null
+        clone_$core || return 1
     done
-    for core in "${cores_list[@]}"; do
-        clone_$core || { error_message "克隆内核 \"$core\" 出错！"; return 1; }
-    done    
     return 0
 }
 
-cloneAllCores() {
+cd "$(dirname "$0")" >/dev/null
+
+pushd .. >/dev/null
+cores_dir="$PWD/cores"
+popd >/dev/null
+
+unset build_all
+clone_cores_list=()
+while [[ $# -gt 0 ]]; do
+    if [[ ${1,,} = "all" ]]; then build_all=1; break; fi
+    if ! function_exist "clone_${1,,}"; then die "参数错误，内核 \"${1,,}\" 不存在！"; fi
+    #if [[ ! -d "$cores_dir/libretro-${1,,}" ]]; then 
+    #    die "内核 \"${1,,}\" 目录 \"$cores_dir/libretro-${1,,}\" 已存在，跳过。"; 
+    #else
+    clone_cores_list+=(${1,,})
+    #fi
+    shift
+done
+
+if [[ -v build_all ]]; then
+    clone_cores_list=()
     for core in $(declare -F | grep -i "\-f clone_" | cut -d" " -f3 | cut -d"_" -f2-); do
-        cloneCores $core || { error_message "克隆内核 \"$core\" 出错！"; return 1; }
+        clone_cores_list+=($core)
     done
-}
+fi
 
-
-if [[ $# -lt 1 ]]; then
-    message "需要指定内核名称！可用内核列表："
-    # declare -F | grep -i "\-f clone_" | cut -d" " -f3
+if [[ ${#clone_cores_list[@]} -eq 0  ]]; then
+    message "需要指定内核，或指定 \"all\" 克隆所有内核。可用内核列表："
     declare -F | grep -i "\-f clone_" | cut -d" " -f3 | cut -d"_" -f2-
     echo
     echo "示例："
@@ -497,22 +508,10 @@ if [[ $# -lt 1 ]]; then
     exit 0
 fi
 
-pushd $(dirname "$0") >/dev/null
+if [[ ! -d "$cores_dir" ]]; then mkdir -p "$cores_dir" >/dev/null || die "创建内核目录出错！"; fi
 
-cd ..
-if [[ ! -d cores ]]; then
-    mkdir cores &>/dev/null || die "创建内核目录出错！"
-fi
-cores_dir="$PWD\cores"
+cloneCores || die
 
-if [[ "$(echo "$1" | tr '[:upper:]' '[:lower:]')" = "all" ]]; then
-    cloneAllCores
-else
-    cloneCores $@
-fi
-if [[ $? -ne 0 ]]; then die; fi
-
-popd &>/dev/null
 message "全部克隆完成。"
 exit 0
 

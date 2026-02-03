@@ -2,27 +2,65 @@
 
 ## 快速使用
 
-- 安装Msys2/MinGW编译环境：
+- 安装Msys2/MinGW编译环境和Visual C++编译环境：
 
   ```cmd
   scripts\env_setup\setup_msys2.cmd
-  ```
-
-- 安装Visual C++编译环境：
-
-  ```cmd
   scripts\env_setup\setup_vc.cmd
   ```
 
   以上编译环境皆为绿色版，不会在系统目录和注册表写入文件和信息。
 
-- 拉取RA源代码：
+- 进入VC编译环境，编译安装 libsmb2 库（可选，RA的可选依赖库，没有也不影响使用）：
 
-拉取RA内核源代码：
+  ```cmd
+  scripts\vc64shell.cmd
+  env_setup\inst_libsmb2.cmd
+  ```
 
-编译RA：
+- 进入 msys2 环境：
 
-编译RA内核：
+  ```cmd
+  scripts\msys2shell.cmd
+  ```
+
+- 拉取RA源代码和模拟器内核源代码：
+
+  ```bash
+  ./clone_ra.sh
+  ./clone_cores.sh all
+  ```
+
+- 编译RA和音视频滤镜：
+
+  ```bash
+  ./build_ra.sh ../retroarch
+  ./build_ra_filters.sh ../retroarch
+  ```
+
+- 编译模拟器内核：
+
+  ```bash
+  ./build_cores.sh all
+  ```
+
+- 部分内核只能使用VC编译，进入VC编译环境进行编译：
+
+  ```cmd
+  scripts/vc64shell.cmd
+  build_cores.cmd all
+  ```
+
+- 分发所有编译结果，下载其他资源文件。最终结果将在`retroarch_dist`目录中：
+
+  ```bash
+  ./dist_ra.sh ../retrorach
+  ./dist_cores.sh all
+  ```
+
+> [!IMPORTANT]
+>
+> 拉取源代码和部分内核的编译过程会访问github等网站，部分网站包括github在国内访问不稳定或者无法访问，需要架梯子。否则可能会造成拉取失败或者编译失败。
 
 ## 一、编译环境搭建
 
@@ -42,7 +80,7 @@
 
 1. 安装Visual C++编译工具
 
-- 可以安装Visual Studio完整版，Community版本即可，安装时注意选中VC开发和Windows SDK。
+- （不使用此方法）安装Visual Studio完整版，Community版本即可，安装时注意选中VC开发和Windows SDK。
 
   下载地址：<https://visualstudio.microsoft.com/zh-hans/vs/>
 
@@ -50,31 +88,39 @@
 
   Visual Studio 2022 版本Community安装文件下载地址：https://aka.ms/vs/17/release/vs_community.exe
 
-- 也可以使用[PortableBuildTools](https://github.com/Data-Oriented-House/PortableBuildTools)创建绿色版VC编译器。由于绿色版VC不包含msbuild工具，无法直接编译.vcxproj文件和.sln文件，需要使用另一个工具[vcxproj2cmake](https://github.com/chausner/vcxproj2cmake)转换vcxproj文件或.sln为CMake文件（CMakeLists.txt），然后再用CMake编译。
+- 使用[PortableBuildTools](https://github.com/Data-Oriented-House/PortableBuildTools)创建绿色版VC编译器。由于绿色版VC不包含msbuild工具，无法直接编译.vcxproj文件和.sln文件，需要使用另一个工具[vcxproj2cmake](https://github.com/chausner/vcxproj2cmake)转换vcxproj文件或.sln为CMake文件（CMakeLists.txt），然后再用CMake编译。
 
-2. 安装git，自解压绿色busybox最小版版即可。
-3. 安装CMake，如果安装了完整版Visual Studio，VS自带的CMake不能用，必须要独立版本的CMake，同样可以使用绿色版本。
-4. 安装Python。部分内核编译需要Python，可使用embedded绿色版本的Python，手动安装pip和setuptools包。方法如下：
+2. git，自解压绿色busybox最小版版即可。
 
-   1. 解压embedded版本Python压缩包，编辑python313._pth文件，去掉`#import site`前的注释。313为当前python的版本号，文件名根据版本号不同。
+3. CMake，如果安装了完整版Visual Studio，VS自带的CMake不能用，必须要独立版本的CMake，同样可以使用绿色版本。<https://cmake.org/download/>
 
-   2. 下载get-pip.py脚本：
+4. Python，部分内核编译需要Python，可使用embedded绿色版本的Python，手动安装pip和setuptools包。方法如下：
 
-      ```cmd
-      curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
-      ```
+   - 解压embedded版本Python压缩包，编辑python313._pth文件，去掉`#import site`前的注释。313为当前python的版本号，文件名根据版本号不同。
 
-   3. 运行以下命令安装pip：
+   - 下载get-pip.py脚本：
 
-      ```cmd
-      python get-pip.py
-      ```
+   ```cmd
+   curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+   ```
 
-   4. 运行以下命令安装setuptools包：
+   - 运行以下命令安装pip：
 
-      ```cmd
-      Scripts\pip install setuptools
-      ```
+   ```cmd
+   python get-pip.py
+   ```
+
+   - 运行以下命令安装setuptools包：
+
+   ```cmd
+   Scripts\pip install setuptools
+   ```
+   
+5. Ninja，[官网下载](https://github.com/ninja-build/ninja/releases)
+
+6. vcxproj2cmake，[官网下载](https://github.com/chausner/vcxproj2cmake/releases)。
+
+7. PortableBuildTools 和 vcxproj2cmake 都需要.NET 10运行库，下载：<https://dotnet.microsoft.com/zh-cn/download/dotnet/10.0>
 
 > [!TIP]
 >
@@ -124,15 +170,23 @@
    install -v -D include/caps/*.h $MINGW_PREFIX/include/caps/
    ```
 
-2. VS2022版本编译安装
+2. Visual C++ 版本编译安装
 
    暂无
+
+#### libsmb2
+
+RA的可选依赖库，目前该库Windows下只能在Visual C++环境编译。因此需要用VC编译以后再安装到msys2编译环境。
+
+使用CMake编译，注意生成的libsmb2.pc文件要更改里面的路径名称以适配msys2环境。
+
+具体编译安装步骤见脚本`scripts\env_setup\inst_libsmb2.cmd`
 
 ## 二、完整编译和分发 RA
 
 ###  1. 拉取 RA 源代码
 
-1. 进入ucrt64环境，执行：
+1. 进入msys2环境，执行：
 
    ```bash
    git clone https://github.com/libretro/RetroArch retroarch
@@ -146,14 +200,14 @@
 
 > [!TIP]
 >
-> 可使用`scripts/clone_ra_orig.sh`和`scripts/clone_ra.sh`脚本自动执行拉取。
+> 可使用`scripts/clone_ra.sh`脚本自动执行拉取。
 
 ### 2. 编译 RA 主程序
 
-1. 进入ucrt64编译环境：
+1. 进入msys2编译环境：
 
    ```cmd
-   `msys2_shell.cmd -ucrt64 -defterm -no-start`
+   msys2_shell.cmd -ucrt64 -defterm -no-start
    ```
 
 2. 进入RA源代码目录，运行配置程序：
@@ -175,9 +229,9 @@
    strip -s retroarch.exe
    ```
 
-> [!NOTE]
+> [!Tip]
 >
-> 可使用`scripts/build_ra.sh`脚本自动执行以上编译步骤（在源代码根目录下运行）。
+> 可使用`scripts/build_ra.sh`脚本自动执行以上编译步骤。
 
 ### 3. 编译视频滤镜和音频滤镜
 
@@ -197,7 +251,7 @@
 
 > [!TIP]
 >
-> 可使用`scripts/build_ra_filters.sh`脚本自动编译视频滤镜和音频DSP（在源代码根目录下运行）。
+> 可使用`scripts/build_ra_filters.sh`脚本自动编译视频滤镜和音频DSP。
 
 ### 4. 建立完整 RA 发行目录
 
@@ -225,7 +279,7 @@
    cp -t ../retroarch_dist/filters/audio libretro-common/audio/dsp_filters/*.dll libretro-common/audio/dsp_filters/*.dsp
    ```
 
-5. 从<https://buildbot.libretro.com/assets/frontend/>下载并解压其他资源:
+5. 从<https://buildbot.libretro.com/assets/frontend/>下载其他资源并解压到RA根目录下对应子目录:
 
    ```bash
    wget https://buildbot.libretro.com/assets/frontend/assets.zip
@@ -270,9 +324,9 @@
 
 > [!TIP]
 >
-> 可使用`scripts\dist_ra.sh`脚本自动执行以上步骤（在源代码根目录下运行）。
+> 可使用`scripts\dist_ra_filters.sh`脚本自动执行以上步骤。
 
-### 5. 中文字体
+### 5. 中文字体问题
 
 目前 RA 的 assets 资源里自带一个中文字体`chinese-fallback-font.ttf`（在assets/pkg目录下），但是该字体仍然不完善，会有显示方块的问题。
 
@@ -288,73 +342,46 @@
 
 > [!TIP]
 >
-> - 使用自动化脚本`scripts\build_cores.sh`可以自动编译需要MSys2/MinGW编译的内核。
+> - 使用脚本`scripts\build_cores.sh`可以自动编译使用MSys2/MinGW编译的内核。
 >
-> - 使用自动化脚本`scripts\build_cores.cmd`可以自动编译需要VS编译的内核。
+> - 使用脚本`scripts\build_cores.cmd`可以自动编译使用VC编译的内核。
 >
-> - 使用自动化脚本`scripts\dist_cores.sh`可完成内核的分发。
+> - 使用脚本`scripts\dist_cores.sh`可完成内核的分发。
 
-### 通用内核编译方法
+### 内核编译方法
 
-1. 使用make编译的项目
+目前内核编译的方式可分为三种：
 
-   进入内核源代码目录，如果存在Makefile.libretro文件，运行：
+1. 大部分内核在msys2环境下直接使用make编译。
 
-   ```bash
-   make -f Makefile.libretro
-   ```
-
-   如果不存在Makefile.libretro文件，直接运行：
+   进入内核源代码目录，如果存在Makefile.libretro文件则使用，否则使用默认Makefile文件。
 
    ```bash
-   make
+   make -f Makefile.libretro -j
+   # 或者
+   make -j
+   strip -s core_name_libretro.dll # 裁剪，去除调试符号信息
    ```
 
-   裁剪，去除调试符号信息：
+2. 部分内核在msys2或者VC环境下使用CMake编译。
 
-   ```bash
-   strip -s core_name_libretro.dll
-   ```
-
-2. 使用CMake编译的项目
-
-   进入内核源代码目录，先运行CMake在Build目录下生成项目编译文件。
-
-   MinGW下通用命令：
+   进入内核源代码目录，先运行cmake生成Ninja编译配置文件，然后再编译。
 
    ```bash
-   cmake -Wno-dev -DCMAKE_BUILD_TYPE=Release . -B Build
+   cmake -Wno-dev -DCMAKE_BUILD_TYPE=Release -G Ninja -B build_dir
+   cmake --build build_dir --target ${core}_libretro --config Release -j
+   strip -s ${core}_libretro.dll # 裁剪，去除调试符号信息，msys2 环境编译执行此步骤
    ```
-   
-   VS2022下通用命令：
-   
-   ```cmd
-   cmake -Wno-dev -DCMAKE_BUILD_TYPE=Release -A x64 . -B Build
-   ```
-   
-   然后进行编译。
-   
-   MinGW下通用命令：
 
-   ```bash
-   cmake --build Build --config Release --target core_name_libretro
-   ```
-   
-   VS2022下通用命令：
-   
-   ```cmd
-   cmake --build Build --config Release --target dolphin_libretro -- /p:Platform=x64
-   ```
-   
-   裁剪，去除调试符号信息 (MinGW)：
-   
-   ```bash
-   strip -s core_name_libretro.dll
-   ```
+3. msys2环境下使用其他工具编译的内核。
+
+   目前只有内核 holani (Atari Lynx模拟器) 使用 cargo 编译工具(msys2环境)进行编译。
+
+
 
 > [!CAUTION]
 >
-> CMake升级到4.0以后，所有使用CMake编译的项目，要在命令行添加`-DCMAKE_POLICY_VERSION_MINIMUM=3.5`参数，否则很多CMakeLists.txt会报错。
+> CMake升级到4.0以后，部分使用CMake编译的项目，要在命令行添加`-DCMAKE_POLICY_VERSION_MINIMUM=3.5`参数，否则会报错。
 
 ### 需要特殊处理的内核编译
 

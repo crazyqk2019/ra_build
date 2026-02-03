@@ -48,20 +48,33 @@ if [[ -z $no_clean && -f "$build_dir/build.ninja" ]]; then
     echo
 fi
 
+unset phase1_time
+SECONDS=0
 if [[ ! -f "$build_dir/build.ninja" ]]; then
     message "生成内核 \"$core_name\" 编译配置文件 ($cmake_gen)..."
     $cmake_gen || die "生成内核 \"$core_name\" 编译配置文件出错！"
+    phase1_time=$SECONDS
     echo
 fi
 
-message "编译 \"$core_name\" ($cmake_build)..."
+message "编译内核 \"$core_name\" ($cmake_build)..."
 $cmake_build || die "编译内核 \"$core_name\" 出错！"
+total_time=$SECONDS
+phase2_time=$total_time
 echo
 
 cd "$cores_dir/libretro-$core/$core_src"
 strip -s "$core_dest/$core_output" || die "裁剪内核 \"$core_name\" dll文件出错！"
 cp -v "$core_dest/$core_output" "$dists_dir/$core_output" || die "拷贝内核 \"$core_name\" dll文件到分发目录出错！"
 echo
+
+if [[ -v phase1_time ]]; then
+    phase2_time=$((total_time - phase1_time))
+    echo "生成内核 \"$core_name\" 编译配置文件用时：$((phase1_time / 60))分$((phase1_time % 60))秒"
+fi
+echo "编译内核 \"$core_name\" 用时：$((phase2_time / 60))分$((phase2_time % 60))秒"
+echo "编译内核 \"$core_name\" 总用时：$((total_time / 60))分$((total_time % 60))秒"
+echo 
 
 message "编译内核 \"$core_name\" 完成。"
 echo

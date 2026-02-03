@@ -56,6 +56,7 @@ if [[ -z $no_clean ]]; then
     echo
 fi
 
+SECONDS=0
 if [[ -z no_ccache ]]; then
     message "编译内核 \"$core_name\" (ccache $make_build)..."
     ccache $make_build || die "编译 \"$core_name\" 出错！"
@@ -63,11 +64,15 @@ else
     message "编译内核 \"$core_name\" ($make_build)..."
     $make_build || die "编译 \"$core_name\" 出错！"
 fi
+total_time=$SECONDS
 echo
 
 cd "$cores_dir/libretro-$core/$core_src"
 strip -s "$core_dest/$core_output" || die "裁剪内核 \"$core_name\" dll文件出错！"
 cp -v "$core_dest/$core_output" "$dists_dir/" || die "拷贝内核 \"$core_name\" dll文件到分发目录出错！"
+echo
+
+echo "编译内核 \"$core_name\" 总用时：$((total_time / 60))分$((total_time % 60))秒"
 echo
 
 message "编译内核 \"$core_name\" 完成。"

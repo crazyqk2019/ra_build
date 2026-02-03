@@ -573,6 +573,10 @@ cmake --build Build --config Release --target melondsds_libretro
    cmake --build Build --config Release --target citra_libretro
    ```
 
+   > [!NOTE]
+   >
+   > 2026/02/03 修正了一个编译错误 ，修改文件`src\common\file_util.cpp`，该错误可能是由于新版gcc自身的bug导致，后续升级gcc时可尝试还原此更改。
+
 2. 使用VS2022编译：
 
    ```cmd

@@ -8,7 +8,6 @@ die() { if [ $# -gt 0 ]; then error_message "$@"; fi; exit 1; }
 if [ $# -lt 1 ]; then die "需要指定RA目录，例如 ../retroarch"; fi
 if [ ! -d "$1" ]; then die "目录不存在！"; fi
 
-pushd $(dirname "$0") >/dev/null
 cd "$1" >/dev/null || exit $?
 
 message "编译视频滤镜……"

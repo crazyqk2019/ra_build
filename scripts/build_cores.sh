@@ -471,13 +471,12 @@ build_melondsds() {
 
 build_citra() {
     local cmake_params="-DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DENABLE_LIBRETRO=ON -DENABLE_SDL2=OFF -DENABLE_QT=OFF -DENABLE_WEB_SERVICE=OFF -DCITRA_WARNINGS_AS_ERRORS=OFF -DDISABLE_CLANG_TARGET=ON -DENABLE_LTO=OFF -DENABLE_TESTS=OFF -DENABLE_DEDICATED_ROOM=OFF -DENABLE_SCRIPTING=OFF -DENABLE_OPENAL=OFF -DENABLE_LIBUSB=OFF -DCITRA_ENABLE_BUNDLE_TARGET=OFF -DENABLE_CUBEB=OFF -DUSE_SYSTEM_GLSLANG=ON"
-    #                  "-DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DENABLE_LIBRETRO=ON -DENABLE_SDL2=OFF -DENABLE_QT=OFF -DENABLE_WEB_SERVICE=OFF -DCITRA_WARNINGS_AS_ERRORS=OFF -DDISABLE_CLANG_TARGET=ON -DENABLE_LTO=OFF -DENABLE_TESTS=OFF -DENABLE_DEDICATED_ROOM=OFF -DENABLE_SCRIPTING=OFF -DENABLE_OPENAL=OFF"
     no_clean=$no_clean no_regen=$no_regen cmake_params=$cmake_params ./build_use_cmake.sh "Citra" "citra" "." "${MSYSTEM,,}_build/bin/Release"
 }
 
 build_flycast() {
     local cmake_params="-DLIBRETRO=ON"
-    no_clean=$no_clean no_regen=$no_regen cmake_params=$cmake_params ./build_use_cmake.sh "PPSSPP" "ppsspp" "." "${MSYSTEM,,}_build"
+    no_clean=$no_clean no_regen=$no_regen cmake_params=$cmake_params ./build_use_cmake.sh "Flycast" "flycast" "." "${MSYSTEM,,}_build"
 }
 
 build_ppsspp() {
@@ -509,7 +508,7 @@ build_squirreljme() {
 }
 
 build_tic80() {
-    local cmake_params="-DBUILD_SDLGPU=On -DBUILD_WITH_ALL=On -DBUILD_LIBRETRO=ON -DPREFER_SYSTEM_LIBRARIES=ON"
+    local cmake_params="-DBUILD_SDLGPU=ON -DBUILD_WITH_ALL=ON -DBUILD_LIBRETRO=ON -DPREFER_SYSTEM_LIBRARIES=ON"
     no_clean=$no_clean no_regen=$no_regen cmake_params=$cmake_params ./build_use_cmake.sh "TIC-80" "tic80" "." "${MSYSTEM,,}_build/lib"
 }
 

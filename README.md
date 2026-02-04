@@ -64,13 +64,15 @@
 
 ## 一、编译环境搭建
 
-在Windows下编译RetroArch同时需要MSys2/MinGW编译环境和Visual C++编译环境。
+在Windows下编译RetroArch和所有模拟器内核，同时需要MSys2/MinGW编译环境和Visual C++编译环境。
+
+RA自身使用msys2/mingw编译，但是某些内核只能在Visual C++下编译。
 
 ### MSys2/MinGW 编译环境搭建
 
 参见子模块说明：[MSys2/MinGW 编译环境安装](.\scripts\env_setup\msys2_dev_env\README.md)
 
-默认使用ucrt64编译工具链进行编译。
+本项目默认使用ucrt64编译工具链进行编译，而不是使用官方推荐的mingw64编译工具链。
 
 > [!TIP]
 >
@@ -336,7 +338,19 @@ RA的可选依赖库，目前该库Windows下只能在Visual C++环境编译。�
 
 ### 6. 编译和分发模拟器内核
 
-具体方法见下节。
+模拟器内核编译具体方法见下节。
+
+分发内核时除了要拷贝内核本身的dll文件外，还要拷贝所有依赖的dll文件。
+
+```bash
+for i in $(seq 3); do 
+	for dll in $(ntldd -R cores/$core_file | grep -i msys64 | cut -d">" -f2 | cut -d" " -f2); do
+		cp -v "$dll" .
+	done
+done
+```
+
+
 
 ## 三、模拟器内核的编译方法
 
@@ -373,11 +387,17 @@ RA的可选依赖库，目前该库Windows下只能在Visual C++环境编译。�
    strip -s ${core}_libretro.dll # 裁剪，去除调试符号信息，msys2 环境编译执行此步骤
    ```
 
+   使用CMake编译的内核列表：
+
+   | 内核名称 | Msys2/MinGW 编译 | Visual C++ 编译 | 推荐编译环境 |
+   | -------- | ---------------- | --------------- | ------------ |
+   |          |                  |                 |              |
+   |          |                  |                 |              |
+   |          |                  |                 |              |
+
 3. msys2环境下使用其他工具编译的内核。
 
-   目前只有内核 holani (Atari Lynx模拟器) 使用 cargo 编译工具(msys2环境)进行编译。
-
-
+   目前只有内核 [holani](#holani) (Atari Lynx模拟器) 使用 cargo 编译工具(msys2环境)进行编译。
 
 > [!CAUTION]
 >
@@ -385,29 +405,31 @@ RA的可选依赖库，目前该库Windows下只能在Visual C++环境编译。�
 
 ### 需要特殊处理的内核编译
 
-#### MAME
+* <span id="mame_make"> </span>**MAME**（使用make编译)
 
-- 需要修正第三方库sol2在高版本gcc下的编译错误。参考来源：[Fix SOL2 build on GCC 10.2 by working around overload resolution problem](https://github.com/ajrhacker/mame/commit/dcbee7cda6faea688605ed24c2548187cb55f60a)
+  - 需要修正第三方库sol2在高版本gcc下的编译错误。参考来源：[Fix SOL2 build on GCC 10.2 by working around overload resolution problem](https://github.com/ajrhacker/mame/commit/dcbee7cda6faea688605ed24c2548187cb55f60a)
 
-- 需要修正部分头文件高版本gcc下的编译错误。
+  - 需要修正部分头文件高版本gcc下的编译错误。
 
-- 需要修正genie生成MinGW下的链接命令的错误，不适用static链接。
+  - 需要修正genie生成MinGW下的链接命令的错误，不适用static链接。
 
-- 需要在make命令行指定使用python3。
+  - 需要在make命令行指定使用python3。
 
-```bash
-make PYTHON_EXECUTABLE=python3
-```
+    ```bash
+    make PYTHON_EXECUTABLE=python3
+    ```
 
-#### MAME 2015
+    
 
-需要在make命令行添加"CC=g++"参数，指定使用g++编译，否则链接时会出错，找不到c++的部分库。
+* <span id="mame2015_make"> </span>**MAME 2015**（使用make编译)
 
-```bash
-make CC=g++
-```
+  需要在make命令行添加"CC=g++"参数，指定使用g++编译，否则链接时会出错，找不到c++的部分库。
 
-#### MAME 2016
+  ```bash
+  make CC=g++
+  ```
+
+* MAME 2016
 
 需要在make命令行指定使用python3。
 
@@ -712,16 +734,6 @@ make BUNDLED_AUDIO_CODECS=1 BUNDLED_LIBSNDFILE=1 STATIC_LIBCXX=1 STATIC_PACKAGES
    msbuild dosbox_pure_libretro.vcxproj -p:Platform=x64;Configuration=Release
    ```
 
-#### Holani
-
-使用rust语言编写，需要使用cargo编译。另外要注意的是：librero-holani仓库下只是编译脚本，实际源代码是在https://github.com/LLeny/holani中，编译时会自动下载。
-
-编译结果在`target/release`目录下，文件名为`halani.dll`
-
-```bash
-cargo build --relase
-```
-
 #### Hatari
 
 支持IPF格式需要[安装capsimage库](#capsimage)；`Makefile.libretro`为MinGW编译已做适当修改。
@@ -765,7 +777,7 @@ cmake -DRETROARCH=ON -DSQUIRRELJME_ENABLE_TESTING=OFF -Wno-dev -DCMAKE_BUILD_TYP
 cmake --build Build --config Release --target squirreljme_libretro
 ```
 
-#### TIC-80
+#### TIC-80{#tic80}
 
 1. MingGW下使用CMake编译：
 
@@ -787,34 +799,42 @@ cmake --build Build --config Release --target squirreljme_libretro
 
    
 
+- <span id="holani"> </span>**Holani**
+
+  使用rust语言编写，需要使用cargo编译。另外要注意的是：librero-holani仓库下只是编译脚本，实际源代码是在https://github.com/LLeny/holani中，编译时会自动下载。编译结果在`target/release`目录下，文件名为`halani.dll`
+
+  ```bash
+  cargo build --relase
+  ```
+
 
 
 ## 四、个人汉化模拟器内核列表
 
 ### Aracde 街机模拟器内核
 
-| 内核名称                                                     | 汉化仓库地址                                                 | 内核说明                                                     | 汉化时间和版本 |
-| ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | -------------- |
-| MAME                                                         | [libretro-mame](https://github.com/crazyqk2019/libretro-mame) | MAME多机种模拟器                                             |                |
-| MAME 2000                                                    | [libretro-mame2000](https://github.com/crazyqk2019/libretro-mame2000) | 基于2000年版本的MAME (0.37b5)。<br />和iMAME4All/MAME4Droid/MAME 0.37b5兼容。 |                |
-| [MAME 2003-Plus](https://docs.libretro.com/library/mame2003_plus/) | [libretro-mame2003_plus](https://github.com/crazyqk2019/libretro-mame2003_plus) | 基于2018年版本的MAME (0.78)。                                |                |
-| [MAME 2010](https://docs.libretro.com/library/mame_2010/)    | [libretro-mame2010](https://github.com/crazyqk2019/libretro-mame2010) | 基于2010年版本的MAME (0.139)。                               |                |
-| MAME 2015                                                    | [libretro-mame2015](https://github.com/crazyqk2019/libretro-mame2015) | 基于2014年晚期/2015年早期版本的MAME (0.160-ish)。            |                |
-| MAME 2016                                                    | [libretro-mame2016](https://github.com/crazyqk2019/libretro-mame2016) | 基于2016年版本的MAME (0.174)。                               |                |
-| HBMAME                                                       | [libretro-hbmame](https://github.com/crazyqk2019/libretro-hbmame) | MAME的改版，主要用于运行自制和修改版街机游戏。               |                |
-| Final Burn Alpha 2012                                        | [libretro-fbalpha2012](https://github.com/crazyqk2019/libretro-fbalpha2012) | 基于Final Burn Alpha 2012 (0.2.97.24)。                      |                |
-| Final Burn Alpha 2012 CPS1                                   | [libretro-fbalpha2012_cps1](https://github.com/crazyqk2019/libretro-fbalpha2012_cps1) | 基于Final Burn Alpha 2012 (0.2.97.24)。<br />单独的Capcom CPS1内核。 |                |
-| Final Burn Alpha 2012 CPS2                                   | [libretro-fbalpha2012_cps2](https://github.com/crazyqk2019/libretro-fbalpha2012_cps2) | 基于Final Burn Alpha 2012 (0.2.97.24)。<br />单独的Capcom CPS2内核。 |                |
-| Final Burn Alpha 2012 CPS3                                   | [libretro-fbalpha2012_cps3](https://github.com/crazyqk2019/libretro-fbalpha2012_cps3) | 基于Final Burn Alpha 2012 (0.2.97.24)。<br />单独的Capcom CPS3内核。 |                |
-| Final Burn Alpha 2012 Neo Geo                                | [libretro-fbalpha2012_neogeo](https://github.com/crazyqk2019/libretro-fbalpha2012_neogeo) | 基于Final Burn Alpha 2012 (0.2.97.24)。<br />单独的Neo Geo内核。 |                |
-| [Final Burn Neo](https://docs.libretro.com/library/fbneo/)   | [libretro-fbneo](https://github.com/crazyqk2019/libretro-fbneo) | FinalBurn和 FinalBurn Alpha 后继模拟器。                     |                |
-| [SAME_CDI](https://docs.libretro.com/library/same_cdi/)      | [libretro-same_cdi](https://github.com/crazyqk2019/libretro-same_cdi) | 从MAME分支而来，只包含了Philips CD-i的驱动。<br />简化了CD游戏的加载，提供即插即用体验。 |                |
+| 内核名称（官网说明链接）                                     | 汉化仓库地址                                                 | 简要说明                                                     | 汉化时间和版本 | 编译说明 |
+| ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | -------------- | -------- |
+| MAME                                                         | [libretro-mame](https://github.com/crazyqk2019/libretro-mame) | MAME多机种模拟器                                             |                |          |
+| MAME 2000                                                    | [libretro-mame2000](https://github.com/crazyqk2019/libretro-mame2000) | 基于2000年版本的MAME (0.37b5)。<br />和iMAME4All/MAME4Droid/MAME 0.37b5兼容。 |                |          |
+| [MAME 2003-Plus](https://docs.libretro.com/library/mame2003_plus/) | [libretro-mame2003_plus](https://github.com/crazyqk2019/libretro-mame2003_plus) | 基于2018年版本的MAME (0.78)。                                |                |          |
+| [MAME 2010](https://docs.libretro.com/library/mame_2010/)    | [libretro-mame2010](https://github.com/crazyqk2019/libretro-mame2010) | 基于2010年版本的MAME (0.139)。                               |                |          |
+| MAME 2015                                                    | [libretro-mame2015](https://github.com/crazyqk2019/libretro-mame2015) | 基于2014年晚期/2015年早期版本的MAME (0.160-ish)。            |                |          |
+| MAME 2016                                                    | [libretro-mame2016](https://github.com/crazyqk2019/libretro-mame2016) | 基于2016年版本的MAME (0.174)。                               |                |          |
+| HBMAME                                                       | [libretro-hbmame](https://github.com/crazyqk2019/libretro-hbmame) | MAME的改版，主要用于运行自制和修改版街机游戏。               |                |          |
+| Final Burn Alpha 2012                                        | [libretro-fbalpha2012](https://github.com/crazyqk2019/libretro-fbalpha2012) | 基于Final Burn Alpha 2012 (0.2.97.24)。                      |                |          |
+| Final Burn Alpha 2012 CPS1                                   | [libretro-fbalpha2012_cps1](https://github.com/crazyqk2019/libretro-fbalpha2012_cps1) | 基于Final Burn Alpha 2012 (0.2.97.24)。<br />单独的Capcom CPS1内核。 |                |          |
+| Final Burn Alpha 2012 CPS2                                   | [libretro-fbalpha2012_cps2](https://github.com/crazyqk2019/libretro-fbalpha2012_cps2) | 基于Final Burn Alpha 2012 (0.2.97.24)。<br />单独的Capcom CPS2内核。 |                |          |
+| Final Burn Alpha 2012 CPS3                                   | [libretro-fbalpha2012_cps3](https://github.com/crazyqk2019/libretro-fbalpha2012_cps3) | 基于Final Burn Alpha 2012 (0.2.97.24)。<br />单独的Capcom CPS3内核。 |                |          |
+| Final Burn Alpha 2012 NeoGeo                                 | [libretro-fbalpha2012_neogeo](https://github.com/crazyqk2019/libretro-fbalpha2012_neogeo) | 基于Final Burn Alpha 2012 (0.2.97.24)。<br />单独的Neo Geo内核。 |                |          |
+| [Final Burn Neo](https://docs.libretro.com/library/fbneo/)   | [libretro-fbneo](https://github.com/crazyqk2019/libretro-fbneo) | FinalBurn和FinalBurn Alpha的后继模拟器。                     |                |          |
+| [SAME_CDI](https://docs.libretro.com/library/same_cdi/)      | [libretro-same_cdi](https://github.com/crazyqk2019/libretro-same_cdi) | 从MAME分支而来，只包含了Philips CD-i的驱动。<br />简化了CD游戏的加载。 |                |          |
 
 ### Nintendo 系列机型内核
 
 **GB 系列**
 
-| 内核名称                                                    | 汉化仓库地址                                                 | 内核说明                                                     | 汉化时间和版本 |
+| 内核名称（官网说明链接）                                    | 汉化仓库地址                                                 | 内核说明                                                     | 汉化时间和版本 |
 | ----------------------------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ | -------------- |
 | [SameBoy](https://docs.libretro.com/library/sameboy/)       | [libretro-sameboy](https://github.com/crazyqk2019/libretro-sameboy)<br />（分支为`buildbot`） | GB和GBC模拟器。<br />追求极致精确模拟。                      | 2024/04/25     |
 | [Gearboy](https://docs.libretro.com/library/gearboy/)       | [libretro-gearboy](https://github.com/crazyqk2019/libretro-gearboy) | GB/GBC模拟器。                                               | 2024/04/25     |
@@ -831,7 +851,7 @@ cmake --build Build --config Release --target squirreljme_libretro
 
 **FC/NES 系列**
 
-| 内核名称                                                | 汉化仓库地址                                                 | 内核说明                                                     | 汉化时间和版本 |
+| 内核名称（官网说明链接）                                | 汉化仓库地址                                                 | 内核说明                                                     | 汉化时间和版本 |
 | ------------------------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ | -------------- |
 | [FCEUmm](https://docs.libretro.com/library/fceumm/)     | [libretro-fceumm](https://github.com/crazyqk2019/libretro-fceumm) | FC模拟器。<br />FCEU Ultra模拟器的mapper修改版，<br />支持大量新的mapper以及未授权游戏的mapper。 | 2025/04/29     |
 | [Nestopia](https://docs.libretro.com/library/nestopia/) | [libretro-nestopia](https://github.com/crazyqk2019/libretro-nestopia) | FC模拟器。<br />精确时钟周期模拟的FC模拟器。<br />libretro版本包含了超频功能。 | 2025/04/30     |
@@ -839,7 +859,7 @@ cmake --build Build --config Release --target squirreljme_libretro
 
 **SFC/SNES 系列**
 
-| 内核名称                                                     | 汉化仓库地址                                                 | 内核说明                                                     | 汉化时间和版本 |
+| 内核名称（官网说明链接）                                     | 汉化仓库地址                                                 | 内核说明                                                     | 汉化时间和版本 |
 | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | -------------- |
 | [bsnes](https://docs.libretro.com/library/bsnes_accuracy/)   | [libretro-bsnes](https://github.com/crazyqk2019/libretro-bsnes) | SFC模拟器。<br />高精度的SFC模拟器。                         |                |
 | [bsnes mercury](https://docs.libretro.com/library/bsnes_mercury_accuracy/) | [libretro-bsnes_mercury](https://github.com/crazyqk2019/libretro-bsnes_mercury) | SFC模拟器。<br />bsnes的分支版本，<br />恢复了新版bsnes移除的一些功能，同时提高了一些性能。<br />仍然保持了最大模拟精度，所有影响精度的的选项默认都是关闭的。<br />有accurary/performance/balanced三个不同的编译配置。 |                |
@@ -850,20 +870,20 @@ cmake --build Build --config Release --target squirreljme_libretro
 
 **N64 系列**
 
-| 内核名称                                                     | 汉化仓库地址                                                 | 内核说明                                                | 汉化时间和版本 |
+| 内核名称（官网说明链接）                                     | 汉化仓库地址                                                 | 内核说明                                                | 汉化时间和版本 |
 | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------- | -------------- |
 | [Mupen64Plus-Next](https://docs.libretro.com/library/mupen64plus/) | [libretro-mupen64plus_next](https://github.com/crazyqk2019/libretro-mupen64plus_next)<br />（分支为`develop`） | N64模拟器。<br />和最新的Mupen64Plus-Next主线版本同步。 |                |
 | ParaLLEl N64                                                 | [libretro-parallel_n64](https://github.com/crazyqk2019/libretro-parallel_n64) | N64模拟器。<br />基于Mupen64Plus，做了优化和重写。      |                |
 
 **GC/Wii 系列**
 
-| 内核名称                                              | 汉化仓库地址                                                 | 内核说明         | 汉化时间和版本 |
+| 内核名称（官网说明链接）                              | 汉化仓库地址                                                 | 内核说明         | 汉化时间和版本 |
 | ----------------------------------------------------- | ------------------------------------------------------------ | ---------------- | -------------- |
 | [Dolphin](https://docs.libretro.com/library/dolphin/) | [libretro-dolphin](https://github.com/crazyqk2019/libretro-dolphin) | NGC/Wii 模拟器。 |                |
 
 **DS 系列**
 
-| 内核名称                                                    | 汉化仓库地址                                                 | 内核说明                    | 汉化时间和版本 |
+| 内核名称（官网说明链接）                                    | 汉化仓库地址                                                 | 内核说明                    | 汉化时间和版本 |
 | ----------------------------------------------------------- | ------------------------------------------------------------ | --------------------------- | -------------- |
 | [DeSmuME](https://docs.libretro.com/library/desmume/)       | [libretro-desmume](https://github.com/crazyqk2019/libretro-desmume) | NDS模拟器。                 |                |
 | [melonDS DS](https://docs.libretro.com/library/melonds_ds/) | [libretro-melondsds](https://github.com/crazyqk2019/libretro-melondsds)（分支为`main`） | NDS模拟器。<br />支持NDSi。 |                |
@@ -871,7 +891,7 @@ cmake --build Build --config Release --target squirreljme_libretro
 
 ### Sega 系列机型内核
 
-| 内核名称                                                     | 汉化仓库地址                                                 | 内核说明                                                     | 汉化时间和版本 |
+| 内核名称（官网说明链接）                                     | 汉化仓库地址                                                 | 内核说明                                                     | 汉化时间和版本 |
 | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | -------------- |
 | [Gearsystem](https://docs.libretro.com/library/gearsystem/)  | [libretro-gearsystem](https://github.com/crazyqk2019/libretro-gearsystem) | MS/GG/SG-100/Othello 机种模拟器。                            |                |
 | [SMS Plus GX](https://docs.libretro.com/library/smsplus/)    | [libretro-smsplus](https://github.com/crazyqk2019/libretro-smsplus) | MS/GG模拟器。<br />SMS Plus的增强版本，包含了性能改进和bug修复。 |                |
@@ -880,18 +900,18 @@ cmake --build Build --config Release --target squirreljme_libretro
 | [PicoDrive](https://docs.libretro.com/library/picodrive/)    | [libretro-picodrive](https://github.com/crazyqk2019/libretro-picodrive) | MS/MD/MDCD/32X模拟器。<br />为了基于ARM的手持设备而优化。    |                |
 | BlastEm                                                      | [libretro-blastem](https://github.com/crazyqk2019/libretro-blastem)<br />（分支为`libretro`） | MD模拟器。<br />和最新版BlastEm同步，快速和高精度的MD模拟器。 |                |
 
-| 内核名称                                                     | 汉化仓库地址                                                 | 内核说明                                                     | 汉化时间和版本 |
+| 内核名称（官网说明链接）                                     | 汉化仓库地址                                                 | 内核说明                                                     | 汉化时间和版本 |
 | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | -------------- |
 | [Beetle Saturn](https://docs.libretro.com/library/beetle_saturn/) | [libretro-mednafen_saturn](https://github.com/crazyqk2019/libretro-mednafen_saturn) | SS模拟器。<br />Mednafen 多机种模拟器中的 SS 内核。          |                |
 | [Kronos](https://docs.libretro.com/library/kronos/)          | [libretro-kronos](https://github.com/crazyqk2019/libretro-kronos)<br />（分支`kronos`） | SS模拟器。<br />[Yabause](https://docs.libretro.com/library/yabause/)的分支版本。<br />使用了着色器渲染，需要 OpenGL 4.3。<br />同时模拟了 SS 的街机版本 ST-V。<br />这是一个是相当活跃的 SS 模拟器项目，<br />同时也是唯一被官方支持的 libretro SS 内核。 |                |
 
-| 内核名称                                              | 汉化仓库地址                                                 | 内核说明                             | 汉化时间和版本 |
+| 内核名称（官网说明链接）                              | 汉化仓库地址                                                 | 内核说明                             | 汉化时间和版本 |
 | ----------------------------------------------------- | ------------------------------------------------------------ | ------------------------------------ | -------------- |
 | [flycast](https://docs.libretro.com/library/flycast/) | [libretro-flycast](https://github.com/crazyqk2019/libretro-flycast) | DC/Naomi/Naomi 2/Atomiswave 模拟器。 |                |
 
 ### Sony 系列机型内核
 
-| 内核名称                                                     | 汉化仓库地址                                                 | 内核说明                                                     | 汉化时间和版本 |
+| 内核名称（官网说明链接）                                     | 汉化仓库地址                                                 | 内核说明                                                     | 汉化时间和版本 |
 | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | -------------- |
 | [Beetle PSX](https://docs.libretro.com/library/beetle_psx/)<br />[Beetle PSX HW](https://docs.libretro.com/library/beetle_psx_hw/) | [libretro-mednafen_psx](https://github.com/crazyqk2019/libretro-mednafen_psx) | PS1模拟器。<br />Mednafen多机种模拟器的单独PS1内核。         |                |
 | [PCSX ReARMed](https://docs.libretro.com/library/pcsx_rearmed/) | [libretro-pcsx_rearmed](https://github.com/crazyqk2019/libretro-pcsx_rearmed) | PS1模拟器。<br />PCSX Reloaded的分支版本。<br />专门为ARM处理器优化。 |                |
@@ -899,24 +919,24 @@ cmake --build Build --config Release --target squirreljme_libretro
 | [PCSX2](https://docs.libretro.com/library/pcsx2/)            | [libretro-pcsx2](https://github.com/crazyqk2019/libretro-pcsx2) | PS2模拟器。<br />基于PCSX2移植到libretro的版本，<br />很久没有和上游版本同步了。 |                |
 | [Play!](https://docs.libretro.com/library/play/)             | [libretro-play](https://github.com/crazyqk2019/libretro-play) | PS2模拟器。                                                  |                |
 
-| 内核名称                                            | 汉化仓库地址                                                 | 内核说明                                                     | 汉化时间和版本 |
+| 内核名称（官网说明链接）                            | 汉化仓库地址                                                 | 内核说明                                                     | 汉化时间和版本 |
 | --------------------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ | -------------- |
 | [PPSSPP](https://docs.libretro.com/library/ppsspp/) | [libretro-ppsspp](https://github.com/crazyqk2019/libretro-ppsspp) | PSP模拟器。<br />支持[OpenGL](https://docs.libretro.com/library/ppsspp/#opengl), [Vulkan](https://docs.libretro.com/library/ppsspp/#vulkan), 和 [Direct3D 11](https://docs.libretro.com/library/ppsspp/#d3d11)。 |                |
 
 ### SNK 系列机型内核
 
-| 内核名称                                                     | 汉化仓库地址                                                 | 内核说明                                                     | 汉化时间和版本 |
+| 内核名称（官网说明链接）                                     | 汉化仓库地址                                                 | 内核说明                                                     | 汉化时间和版本 |
 | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | -------------- |
 | [Beetle NeoPop](https://docs.libretro.com/library/beetle_neopop/) | [libretro-mednafen_ngp](https://github.com/crazyqk2019/libretro-mednafen_ngp) | NGP/NGPC模拟器。<br />Mednafen多机种模拟器的NGP内核，基于NeoPop模拟器。 |                |
 | [RACE](https://docs.libretro.com/library/race/)              | [libretro-race](https://github.com/crazyqk2019/libretro-race) | NGP/NGPC 模拟器。                                            |                |
 
-| 内核名称 | 汉化仓库地址                                                 | 内核说明         | 汉化时间和版本 |
-| -------- | ------------------------------------------------------------ | ---------------- | -------------- |
-| NeoCD    | [libretro-neocd](https://github.com/crazyqk2019/libretro-neocd) | Neo Geo CD模拟器 |                |
+| 内核名称（官网说明链接） | 汉化仓库地址                                                 | 内核说明         | 汉化时间和版本 |
+| ------------------------ | ------------------------------------------------------------ | ---------------- | -------------- |
+| NeoCD                    | [libretro-neocd](https://github.com/crazyqk2019/libretro-neocd) | Neo Geo CD模拟器 |                |
 
 ### NEC 系列机型内核
 
-| 内核名称                                                     | 汉化仓库地址                                                 | 内核说明                                                     | 汉化时间和版本 |
+| 内核名称（官网说明链接）                                     | 汉化仓库地址                                                 | 内核说明                                                     | 汉化时间和版本 |
 | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | -------------- |
 | Beetle PCE                                                   | [libretro-mednafen_pce](https://github.com/crazyqk2019/libretro-mednafen_pce) | PCE模拟器。<br />Medenafen多机种模拟器的单独PCE内核。<br />比Fast版本更加精确，同时保留了对SuperGrafx的支持。 |                |
 | [Beetle PCE Fast](https://docs.libretro.com/library/beetle_pce_fast/) | [libretro-mednafen_pce_fast](https://github.com/crazyqk2019/libretro-mednafen_pce_fast) | PCE模拟器。<br />Medenafen多机种模拟器的单独PCE内核Fast版本。<br />牺牲部分精确性，优化了速度，移除了对SuperGrafx的支持。 |                |
@@ -927,24 +947,24 @@ cmake --build Build --config Release --target squirreljme_libretro
 
 ### Microsoft 系列机型内核
 
-| 内核名称                                        | 汉化仓库地址                                                 | 内核说明                            | 汉化时间和版本 |
+| 内核名称（官网说明链接）                        | 汉化仓库地址                                                 | 内核说明                            | 汉化时间和版本 |
 | ----------------------------------------------- | ------------------------------------------------------------ | ----------------------------------- | -------------- |
 | [fMSX](https://docs.libretro.com/library/fmsx/) | [ibretro-fmsx](https://github.com/crazyqk2019/libretro-fmsx) | MSX/MSX2/MSX2+系列8位计算机模拟器。 |                |
 
-| 内核名称                                                     | 汉化仓库地址                                                 | 内核说明                                                     | 汉化时间和版本 |
+| 内核名称（官网说明链接）                                     | 汉化仓库地址                                                 | 内核说明                                                     | 汉化时间和版本 |
 | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | -------------- |
 | DOSBox Core                                                  | [libretro-dosbox_core](https://github.com/crazyqk2019/libretro-dosbox_core)<br />（分支`libretro`） | DOS模拟器。<br />DOSBox的libretro内核，和最新的DOSBox SVN主线版本保持同步。 |                |
 | [DOSBox Pure](https://docs.libretro.com/library/dosbox_pure/) | [libretro-dosbox_pure](https://github.com/crazyqk2019/libretro-dosbox_pure)<br />（分支`main`） | DOS模拟器。<br />新的基于DOSBox的libretro内核，目标是简化和易用性。<br />实现了一些高级功能，例如存档、屏幕键盘、<br />高可定制性的控制器设置以及倒带功能。 |                |
 
 ###  3DO 机型内核
 
-| 内核名称                                          | 汉化仓库地址                                                 | 内核说明                                                     | 汉化时间和版本 |
+| 内核名称（官网说明链接）                          | 汉化仓库地址                                                 | 内核说明                                                     | 汉化时间和版本 |
 | ------------------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ | -------------- |
 | [Opera](https://docs.libretro.com/library/opera/) | [libretro-opera](https://github.com/crazyqk2019/libretro-opera) | 3DO模拟器。<br />开源的、LLE模拟的3DO模拟器。<br />Opera是4DO的一个分支，最初是4DO的一个移植版本，<br />而4DO本身又是FreeDO的一个分支，移植到了libretro上。<br />这个分支/重命名是由于原始的4DO项目处于休眠状态，<br />为了区分该项目的新的开发和关注。 |                |
 
 ### Atari 系列机型内核
 
-| 内核名称                                                     | 汉化仓库地址                                                 | 内核说明                                                     | 汉化时间和版本 |
+| 内核名称（官网说明链接）                                     | 汉化仓库地址                                                 | 内核说明                                                     | 汉化时间和版本 |
 | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | -------------- |
 | [Stella](https://docs.libretro.com/library/stella/)          | [libretro-stella](https://github.com/crazyqk2019/libretro-stella) | Atari 2600模拟器。                                           |                |
 | [Atari800](https://docs.libretro.com/library/atari800/)      | [libretro-atari800](https://github.com/crazyqk2019/libretro-atari800) | Atari 8位计算机系统(400, 800, 600 XL, 800XL, 130XE)<br />和Atari 5200游戏机模拟器 |                |
@@ -957,35 +977,35 @@ cmake --build Build --config Release --target squirreljme_libretro
 
 ### Commodore 系列机型内核
 
-| 内核名称                                        | 汉化仓库地址                                                 | 内核说明                                                     | 汉化时间和版本 |
+| 内核名称（官网说明链接）                        | 汉化仓库地址                                                 | 内核说明                                                     | 汉化时间和版本 |
 | ----------------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ | -------------- |
 | [VICE](https://docs.libretro.com/library/vice/) | [libretro-vice](https://github.com/crazyqk2019/libretro-vice) | Commodore 8位系列计算机模拟器。<br />支持C64、C64DTV、C128、VIC20、几乎所有的PET型号、<br />PLUS4和CBM-II（又称C610/C510）以及带有CMD SuperCPU扩展的C64。 |                |
 | [PUAE](https://docs.libretro.com/library/puae/) | [libretro-uae](https://github.com/crazyqk2019/libretro-uae)  | Commodore Amiga系列计算机/游戏机模拟器。<br />Commodore Amiga是Commodore收购Amiga公司后，<br />于20世纪80年代起推出的系列机型，<br />定位多媒体个人电脑，性能远超同期产品（如Macintosh）。 |                |
 
 ### Amstrad 系列机型内核
 
-| 内核名称                                                  | 汉化仓库地址                                                 | 内核说明                                                     | 汉化时间和版本 |
+| 内核名称（官网说明链接）                                  | 汉化仓库地址                                                 | 内核说明                                                     | 汉化时间和版本 |
 | --------------------------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ | -------------- |
 | [Caprice32](https://docs.libretro.com/library/caprice32/) | [libretro-cap32](https://github.com/crazyqk2019/libretro-cap32) | Amstrad CPC 8位家用系列计算机模拟器。<br />Amstrad CPC系列由英国Amstrad公司于1984年起推出，<br />定位为廉价家用电脑，直接对抗Commodore 64和Sinclair ZX Spectrum。 |                |
 | [CrocoDS](https://docs.libretro.com/library/crocods/)     | [libretro-crocods](https://github.com/crazyqk2019/libretro-crocods) | Amstrad CPC 8位家用系列计算机模拟器。<br />基于Win-CPC。CrocoDS最初是NDS编写的模拟器。 |                |
 
 ### Sharp 系列机型内核
 
-| 内核名称                                          | 汉化仓库地址                                                 | 内核说明                                                     | 汉化时间和版本 |
+| 内核名称（官网说明链接）                          | 汉化仓库地址                                                 | 内核说明                                                     | 汉化时间和版本 |
 | ------------------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ | -------------- |
 | Sharp X1                                          | [libretro-x1](https://github.com/crazyqk2019/libretro-x1)    | Sharp X1模拟器。<br />1982年由夏普（Sharp）推出，是日本8位元电脑系列，<br />兼具家用电脑和游戏平台功能。<br />定位为与NEC PC-8801、富士通FM-7竞争，<br />主打高性价比和图形性能，后期型号支持游戏开发。 |                |
 | [PX68k](https://docs.libretro.com/library/px68k/) | [libretro-px68k](https://github.com/crazyqk2019/libretro-px68k) | Sharp X68000模拟器。<br />1987年由夏普（Sharp）推出，定位为高性能16位个人电脑，<br />主要面向专业用户和游戏开发者。<br />定位为与NEC PC-9801、富士通FM TOWNS竞争。 |                |
 
 ### Sinclair 系列机型内核
 
-| 内核名称                                             | 汉化仓库地址                                                 | 内核说明                                                     | 汉化时间和版本 |
+| 内核名称（官网说明链接）                             | 汉化仓库地址                                                 | 内核说明                                                     | 汉化时间和版本 |
 | ---------------------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ | -------------- |
 | [ZX81](https://docs.libretro.com/library/eightyone/) | [libretro-81](https://github.com/crazyqk2019/libretro-81)    | Sinclair ZX81模拟器。<br />Sinclair ZX81 1981年由英国Sinclair Research推出，<br />定位家庭与教育市场，作为ZX80的升级版，主打低成本编程学习。 |                |
 | [Fuse](https://docs.libretro.com/library/fuse/)      | [libretro-fuse](https://github.com/crazyqk2019/libretro-fuse) | Sinclair ZX Spectrum模拟器。<br />Sinclair ZX Spectrum 1982年由英国Sinclair Research推出，<br />前身代号"ZX81 Colour/ZX82"，最终命名Spectrum以强调其彩色显示功能。<br />定位家庭娱乐与编程学习。 |                |
 
 ### 多机种模拟器内核
 
-| 内核名称                                                | 汉化仓库地址                                                 | 内核说明                                                     | 汉化时间和版本 |
+| 内核名称（官网说明链接）                                | 汉化仓库地址                                                 | 内核说明                                                     | 汉化时间和版本 |
 | ------------------------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ | -------------- |
 | [blueMSX](https://docs.libretro.com/library/bluemsx/)   | [libretro-bluemsx](https://github.com/crazyqk2019/libretro-bluemsx) | MSX/SVI/ColecoVision/Sega SG-1000模拟器。                    |                |
 | [ep128emu](https://docs.libretro.com/library/ep128emu/) | [libretro-ep128emu_core](https://github.com/crazyqk2019/libretro-ep128emu_core)<br />（分支为`core`） | Z80系列家用计算机模拟器。<br />支持Enterprise 64/128, Videoton TVC, <br />Amstrad CPC和ZX Spectrum。 |                |
@@ -993,7 +1013,7 @@ cmake --build Build --config Release --target squirreljme_libretro
 
 ### 其他模拟器内核
 
-| 内核名称                                                     | 汉化仓库地址                                                 | 内核说明                                                     | 汉化时间和版本 |
+| 内核名称（官网说明链接）                                     | 汉化仓库地址                                                 | 内核说明                                                     | 汉化时间和版本 |
 | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | -------------- |
 | [Beetle Cygne](https://docs.libretro.com/library/beetle_cygne/) | [libretro-mednafen_wswan](https://github.com/crazyqk2019/libretro-mednafen_wswan) | 万代WS/WSC模拟器。<br />Mednafen多机种模拟器的单独WS内核，<br />其本身是Cygen的分支。 |                |
 | [SameDuck](https://docs.libretro.com/library/sameduck/)      | [libretro-sameduck](https://github.com/crazyqk2019/libretro-sameduck)<br />（分支为`SameDuck-libretro`） | Mega Duck模拟器。<br />是20世纪90年代推出的一款掌机（南美市场叫Cougar Boy），<br />主要作为任天堂Game Boy的竞争对手。 |                |

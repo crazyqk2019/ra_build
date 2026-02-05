@@ -12,19 +12,30 @@ SET "CORES_LIST=dolphin citra ppsspp play pcsx2 swanstation tic80"
 
 SET "NO_CLEAN="
 SET "NO_REGEN="
+SET "BUILD_MT="
 SET "BUILD_ALL="
 SET "BUILD_CORES_LIST="
 
 :parseParamsBegin
 IF "%~1" == "" GOTO :parseParamsEnd
-IF /I "%~1" == "-noclean" (SET "NO_CLEAN=1" & SHIFT & GOTO :parseParamsBegin)
-IF /I "%~1" == "/noclean" (SET "NO_CLEAN=1" & SHIFT & GOTO :parseParamsBegin)
-IF /I "%~1" == "-noregen" (SET "NO_REGEN=1" & SHIFT & GOTO :parseParamsBegin)
-IF /I "%~1" == "/noregen" (SET "NO_REGEN=1" & SHIFT & GOTO :parseParamsBegin)
-IF /I "%~1" == "all" (SET "BUILD_ALL=1" & SHIFT & GOTO :parseParamsBegin)
-ECHO %CORES_LIST% | findstr /i "\<%~1\>" >NUL || (ECHO 参数错误，内核 "%~1" 不存在! & GOTO :err)
-IF NOT EXIST "%CORES_DIR%\libretro-%~1" (ECHO 内核 "%~1" 源代码目录不存在！& GOTO :err)
-IF NOT DEFINED BUILD_CORES_LIST (SET "BUILD_CORES_LIST=%~1") ELSE (SET "BUILD_CORES_LIST=%BUILD_CORES_LIST% %~1")
+IF /I "%~1" == "-noclean" (SET "NO_CLEAN=1"
+) ELSE IF /I "%~1" == "/noclean" (SET "NO_CLEAN=1"
+) ELSE IF /I "%~1" == "-noregen" (SET "NO_REGEN=1"
+) ELSE IF /I "%~1" == "/noregen" (SET "NO_REGEN=1"
+) ELSE IF /I "%~1" == "all" (SET "BUILD_ALL=1"
+) ELSE IF /I "%~1" == "-j" (
+    ECHO "%~2"|findstr /r "^\"[0-9][0-9]*\"$" >NUL 2>&1 || (ECHO 无效的 -j 参数："%~2"！& GOTO :err)
+    IF "%~2" == "0" (ECHO 无效的 -j 参数："%~2"！& GOTO :err)
+    SET "BUILD_MT=%~2" & SHIFT
+) ELSE IF /I "%~1" == "/j" (
+    ECHO "%~2"|findstr /r "^\"[0-9][0-9]*\"$" >NUL 2>&1 || (ECHO 无效的 -j 参数："%~2"！& GOTO :err)
+    IF "%~2" == "0" (ECHO 无效的 -j 参数："%~2"！& GOTO :err)
+    SET "BUILD_MT=%~2" & SHIFT
+) ELSE (
+    ECHO %CORES_LIST% | findstr /i "\<%~1\>" >NUL || (ECHO 参数错误，内核 "%~1" 不存在! & GOTO :err)
+    IF NOT EXIST "%CORES_DIR%\libretro-%~1" (ECHO 内核 "%~1" 源代码目录不存在！& GOTO :err)
+    IF NOT DEFINED BUILD_CORES_LIST (SET "BUILD_CORES_LIST=%~1") ELSE (SET "BUILD_CORES_LIST=%BUILD_CORES_LIST% %~1")
+)
 SHIFT & GOTO :parseParamsBegin
 :parseParamsEnd
 
@@ -41,6 +52,7 @@ IF NOT DEFINED BUILD_ALL IF NOT DEFINED BUILD_CORES_LIST (
     ECHO "-noregen: 对于使用CMake编译的内核，不要重新创建编译配置文件"
     GOTO :end
 )
+
 
 IF NOT EXIST "%DISTS_DIR%" MD "%DISTS_DIR%" || (ECHO 创建内核分发目录 "%DISTS_DIR%" 出错！& GOTO :err)
 

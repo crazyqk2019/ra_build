@@ -32,6 +32,7 @@ build_dir=${6:-${MSYSTEM,,}_build}
 cmake_clean="cmake --build $build_dir --target clean -j"
 cmake_gen="cmake -Wno-dev -DCMAKE_BUILD_TYPE=Release $cmake_params -G Ninja -B $build_dir" # -DCMAKE_POLICY_DEFAULT_CMP0198=NEW -DCMAKE_POLICY_VERSION_MINIMUM=3.5
 cmake_build="cmake --build $build_dir --target ${core}_libretro --config Release -j"
+if [[ $build_mt -gt 0 ]]; then cmake_build+=" $build_mt"; fi
 
 if [[ ! -d "$cores_dir/libretro-$core/$core_src" ]]; then die "内核 \"$core_name\" 目录 \"$cores_dir/libretro-$core/$core_src\" 不存在，请先拉取内核源代码！"; fi
 cd "$cores_dir/libretro-$core/$core_src" >/dev/null

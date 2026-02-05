@@ -31,6 +31,7 @@ SET "cmake_gen=cmake -Wno-dev -DCMAKE_BUILD_TYPE=Release -G Ninja"
 IF DEFINED cmake_params (SET "cmake_gen=%cmake_gen% %cmake_params%")
 SET "cmake_gen=%cmake_gen% -B %build_dir%"
 SET "cmake_build=cmake --build "%build_dir%" --target %core%_libretro --config Release -j"
+IF DEFINED BUILD_MT SET "cmake_build=%cmake_build% %BUILD_MT%"
 
 REM IF DEFINED cmake_vcpkg_params (
 REM    SET "cmake_commad_line=%cmake_commad_line% %cmake_vcpkg_params% -DVCPKG_INSTALLED_DIR=vcpkg_installed -DCMAKE_TOOLCHAIN_FILE=%VCPKG_ROOT%\scripts\buildsystems\vcpkg.cmake"

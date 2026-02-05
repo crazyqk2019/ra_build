@@ -7,30 +7,30 @@ die() { if [ $# -gt 0 ]; then error_message "$@"; fi; exit 1; }
 
 # Cores built using make
 build_mame2000() {
-    no_clean=$no_clean no_ccache=$no_ccache ./build_use_make.sh "MAME 2000" "mame2000"
+    ./build_use_make.sh "MAME 2000" "mame2000"
 }
 
 build_mame2003_plus() {
-    no_clean=$no_clean no_ccache=$no_ccache ./build_use_make.sh "MAME 2003 Plus" "mame2003_plus"
+    ./build_use_make.sh "MAME 2003 Plus" "mame2003_plus"
 }
 
 build_mame2010() {
-    no_clean=$no_clean no_ccache=$no_ccache ./build_use_make.sh "MAME 2010" "mame2010"
+    ./build_use_make.sh "MAME 2010" "mame2010"
 }
 
 build_mame2015() {
     local make_params="CC=g++"
-    no_clean=$no_clean no_ccache=$no_ccache make_params=$make_params ./build_use_make.sh "MAME 2015" "mame2015"
+    make_params=$make_params ./build_use_make.sh "MAME 2015" "mame2015"
 }
 
 build_mame2016() {
     local make_params="PYTHON_EXECUTABLE=python3"
-    no_clean=$no_clean no_ccache=$no_ccache make_params=$make_params ./build_use_make.sh "MAME 2016" "mame2016"
+    make_params=$make_params ./build_use_make.sh "MAME 2016" "mame2016"
 }
 
 build_mame() {
     local make_params="PYTHON_EXECUTABLE=python3"
-    no_clean=$no_clean no_ccache=$no_ccache make_params=$make_params ./build_use_make.sh "MAME" "mame"
+    make_params=$make_params ./build_use_make.sh "MAME" "mame"
 }
 
 build_fbalpha2012() {
@@ -39,19 +39,19 @@ build_fbalpha2012() {
     else
         local MY_CFLAGS=$CFLAGS + " -Wno-incompatible-pointer-types"
     fi
-    no_clean=$no_clean no_ccache=$no_ccache CFLAGS=$MY_CFLAGS ./build_use_make.sh "Final Burn Alpha 2012" "fbalpha2012" "svn-current/trunk"
+    CFLAGS=$MY_CFLAGS ./build_use_make.sh "Final Burn Alpha 2012" "fbalpha2012" "svn-current/trunk"
 }
 
 build_fbalpha2012_cps1() {
-    no_clean=$no_clean no_ccache=$no_ccache ./build_use_make.sh "Final Burn Alpha 2012 CPS1" "fbalpha2012_cps1"
+    ./build_use_make.sh "Final Burn Alpha 2012 CPS1" "fbalpha2012_cps1"
 }
 
 build_fbalpha2012_cps2() {
-    no_clean=$no_clean no_ccache=$no_ccache ./build_use_make.sh "Final Burn Alpha 2012 CPS2" "fbalpha2012_cps2"
+    ./build_use_make.sh "Final Burn Alpha 2012 CPS2" "fbalpha2012_cps2"
 }
 
 build_fbalpha2012_cps3() {
-    no_clean=$no_clean no_ccache=$no_ccache ./build_use_make.sh "Final Burn Alpha 2012 CPS3" "fbalpha2012_cps3" "svn-current/trunk"
+    ./build_use_make.sh "Final Burn Alpha 2012 CPS3" "fbalpha2012_cps3" "svn-current/trunk"
 }
 
 build_fbalpha2012_neogeo() {
@@ -60,47 +60,47 @@ build_fbalpha2012_neogeo() {
     else
         local MY_CFLAGS=$CFLAGS + " -Wno-incompatible-pointer-types"
     fi    
-    no_clean=$no_clean no_ccache=$no_ccache CFLAGS=$MY_CFLAGS ./build_use_make.sh "Final Burn Alpha 2012 Neo Geo" "fbalpha2012_neogeo"
+    CFLAGS=$MY_CFLAGS ./build_use_make.sh "Final Burn Alpha 2012 Neo Geo" "fbalpha2012_neogeo"
 }
 
 build_fbneo() {
-    no_clean=$no_clean no_ccache=$no_ccache ./build_use_make.sh "Final Burn Neo" "fbneo" "src/burner/libretro"
+    ./build_use_make.sh "Final Burn Neo" "fbneo" "src/burner/libretro"
 }
 
 build_sameboy() {
-    no_clean=$no_clean no_ccache=$no_ccache ./build_use_make.sh "SameBoy" "sameboy" "libretro"
+    ./build_use_make.sh "SameBoy" "sameboy" "libretro"
 }
 
 build_gearboy() {
-    no_clean=$no_clean no_ccache=$no_ccache ./build_use_make.sh "Gearboy" "gearboy" "platforms/libretro"
+    ./build_use_make.sh "Gearboy" "gearboy" "platforms/libretro"
 }
 
 build_tgbdual() {
-    no_clean=$no_clean no_ccache=$no_ccache ./build_use_make.sh "TGB Dual" "tgbdual"
+    ./build_use_make.sh "TGB Dual" "tgbdual"
 }
 
 build_mgba() {
-    no_clean=$no_clean no_ccache=$no_ccache ./build_use_make.sh "mGBA" "mgba"
+    ./build_use_make.sh "mGBA" "mgba"
 }
 
 build_fceumm() {
-    no_clean=$no_clean no_ccache=$no_ccache ./build_use_make.sh "FCEUmm" "fceumm"
+    ./build_use_make.sh "FCEUmm" "fceumm"
 }
 
 build_nestopia() {
-    no_clean=$no_clean no_ccache=$no_ccache ./build_use_make.sh "Nestopia" "nestopia" "libretro"
+    ./build_use_make.sh "Nestopia" "nestopia" "libretro"
 }
 
 build_bsnes() {
     local make_params="target=libretro binary=library local=false"
-    no_clean=$no_clean no_ccache=$no_ccache make_params=$make_params ./build_use_make.sh "bsnes" "bsnes" "bsnes" "out"
+    make_params=$make_params ./build_use_make.sh "bsnes" "bsnes" "bsnes" "out"
 }
 
 build_bsnes_mercury() {
     local profiles_list=("accuracy" "balanced" "performance")
     for f in "${profiles_list[@]}"; do
         local make_params="PROFILE=$f"
-        no_clean=$no_clean no_ccache=$no_ccache make_params=$make_params ./build_use_make.sh "bsnes mercury $f" "bsnes_mercury" "." "." "bsnes_mercury_"$f"_libretro.dll" || return 1
+        make_params=$make_params ./build_use_make.sh "bsnes mercury $f" "bsnes_mercury" "." "." "bsnes_mercury_"$f"_libretro.dll" || return 1
     done
 }
 
@@ -108,58 +108,58 @@ build_bsnes2014() {
     local profiles_list=("accuracy" "balanced" "performance")
     for f in "${profiles_list[@]}"; do
         local make_params="PROFILE=$f"
-        no_clean=$no_clean no_ccache=$no_ccache make_params=$make_params ./build_use_make.sh "bsnes 2014 $f" "bsnes2014" "." "." "bsnes2014_"$f"_libretro.dll" || return 1
+        make_params=$make_params ./build_use_make.sh "bsnes 2014 $f" "bsnes2014" "." "." "bsnes2014_"$f"_libretro.dll" || return 1
     done
 }
 
 build_bsnes_hd() {
     local make_params="target=libretro binary=library"
-    no_clean=$no_clean no_ccache=$no_ccache make_params=$make_params ./build_use_make.sh "bsnes hd" "bsnes_hd" "bsnes" "out" "bsnes_hd_beta_libretro.dll"
+    make_params=$make_params ./build_use_make.sh "bsnes hd" "bsnes_hd" "bsnes" "out" "bsnes_hd_beta_libretro.dll"
 }
 
 build_bsnes_jg() {
-    no_clean=$no_clean no_ccache=$no_ccache ./build_use_make.sh "bsnes jg" "bsnes_jg" "libretro" "." "bsnes-jg_libretro.dll"
+    ./build_use_make.sh "bsnes jg" "bsnes_jg" "libretro" "." "bsnes-jg_libretro.dll"
 }
 
 build_snes9x() {
-    no_clean=$no_clean no_ccache=$no_ccache ./build_use_make.sh "Snes9x" "snes9x" "libretro"
+    ./build_use_make.sh "Snes9x" "snes9x" "libretro"
 }
 
 build_mupen64plus_next() {
-    no_clean=$no_clean no_ccache=$no_ccache ./build_use_make.sh "Mupen64Plus-Next" "mupen64plus_next"
+    ./build_use_make.sh "Mupen64Plus-Next" "mupen64plus_next"
 }
 
 build_parallel_n64() {
     local make_params="HAVE_PARALLEL=1 HAVE_PARALLEL_RSP=1 WITH_DYNAREC=x86_64"
-    no_clean=$no_clean no_ccache=$no_ccache make_params=$make_params ./build_use_make.sh "ParaLLEl N64" "parallel_n64"
+    make_params=$make_params ./build_use_make.sh "ParaLLEl N64" "parallel_n64"
 }
 
 build_desmume() {
-    no_clean=$no_clean no_ccache=$no_ccache ./build_use_make.sh "DeSmuME" "desmume" "desmume/src/frontend/libretro"
+    ./build_use_make.sh "DeSmuME" "desmume" "desmume/src/frontend/libretro"
 }
 
 build_genesis_plus_gx() {
-    no_clean=$no_clean no_ccache=$no_ccache ./build_use_make.sh "Genesis Plus GX" "genesis_plus_gx"
+    ./build_use_make.sh "Genesis Plus GX" "genesis_plus_gx"
 }
 
 build_genesis_plus_gx_wide() {
-    no_clean=$no_clean no_ccache=$no_ccache ./build_use_make.sh "Genesis Plus GX Wide" "genesis_plus_gx_wide"
+    ./build_use_make.sh "Genesis Plus GX Wide" "genesis_plus_gx_wide"
 }
 
 build_picodrive() {
-    no_clean=$no_clean no_ccache=$no_ccache ./build_use_make.sh "PicoDrive" "picodrive"
+    ./build_use_make.sh "PicoDrive" "picodrive"
 }
 
 build_mednafen_saturn() {
-    no_clean=$no_clean no_ccache=$no_ccache ./build_use_make.sh "Beetle Saturn" "mednafen_saturn"
+    ./build_use_make.sh "Beetle Saturn" "mednafen_saturn"
 }
 
 build_kronos() {
-    no_clean=$no_clean no_ccache=$no_ccache ./build_use_make.sh "Kronos" "kronos" "yabause/src/libretro"
+    ./build_use_make.sh "Kronos" "kronos" "yabause/src/libretro"
 }
 
 build_flycast() {
-    no_clean=$no_clean no_ccache=$no_ccache ./build_use_make.sh "Kronos" "kronos" "yabause/src/libretro"
+    ./build_use_make.sh "Kronos" "kronos" "yabause/src/libretro"
 }
 
 build_mednafen_psx() {
@@ -169,124 +169,124 @@ build_mednafen_psx() {
 }
 
 build_pcsx_rearmed() {
-    no_clean=$no_clean no_ccache=$no_ccache ./build_use_make.sh "PCSX ReARMed" "pcsx_rearmed"
+    ./build_use_make.sh "PCSX ReARMed" "pcsx_rearmed"
 }
 
 build_mednafen_ngp() {
-    no_clean=$no_clean no_ccache=$no_ccache ./build_use_make.sh "Beetle NeoPop" "mednafen_ngp"
+    ./build_use_make.sh "Beetle NeoPop" "mednafen_ngp"
 }
 
 build_neocd() {
-    no_clean=$no_clean no_ccache=$no_ccache ./build_use_make.sh "NeoCD" "neocd"
+    ./build_use_make.sh "NeoCD" "neocd"
 }
 
 build_opera() {
-    no_clean=$no_clean no_ccache=$no_ccache ./build_use_make.sh "Opera" "opera"
+    ./build_use_make.sh "Opera" "opera"
 }
 
 build_mednafen_pce() {
-    no_clean=$no_clean no_ccache=$no_ccache ./build_use_make.sh "Beetle PCE" "mednafen_pce"
+    ./build_use_make.sh "Beetle PCE" "mednafen_pce"
 }
 
 build_mednafen_pce_fast() {
-    no_clean=$no_clean no_ccache=$no_ccache ./build_use_make.sh "Beetle PCE Fast" "mednafen_pce_fast"
+    ./build_use_make.sh "Beetle PCE Fast" "mednafen_pce_fast"
 }
 
 build_fmsx() {
-    no_clean=$no_clean no_ccache=$no_ccache ./build_use_make.sh "fMSX" "fmsx"
+    ./build_use_make.sh "fMSX" "fmsx"
 }
 
 build_px68k() {
-    no_clean=$no_clean no_ccache=$no_ccache ./build_use_make.sh "PX68k" "px68k"
+    ./build_use_make.sh "PX68k" "px68k"
 }
 
 build_81() {
-    no_clean=$no_clean no_ccache=$no_ccache ./build_use_make.sh "ZX81" "81"
+    ./build_use_make.sh "ZX81" "81"
 }
 
 build_fuse() {
-    no_clean=$no_clean no_ccache=$no_ccache ./build_use_make.sh "Fuse" "fuse"
+    ./build_use_make.sh "Fuse" "fuse"
 }
 
 build_atari800() {
-    no_clean=$no_clean no_ccache=$no_ccache ./build_use_make.sh "Atari800" "atari800"
+    ./build_use_make.sh "Atari800" "atari800"
 }
 
 build_stella() {
-    no_clean=$no_clean no_ccache=$no_ccache ./build_use_make.sh "Stella" "stella" "src/os/libretro"
+    ./build_use_make.sh "Stella" "stella" "src/os/libretro"
 }
 
 build_prosystem() {
-    no_clean=$no_clean no_ccache=$no_ccache ./build_use_make.sh "ProSystem" "prosystem"
+    ./build_use_make.sh "ProSystem" "prosystem"
 }
 
 build_virtualjaguar() {
-    no_clean=$no_clean no_ccache=$no_ccache ./build_use_make.sh "Virtual Jaguar" "virtualjaguar"
+    ./build_use_make.sh "Virtual Jaguar" "virtualjaguar"
 }
 
 build_mednafen_lynx() {
-    no_clean=$no_clean no_ccache=$no_ccache ./build_use_make.sh "Beetle Lynx" "mednafen_lynx"
+    ./build_use_make.sh "Beetle Lynx" "mednafen_lynx"
 }
 
 build_handy() {
-    no_clean=$no_clean no_ccache=$no_ccache ./build_use_make.sh "Handy" "handy"
+    ./build_use_make.sh "Handy" "handy"
 }
 
 build_hatari() {
-    no_clean=$no_clean no_ccache=$no_ccache ./build_use_make.sh "Hatari" "hatari"
+    ./build_use_make.sh "Hatari" "hatari"
 }
 
 build_bk() {
-    no_clean=$no_clean no_ccache=$no_ccache ./build_use_make.sh "bk" "bk"
+    ./build_use_make.sh "bk" "bk"
 }
 
 build_blastem() {
-    no_clean=$no_clean no_ccache=$no_ccache ./build_use_make.sh "BlastEm" "blastem"
+    ./build_use_make.sh "BlastEm" "blastem"
 }
 
 build_bluemsx() {
-    no_clean=$no_clean no_ccache=$no_ccache ./build_use_make.sh "blueMSX" "bluemsx"
+    ./build_use_make.sh "blueMSX" "bluemsx"
 }
 
 build_cap32() {
-    no_clean=$no_clean no_ccache=$no_ccache ./build_use_make.sh "Caprice32" "cap32"
+    ./build_use_make.sh "Caprice32" "cap32"
 }
 
 build_crocods() {
-    no_clean=$no_clean no_ccache=$no_ccache ./build_use_make.sh "CrocoDS" "crocods"
+    ./build_use_make.sh "CrocoDS" "crocods"
 }
 
 build_jaxe() {
-    no_clean=$no_clean no_ccache=$no_ccache ./build_use_make.sh "JAXE" "jaxe"
+    ./build_use_make.sh "JAXE" "jaxe"
 }
 
 build_ep128emu_core() {
     local make_params="platform=win64"
-    no_clean=$no_clean no_ccache=$no_ccache make_params=$make_params ./build_use_make.sh "ep128emu" "ep128emu_core"
+    make_params=$make_params ./build_use_make.sh "ep128emu" "ep128emu_core"
 }
 
 build_freeintv() {
-    no_clean=$no_clean no_ccache=$no_ccache ./build_use_make.sh "FreeIntv" "freeintv"
+    ./build_use_make.sh "FreeIntv" "freeintv"
 }
 
 build_gambatte() {
-    no_clean=$no_clean no_ccache=$no_ccache ./build_use_make.sh "Gambatte" "gambatte"
+    ./build_use_make.sh "Gambatte" "gambatte"
 }
 
 build_gearcoleco() {
-    no_clean=$no_clean no_ccache=$no_ccache ./build_use_make.sh "GearColeco" "gearcoleco" "platforms/libretro"
+    ./build_use_make.sh "GearColeco" "gearcoleco" "platforms/libretro"
 }
 
 build_gearsystem() {
-    no_clean=$no_clean no_ccache=$no_ccache ./build_use_make.sh "Gearsystem" "gearsystem" "platforms/libretro"
+    ./build_use_make.sh "Gearsystem" "gearsystem" "platforms/libretro"
 }
 
 build_gpsp() {
-    no_clean=$no_clean no_ccache=$no_ccache ./build_use_make.sh "gpSP" "gpsp"
+    ./build_use_make.sh "gpSP" "gpsp"
 }
 
 build_gw() {
-    no_clean=$no_clean no_ccache=$no_ccache ./build_use_make.sh "GW" "gw"
+    ./build_use_make.sh "GW" "gw"
 }
 
 build_hbmame() {
@@ -294,31 +294,31 @@ build_hbmame() {
     make_params+=" NO_USE_MIDI=0 NO_USE_PORTAUDIO=0" 
     make_params+=" USE_SYSTEM_LIB_EXPAT=1 USE_SYSTEM_LIB_ZLIB=1 USE_SYSTEM_LIB_JPEG=1 USE_SYSTEM_LIB_FLAC=1 USE_SYSTEM_LIB_SQLITE3=1 USE_SYSTEM_LIB_PORTMIDI=1 USE_SYSTEM_LIB_PORTAUDIO=1 USE_SYSTEM_LIB_UTF8PROC=1 USE_SYSTEM_LIB_GLM=1 USE_SYSTEM_LIB_RAPIDJSON=1 USE_SYSTEM_LIB_PUGIXML=1"
     make_params+=" USE_BUNDLED_LIB_SDL2=0"
-    no_clean=$no_clean no_ccache=$no_ccache make_params=$make_params ./build_use_make.sh "HBMAME" "hbmame"
+    make_params=$make_params ./build_use_make.sh "HBMAME" "hbmame"
 }
 
 build_mednafen_gba() {
-    no_clean=$no_clean no_ccache=$no_ccache ./build_use_make.sh "Beetle GBA" "mednafen_gba"
+    ./build_use_make.sh "Beetle GBA" "mednafen_gba"
 }
 
 build_mednafen_pcfx() {
-    no_clean=$no_clean no_ccache=$no_ccache ./build_use_make.sh "Beetle PC-FX" "mednafen_pcfx"
+    ./build_use_make.sh "Beetle PC-FX" "mednafen_pcfx"
 }
 
 build_mednafen_supergrafx() {
-    no_clean=$no_clean no_ccache=$no_ccache ./build_use_make.sh "Beetle SuperGrafx" "mednafen_supergrafx"
+    ./build_use_make.sh "Beetle SuperGrafx" "mednafen_supergrafx"
 }
 
 build_mednafen_vb() {
-    .no_clean=$no_clean no_ccache=$no_ccache /build_use_make.sh "Beetle VB" "mednafen_vb"
+    ./build_use_make.sh "Beetle VB" "mednafen_vb"
 }
 
 build_mednafen_wswan() {
-    no_clean=$no_clean no_ccache=$no_ccache ./build_use_make.sh "Beetle Cygne" "mednafen_wswan"
+    ./build_use_make.sh "Beetle Cygne" "mednafen_wswan"
 }
 
 build_meteor() {
-    no_clean=$no_clean no_ccache=$no_ccache ./build_use_make.sh "Meteor" "meteor" "libretro"
+    ./build_use_make.sh "Meteor" "meteor" "libretro"
 }
 
 build_np2kai() {
@@ -327,27 +327,27 @@ build_np2kai() {
     else
         local MY_CFLAGS=$CFLAGS + " -Wno-incompatible-pointer-types"
     fi
-    no_clean=$no_clean no_ccache=$no_ccache CFLAGS=$MY_CFLAGS ./build_use_make.sh "Neko Project II Kai" "np2kai" "sdl"
+    CFLAGS=$MY_CFLAGS ./build_use_make.sh "Neko Project II Kai" "np2kai" "sdl"
 }
 
 build_numero() {
-    no_clean=$no_clean no_ccache=$no_ccache ./build_use_make.sh "Numero" "numero"
+    ./build_use_make.sh "Numero" "numero"
 }
 
 build_o2em() {
-    no_clean=$no_clean no_ccache=$no_ccache ./build_use_make.sh "O2EM" "o2em"
+    ./build_use_make.sh "O2EM" "o2em"
 }
 
 build_oberon() {
-    no_clean=$no_clean no_ccache=$no_ccache ./build_use_make.sh "Oberon" "oberon"
+    ./build_use_make.sh "Oberon" "oberon"
 }
 
 build_pokemini() {
-    no_clean=$no_clean no_ccache=$no_ccache ./build_use_make.sh "PokeMini" "pokemini"
+    ./build_use_make.sh "PokeMini" "pokemini"
 }
 
 build_potator() {
-    no_clean=$no_clean no_ccache=$no_ccache ./build_use_make.sh "Potator" "potator" "platform/libretro"
+    ./build_use_make.sh "Potator" "potator" "platform/libretro"
 }
 
 build_vice() {
@@ -355,69 +355,69 @@ build_vice() {
     local emutype_list=( $(ls Makefile.* | cut -d"." -f2 | grep -v -i "common") )
     popd
     for t in "${emutype_list[@]}"; do
-         no_clean=$no_clean no_ccache=$no_ccache make_params="EMUTYPE=$t" ./build_use_make.sh "VICE $t" "vice" "." "." "vice_"$t"_libretro.dll" || return 1
+         make_params="EMUTYPE=$t" ./build_use_make.sh "VICE $t" "vice" "." "." "vice_"$t"_libretro.dll" || return 1
     done
 }
 
 build_puae() {
-    no_clean=$no_clean no_ccache=$no_ccache ./build_use_make.sh "PUAE" "puae"
+    ./build_use_make.sh "PUAE" "puae"
 }
 
 build_quasi88() {
-    no_clean=$no_clean no_ccache=$no_ccache ./build_use_make.sh "QUASI88" "quasi88"
+    ./build_use_make.sh "QUASI88" "quasi88"
 }
 
 build_quicknes() {
-    no_clean=$no_clean no_ccache=$no_ccache ./build_use_make.sh "QuickNES" "quicknes"
+    ./build_use_make.sh "QuickNES" "quicknes"
 }
 
 build_race() {
-    no_clean=$no_clean no_ccache=$no_ccache ./build_use_make.sh "RACE" "race"
+    ./build_use_make.sh "RACE" "race"
 }
 
 build_same_cdi() {
-    no_clean=$no_clean no_ccache=$no_ccache ./build_use_make.sh "SAME_CDI" "same_cdi"
+    ./build_use_make.sh "SAME_CDI" "same_cdi"
 }
 
 build_sameduck() {
-    no_clean=$no_clean no_ccache=$no_ccache ./build_use_make.sh "SameDuck" "sameduck" "libretro"
+    ./build_use_make.sh "SameDuck" "sameduck" "libretro"
 }
 
 build_scummvm() {
     local make_params="USE_SYSTEM_fluidsynth=1 USE_SYSTEM_FLAC=1 USE_SYSTEM_vorbis=1 USE_SYSTEM_z=1 USE_SYSTEM_mad=1 USE_SYSTEM_faad=1 USE_SYSTEM_png=1 USE_SYSTEM_jpeg=1 USE_SYSTEM_theora=1 USE_SYSTEM_freetype=1 USE_SYSTEM_fribidi=1"
-    no_clean=$no_clean no_ccache=$no_ccache make_params=$make_params ./build_use_make.sh "ScummVM" "scummvm" "backends\platform\libretro"
+    make_params=$make_params ./build_use_make.sh "ScummVM" "scummvm" "backends\platform\libretro"
 }
 
 build_smsplus() {
-    no_clean=$no_clean no_ccache=$no_ccache ./build_use_make.sh "SMS Plus GX" "smsplus"
+    ./build_use_make.sh "SMS Plus GX" "smsplus"
 }
 
 build_theodore() {
-    no_clean=$no_clean no_ccache=$no_ccache ./build_use_make.sh "Theodore" "theodore"
+    ./build_use_make.sh "Theodore" "theodore"
 }
 
 build_uw8() {
-    no_clean=$no_clean no_ccache=$no_ccache ./build_use_make.sh "MicroW8" "uw8"
+    ./build_use_make.sh "MicroW8" "uw8"
 }
 
 build_uzem() {
-    no_clean=$no_clean no_ccache=$no_ccache ./build_use_make.sh "Uzem" "uzem"
+    ./build_use_make.sh "Uzem" "uzem"
 }
 
 build_vbam() {
-    no_clean=$no_clean no_ccache=$no_ccache ./build_use_make.sh "VBA-M" "vbam" "src/libretro"
+    ./build_use_make.sh "VBA-M" "vbam" "src/libretro"
 }
 
 build_vba_next() {
-    no_clean=$no_clean no_ccache=$no_ccache ./build_use_make.sh "VBA Next" "vba_next"
+    ./build_use_make.sh "VBA Next" "vba_next"
 }
 
 build_vecx() {
-    no_clean=$no_clean no_ccache=$no_ccache ./build_use_make.sh "vecx" "vecx"
+    ./build_use_make.sh "vecx" "vecx"
 }
 
 build_x1() {
-    no_clean=$no_clean no_ccache=$no_ccache ./build_use_make.sh "Sharp X1" "x1" "libretro"
+    ./build_use_make.sh "Sharp X1" "x1" "libretro"
 }
 
 build_dosbox_core() {
@@ -441,7 +441,7 @@ build_dosbox_core() {
 
 build_dosbox_pure() {
     local make_params="platform=windows"
-    no_clean=$no_clean no_ccache=$no_ccache make_params=$make_params ./build_use_make.sh "DOSBox Pure" "dosbox_pure"
+    make_params=$make_params ./build_use_make.sh "DOSBox Pure" "dosbox_pure"
 }
 
 # Cores built using cmake
@@ -462,21 +462,21 @@ build_dolphin() {
 #    if [[ $? -ne 0 ]]; then error_message "编译 \"dxsdk\" 出错！"; return 1; fi
     
     local cmake_params="-DLIBRETRO=ON"
-    no_clean=$no_clean no_regen=$no_regen cmake_params=$cmake_params ./build_use_cmake.sh "Dolphin" "dolphin" "." "Binary"
+    cmake_params=$cmake_params ./build_use_cmake.sh "Dolphin" "dolphin" "." "Binary"
 }
 
 build_melondsds() {
-    no_clean=$no_clean no_regen=$no_regen  cmake_params=-DENABLE_LTO_RELEASE=OFF ./build_use_cmake.sh "melonDS DS" "melondsds" "." "${MSYSTEM,,}_build/src/libretro"
+     cmake_params=-DENABLE_LTO_RELEASE=OFF ./build_use_cmake.sh "melonDS DS" "melondsds" "." "${MSYSTEM,,}_build/src/libretro"
 }
 
 build_citra() {
     local cmake_params="-DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DENABLE_LIBRETRO=ON -DENABLE_SDL2=OFF -DENABLE_QT=OFF -DENABLE_WEB_SERVICE=OFF -DCITRA_WARNINGS_AS_ERRORS=OFF -DDISABLE_CLANG_TARGET=ON -DENABLE_LTO=OFF -DENABLE_TESTS=OFF -DENABLE_DEDICATED_ROOM=OFF -DENABLE_SCRIPTING=OFF -DENABLE_OPENAL=OFF -DENABLE_LIBUSB=OFF -DCITRA_ENABLE_BUNDLE_TARGET=OFF -DENABLE_CUBEB=OFF -DUSE_SYSTEM_GLSLANG=ON"
-    no_clean=$no_clean no_regen=$no_regen cmake_params=$cmake_params ./build_use_cmake.sh "Citra" "citra" "." "${MSYSTEM,,}_build/bin/Release"
+    cmake_params=$cmake_params ./build_use_cmake.sh "Citra" "citra" "." "${MSYSTEM,,}_build/bin/Release"
 }
 
 build_flycast() {
     local cmake_params="-DLIBRETRO=ON"
-    no_clean=$no_clean no_regen=$no_regen cmake_params=$cmake_params ./build_use_cmake.sh "Flycast" "flycast" "." "${MSYSTEM,,}_build"
+    cmake_params=$cmake_params ./build_use_cmake.sh "Flycast" "flycast" "." "${MSYSTEM,,}_build"
 }
 
 build_ppsspp() {
@@ -499,17 +499,17 @@ build_ppsspp() {
     
     # local cmake_params="-DLIBRETRO=ON -DUSE_SYSTEM_SNAPPY=ON -DUSE_SYSTEM_FFMPEG=ON -DUSE_SYSTEM_LIBZIP=ON -DUSE_SYSTEM_LIBSDL2=ON -DUSE_SYSTEM_LIBPNG=ON -DUSE_SYSTEM_ZSTD=ON -DUSE_SYSTEM_MINIUPNPC=ON"
     local cmake_params="-DLIBRETRO=ON"
-    no_clean=$no_clean no_regen=$no_regen cmake_params=$cmake_params ./build_use_cmake.sh "PPSSPP" "ppsspp" "." "${MSYSTEM,,}_build"
+    cmake_params=$cmake_params ./build_use_cmake.sh "PPSSPP" "ppsspp" "." "${MSYSTEM,,}_build"
 }
 
 build_squirreljme() {
     local cmake_params="-DRETROARCH=ON -DSQUIRRELJME_ENABLE_TESTING=OFF"
-    no_clean=$no_clean no_regen=$no_regen cmake_params=$cmake_params ./build_use_cmake.sh "SquirrelJME" "squirreljme" "nanocoat" "${MSYSTEM,,}_build"
+    cmake_params=$cmake_params ./build_use_cmake.sh "SquirrelJME" "squirreljme" "nanocoat" "${MSYSTEM,,}_build"
 }
 
 build_tic80() {
     local cmake_params="-DBUILD_SDLGPU=ON -DBUILD_WITH_ALL=ON -DBUILD_LIBRETRO=ON -DPREFER_SYSTEM_LIBRARIES=ON"
-    no_clean=$no_clean no_regen=$no_regen cmake_params=$cmake_params ./build_use_cmake.sh "TIC-80" "tic80" "." "${MSYSTEM,,}_build/lib"
+    cmake_params=$cmake_params ./build_use_cmake.sh "TIC-80" "tic80" "." "${MSYSTEM,,}_build/lib"
 }
 
 # Cores built using other tools
@@ -544,11 +544,16 @@ unset no_clean
 unset no_ccache
 unset no_regen
 unset build_all
+unset build_mt=0
 build_cores_list=()
 while [[ $# -gt 0 ]]; do
     if [[ ${1,,} = "-noclean" || ${1,,} = "/noclean" ]]; then no_clean=1;
     elif [[ ${1,,} = "-noccache" || ${1,,} = "/noccache" ]]; then no_ccache=1;
     elif [[ ${1,,} = "-noregen" || ${1,,} = "/noregen" ]]; then no_regen=1;
+    elif [[ ${1,,} = "-j" || ${1,,} = "/j" ]]; then
+        shift; build_mt=$1
+        if [[ ! $build_mt =~ ^[0-9]+$ ]]; then die "无效的 -j 参数：\"$build_mt\"！"; fi
+        if [[ $build_mt -lt 1 ]]; then die "无效的 -j 参数：\"$build_mt\"！"; fi
     elif [[ ${1,,} = "all" ]]; then build_all=1;
     else
         if ! function_exist "build_${1,,}"; then die "参数错误，内核 \"${1,,}\" 不存在！"; fi
@@ -557,6 +562,7 @@ while [[ $# -gt 0 ]]; do
     fi
     shift
 done
+export no_clean no_ccache no_regen build_mt
 if [[ -v build_all ]]; then
     build_cores_list=()
     for core in $(declare -F | grep -i "\-f build_" | cut -d" " -f3 | cut -d"_" -f2-); do

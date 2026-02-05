@@ -47,8 +47,9 @@ export CFLAGS
 export CXXFLAGS
 export CPPFLAGS
 
-make_clean="make -f $make_file -j $make_params clean"
-make_build="make -f $make_file -j $make_params"
+make_clean="make -f $make_file $make_params clean -j"
+make_build="make -f $make_file $make_params -j"
+if [[ $build_mt -gt 0 ]]; then make_build+="$build_mt"; fi
 
 if [[ -z $no_clean ]]; then
     message "清理内核 \"$core_name\" ($make_clean)..."

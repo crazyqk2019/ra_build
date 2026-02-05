@@ -461,7 +461,7 @@ build_dolphin() {
 #    if [[ $? -ne 0 ]]; then error_message "编译 \"dxsdk\" 出错！"; return 1; fi
     
     local cmake_params="-DLIBRETRO=ON"
-    cmake_params=$cmake_params ./build_use_cmake.sh "Dolphin" "dolphin" "." "Binary"
+    cmake_params=$cmake_params ./build_use_cmake.sh "Dolphin" "dolphin" "." "Binary/x64"
 }
 
 build_citra() {

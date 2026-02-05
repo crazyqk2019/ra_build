@@ -598,32 +598,34 @@ done
   同时支持使用MSys/MinGW和Visual C++编译。
   
   + <span id="dolphin_msys2_cmake"> </span>MSys2/MinGW环境使下使用CMake编译
-    
+  
+    目前官方库已修复以下编译问题，无需再修正，只需添加参数`-DLIBRETRO=ON`即可。
+  
     - ~~至当前（20250313）为止，MinGW自带的DirectX 11的头文件版本较老，缺少某些辅助结构的定义。要使用从[dxsdk](https://github.com/apitrace/dxsdk)获得的DirectX 11头文件进行编译。此处的头文件包中还包含DirectX 12的头文件，但是和当前MinGW不兼容，因此要删除其中DirectX 12的头文件。DirectX 11的头文件也需要一些修改，增加部分UUID的声明，否则链接时会出现错误：~~
-    
+  
       ```bash
       undefined reference to `_GUID const& __mingw_uuidof()
       ```
       
       ~~该头文件包已添加至Dolphin源代码Externals/dxsdk下，并做好了需要的修改：删除其中DX12头文件，添加了需要的UUID声明。~~
-    
+  
       ~~通过修改Dolphin的CMakeLists.txt文件，添加dxsdk的包含路径和库路径。~~
-    
+  
       ~~编译Dolphin前，需要先编译dxsdk，生成MinGW可用的lib文件：~~
-    
+  
       ```bash
       cd Externals/dxsdk/Lib
       make DLLTOOL=dlltool
       ```
       
     - ~~MinGW的fmt库太新，编译无法通过。通过修改Dolphin的CMakeLists.txt文件，使用Dolphin自带的fmt库。~~
-    
+  
     - ~~Dolphin自带的curl库和MinGW不兼容，编译无法通过。通过修改Dolphin的CMakeLists.txt文件，使用MinGW的curl库。~~
-    
+  
     - ~~Dolphin其他部分头文件、源文件和CMakeLists.txt要做适当修改才能在MinGW编译通过。~~
-    
+  
     ~~完整编译命令：~~
-    
+  
     ```bash
     # 编译dxsdk
     make -C Externals/dxsdk/lib DLLTOOL=dlltool
@@ -632,10 +634,7 @@ done
     # 编译
     cmake --build Build --config Release --target dolphin_libretro
     ```
-    
-    > [!NOTE]
-    >
-    > 目前官方库已修复编译问题，无需再执行以上操作。
+  
    + <span id="dolphin_vc_cmake"> </span>Visual C++环境使下使用CMake编译
   
      使用通用CMake编译命令进行编译。

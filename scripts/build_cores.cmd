@@ -63,7 +63,7 @@ GOTO :end
 :build_dolphin
 SETLOCAL
 SET "cmake_params=-DLIBRETRO=ON"
-CALL build_use_cmake.cmd "Dolphin" "dolphin" "." "Binary"
+CALL build_use_cmake.cmd "Dolphin" "dolphin" "." "Binary/x64"
 ENDLOCAL
 EXIT /B %ERRORLEVEL%
 

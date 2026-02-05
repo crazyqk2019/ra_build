@@ -457,13 +457,23 @@ done
 
   MSys2/MinGW环境使下使用make编译。
 
-  - 修正第三方库sol2在高版本gcc下的编译错误。参考来源：[Fix SOL2 build on GCC 10.2 by working around overload resolution problem](https://github.com/ajrhacker/mame/commit/dcbee7cda6faea688605ed24c2548187cb55f60a)
+  目前仅需要修改`Makefile.libretro`，增加对ucrt64编译器的识别。
 
-  - 修正部分头文件高版本gcc下的编译错误。
+  > [!WARNING]
+  >
+  > MAME编译非常消耗内存，内存不够很容造成编译出错。
+  >
+  > 实测32GB内存机器，8线程CPU，默认8线程编译会内存耗尽而出错。
+  >
+  > 如果机器内存小于64GB，建议添加参数-j ，限制并行编译线程数。
 
-  - 修正genie生成MinGW下的链接命令的错误，不适用static链接。
+  - ~~修正第三方库sol2在高版本gcc下的编译错误。参考来源：[Fix SOL2 build on GCC 10.2 by working around overload resolution problem](https://github.com/ajrhacker/mame/commit/dcbee7cda6faea688605ed24c2548187cb55f60a)~~
 
-  - 需要在make命令行指定使用python3。
+  - ~~修正部分头文件高版本gcc下的编译错误。~~
+
+  - ~~修正genie生成MinGW下的链接命令的错误，不适用static链接。~~
+
+  - ~~需要在make命令行指定使用python3。~~
 
     ```bash
     make PYTHON_EXECUTABLE=python3

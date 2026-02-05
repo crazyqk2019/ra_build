@@ -6,6 +6,10 @@ error_message() { $SETCOLOR_RED; echo "$@"; $SETCOLOR_NORMAL; }
 die() { if [ $# -gt 0 ]; then error_message "$@"; fi; exit 1; }
 
 # Cores built using make
+build_mame() {
+    ./build_use_make.sh "MAME" "mame"
+}
+
 build_mame2000() {
     ./build_use_make.sh "MAME 2000" "mame2000"
 }
@@ -26,11 +30,6 @@ build_mame2015() {
 build_mame2016() {
     local make_params="PYTHON_EXECUTABLE=python3"
     make_params=$make_params ./build_use_make.sh "MAME 2016" "mame2016"
-}
-
-build_mame() {
-    local make_params="PYTHON_EXECUTABLE=python3"
-    make_params=$make_params ./build_use_make.sh "MAME" "mame"
 }
 
 build_fbalpha2012() {

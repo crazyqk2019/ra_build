@@ -493,7 +493,7 @@ build_ppsspp() {
 }
 
 build_tic80() {
-    local cmake_params="-DBUILD_SDLGPU=ON -DBUILD_WITH_ALL=ON -DBUILD_LIBRETRO=ON -DPREFER_SYSTEM_LIBRARIES=ON"
+    local cmake_params="-DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DBUILD_LIBRETRO=ON -DBUILD_PRO=ON -DBUILD_EDITORS=OFF -DBUILD_PLAYER=OFF -DBUILD_TOUCH_INPUT=ON -DBUILD_SDLGPU=ON -DBUILD_WITH_ALL=ON"
     cmake_params=$cmake_params ./build_use_cmake.sh "TIC-80" "tic80" "." "${MSYSTEM,,}_build/lib"
 }
 

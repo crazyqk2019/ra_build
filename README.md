@@ -1142,6 +1142,10 @@ SSL certificate problem: unable to get local issuer certificate
 git config --system http.sslBackend schannel
 ```
 
+### 子模块仓库地址变更问题
+
+和上游仓库合并时子模块地址发生变更，需要执行`git submodule sync --recursive`命令来同步变更本地仓库配置。
+
 
 
 ---

@@ -76,15 +76,16 @@ EXIT /B %ERRORLEVEL%
 
 :build_ppsspp
 SETLOCAL
-ECHO "更新 glslang 外部源代码……"
-PUSHD "%CORES_DIR%\libretro-ppsspp\ext\glslang"
-python update_glslang_sources.py
-POPD
-IF NOT %ERRORLEVEL% == 0 (ENDLOCAL & ECHO 更新 glslang 外部源代码出错！& EXIT /B %ERRORLEVEL%)
+REM ECHO "更新 glslang 外部源代码……"
+REM PUSHD "%CORES_DIR%\libretro-ppsspp\ext\glslang"
+REM python update_glslang_sources.py
+REM POPD
+REM IF NOT %ERRORLEVEL% == 0 (ENDLOCAL & ECHO 更新 glslang 外部源代码出错！& EXIT /B %ERRORLEVEL%)
 REM SET "cmake_vcpkg_params=-DVCPKG_TARGET_TRIPLET=x64-windows-release"
 REM SET "cmake_params=-DLIBRETRO=ON -DUSE_SYSTEM_SNAPPY=ON -DUSE_SYSTEM_FFMPEG=ON -DUSE_SYSTEM_LIBZIP=ON -DUSE_SYSTEM_LIBSDL2=ON -DUSE_SYSTEM_LIBPNG=ON -DUSE_SYSTEM_ZSTD=ON -DUSE_SYSTEM_MINIUPNPC=ON -DCMAKE_C_FLAGS_RELEASE="/MD /utf-8" -DCMAKE_CXX_FLAGS_RELEASE="/MD /utf-8""
-SET "cmake_params=-DLIBRETRO=ON -DCMAKE_C_FLAGS_RELEASE="/MD /utf-8" -DCMAKE_CXX_FLAGS_RELEASE="/MD /utf-8""
-CALL build_use_cmake.cmd "PPSSPP" "ppsspp" "." "vc_build\Release"
+REM -DCMAKE_C_FLAGS_RELEASE="/MD /utf-8" -DCMAKE_CXX_FLAGS_RELEASE="/MD /utf-8""
+SET "cmake_params=-DLIBRETRO=ON -DCMAKE_C_FLAGS_RELEASE="/DNOMINMAX" -DCMAKE_CXX_FLAGS_RELEASE="/DNOMINMAX""
+CALL build_use_cmake.cmd "PPSSPP" "ppsspp" "." "vc_build"
 ENDLOCAL
 EXIT /B %ERRORLEVEL%
 

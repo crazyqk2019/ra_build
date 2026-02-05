@@ -694,19 +694,22 @@ done
 
   同时支持使用MSys/MinGW和Visual C++编译。
 
-  + <span id="ppsspp_msys2_cmake"> </span>MSys2/MinGW环境使下使用CMake编译
+  + <span id="ppsspp_msys2_cmake"> </span>MSys2/MinGW环境使下使用CMake编译，生成Ninja编译文件须添加额外参数：
 
-    第三方库子模块`ext/glslang`下的一个头文件`SymbolTable.h`需要修改，添加`#inlcude <cstdint>`：
+    `-DLIBRETRO=ON -DCMAKE_C_FLAGS=-Wno-incompatible-pointer-types`
+
+    `Core\System.cpp`文件须修改，添加`#include <cstdint>`
+
+    ~~第三方库子模块`ext/glslang`下的一个头文件`SymbolTable.h`需要修改，添加`#inlcude <cstdint>`：~~
 
     ```bash
     # ext/glslang/glslang/MachineIndependent/SymbolTable.h 文件添加 #inlcude <cstdint>
     sed -i '0,/#include/{s/#include/#include <cstdint>\n#include/}' ext/glslang/glslang/MachineIndependent/SymbolTable.h
     ```
-    生成Ninja编译文件须添加额外参数`-DLIBRETRO=ON`
 
   + <span id="ppsspp_vc_cmake"> </span>Visual C++环境下使用CMake编译，生成Ninja编译文件须添加额外参数：
-  
-    `-DLIBRETRO=ON -DCMAKE_C_FLAGS_RELEASE="/MD /utf-8" -DCMAKE_CXX_FLAGS_RELEASE="/MD /utf-8"`
+
+    `-DLIBRETRO=ON -DCMAKE_C_FLAGS_RELEASE="/DNOMINMAX" -DCMAKE_CXX_FLAGS_RELEASE="/DNOMINMAX"`
 
 * <span id="play_vc_cmake"> </span>**Play!**
 

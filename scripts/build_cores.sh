@@ -470,25 +470,25 @@ build_citra() {
 }
 
 build_ppsspp() {
-    (
-        cd "$cores_dir/libretro-ppsspp"
-        message "Patching \"ext/glslang/glslang/MachineIndependent/SymbolTable.h\""...
-        grep -i "cstdint" ext/glslang/glslang/MachineIndependent/SymbolTable.h
-        if [ $? -ne 0 ]; then
-            sed -i '0,/#include/{s/#include/#include <cstdint>\n#include/}' ext/glslang/glslang/MachineIndependent/SymbolTable.h || return $?
-        fi
-        echo
-        message "Update glslang external sources..."
-        cd ext/glslang
-        ./update_glslang_sources.py || return $?
-        echo
-        return 0
-    )
-    if [ $? -ne 0 ]; then error_message "Patching file failed!"; return 1; fi
-    echo
+#    (
+#        cd "$cores_dir/libretro-ppsspp"
+#        message "Patching \"ext/glslang/glslang/MachineIndependent/SymbolTable.h\""...
+#        grep -i "cstdint" ext/glslang/glslang/MachineIndependent/SymbolTable.h
+#        if [ $? -ne 0 ]; then
+#            sed -i '0,/#include/{s/#include/#include <cstdint>\n#include/}' ext/glslang/glslang/MachineIndependent/SymbolTable.h || return $?
+#        fi
+#        echo
+#        message "Update glslang external sources..."
+#        cd ext/glslang
+#        ./update_glslang_sources.py || return $?
+#        echo
+#        return 0
+#    )
+#    if [ $? -ne 0 ]; then error_message "Patching file failed!"; return 1; fi
+#    echo
     
     # local cmake_params="-DLIBRETRO=ON -DUSE_SYSTEM_SNAPPY=ON -DUSE_SYSTEM_FFMPEG=ON -DUSE_SYSTEM_LIBZIP=ON -DUSE_SYSTEM_LIBSDL2=ON -DUSE_SYSTEM_LIBPNG=ON -DUSE_SYSTEM_ZSTD=ON -DUSE_SYSTEM_MINIUPNPC=ON"
-    local cmake_params="-DLIBRETRO=ON"
+    local cmake_params="-DLIBRETRO=ON -DCMAKE_C_FLAGS=-Wno-incompatible-pointer-types"
     cmake_params=$cmake_params ./build_use_cmake.sh "PPSSPP" "ppsspp" "." "${MSYSTEM,,}_build"
 }
 

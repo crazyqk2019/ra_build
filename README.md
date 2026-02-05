@@ -669,9 +669,9 @@ done
 
   
 
-   > [!NOTE]
+   > [!Caution]
    >
-   > 2026/02/03 修正了一个编译错误 ，修改文件`src\common\file_util.cpp`，该错误可能是由于新版gcc自身的bug导致，后续升级gcc时可尝试还原此更改。
+   > 2026/02/03 修正了一个编译错误 ，修改文件为`src\common\file_util.cpp`，该错误可能是由于新版gcc自身的bug导致，后续升级gcc时可尝试还原此更改。
 
   + <span id="citra_vc_cmake"> </span>Visual C++环境下使用CMake编译，生成Ninja编译文件须添加额外参数：
 

@@ -8,7 +8,7 @@ SET "CORES_DIR=%CD%\cores"
 SET "DISTS_DIR=%CD%\cores\dists"
 POPD
 
-SET "CORES_LIST=dolphin citra ppsspp play pcsx2 swanstation tic80"
+SET "CORES_LIST=dolphin citra ppsspp tic80 play pcsx2 swanstation"
 
 SET "NO_CLEAN="
 SET "NO_REGEN="
@@ -88,6 +88,13 @@ CALL build_use_cmake.cmd "PPSSPP" "ppsspp" "." "vc_build\Release"
 ENDLOCAL
 EXIT /B %ERRORLEVEL%
 
+:build_tic80
+SETLOCAL
+SET "cmake_params=-DBUILD_SDLGPU=ON -DBUILD_WITH_ALL=ON -DBUILD_LIBRETRO=ON -DPREFER_SYSTEM_LIBRARIES=ON"
+CALL build_use_cmake.cmd "TIC-80" "tic80" "." "vc_build\bin"
+ENDLOCAL
+EXIT /B %ERRORLEVEL%
+
 :build_play
 SETLOCAL
 SET "cmake_params=-DBUILD_PLAY=OFF -DBUILD_LIBRETRO_CORE=ON -DBUILD_TESTS=OFF"
@@ -105,13 +112,6 @@ EXIT /B %ERRORLEVEL%
 :build_swanstation
 SETLOCAL
 CALL build_use_cmake.cmd "SwanStation" "swanstation" "." "vc_build"
-ENDLOCAL
-EXIT /B %ERRORLEVEL%
-
-:build_tic80
-SETLOCAL
-SET "cmake_params=-DBUILD_SDLGPU=ON -DBUILD_WITH_ALL=ON -DBUILD_LIBRETRO=ON -DPREFER_SYSTEM_LIBRARIES=ON"
-CALL build_use_cmake.cmd "TIC-80" "tic80" "." "vc_build\bin"
 ENDLOCAL
 EXIT /B %ERRORLEVEL%
 

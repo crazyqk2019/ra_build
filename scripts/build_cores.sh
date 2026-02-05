@@ -464,18 +464,9 @@ build_dolphin() {
     cmake_params=$cmake_params ./build_use_cmake.sh "Dolphin" "dolphin" "." "Binary"
 }
 
-build_melondsds() {
-     cmake_params=-DENABLE_LTO_RELEASE=OFF ./build_use_cmake.sh "melonDS DS" "melondsds" "." "${MSYSTEM,,}_build/src/libretro"
-}
-
 build_citra() {
     local cmake_params="-DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DENABLE_LIBRETRO=ON -DENABLE_SDL2=OFF -DENABLE_QT=OFF -DENABLE_WEB_SERVICE=OFF -DCITRA_WARNINGS_AS_ERRORS=OFF -DDISABLE_CLANG_TARGET=ON -DENABLE_LTO=OFF -DENABLE_TESTS=OFF -DENABLE_DEDICATED_ROOM=OFF -DENABLE_SCRIPTING=OFF -DENABLE_OPENAL=OFF -DENABLE_LIBUSB=OFF -DCITRA_ENABLE_BUNDLE_TARGET=OFF -DENABLE_CUBEB=OFF -DUSE_SYSTEM_GLSLANG=ON"
     cmake_params=$cmake_params ./build_use_cmake.sh "Citra" "citra" "." "${MSYSTEM,,}_build/bin/Release"
-}
-
-build_flycast() {
-    local cmake_params="-DLIBRETRO=ON"
-    cmake_params=$cmake_params ./build_use_cmake.sh "Flycast" "flycast" "." "${MSYSTEM,,}_build"
 }
 
 build_ppsspp() {
@@ -501,14 +492,23 @@ build_ppsspp() {
     cmake_params=$cmake_params ./build_use_cmake.sh "PPSSPP" "ppsspp" "." "${MSYSTEM,,}_build"
 }
 
-build_squirreljme() {
-    local cmake_params="-DRETROARCH=ON -DSQUIRRELJME_ENABLE_TESTING=OFF"
-    cmake_params=$cmake_params ./build_use_cmake.sh "SquirrelJME" "squirreljme" "nanocoat" "${MSYSTEM,,}_build"
-}
-
 build_tic80() {
     local cmake_params="-DBUILD_SDLGPU=ON -DBUILD_WITH_ALL=ON -DBUILD_LIBRETRO=ON -DPREFER_SYSTEM_LIBRARIES=ON"
     cmake_params=$cmake_params ./build_use_cmake.sh "TIC-80" "tic80" "." "${MSYSTEM,,}_build/lib"
+}
+
+build_melondsds() {
+     cmake_params=-DENABLE_LTO_RELEASE=OFF ./build_use_cmake.sh "melonDS DS" "melondsds" "." "${MSYSTEM,,}_build/src/libretro"
+}
+
+build_flycast() {
+    local cmake_params="-DLIBRETRO=ON"
+    cmake_params=$cmake_params ./build_use_cmake.sh "Flycast" "flycast" "." "${MSYSTEM,,}_build"
+}
+
+build_squirreljme() {
+    local cmake_params="-DRETROARCH=ON -DSQUIRRELJME_ENABLE_TESTING=OFF"
+    cmake_params=$cmake_params ./build_use_cmake.sh "SquirrelJME" "squirreljme" "nanocoat" "${MSYSTEM,,}_build"
 }
 
 # Cores built using other tools

@@ -99,7 +99,7 @@ EXIT /B %ERRORLEVEL%
 :build_play
 SETLOCAL
 SET "cmake_params=-DBUILD_PLAY=OFF -DBUILD_LIBRETRO_CORE=ON -DBUILD_TESTS=OFF"
-CALL build_use_cmake.cmd "Play!" "play" "." "vc_build\Source\ui_libretro\Release"
+CALL build_use_cmake.cmd "Play!" "play" "." "vc_build\Source\ui_libretro"
 ENDLOCAL
 EXIT /B %ERRORLEVEL%
 

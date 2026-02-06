@@ -8,7 +8,7 @@ SET "CORES_DIR=%CD%\cores"
 SET "DISTS_DIR=%CD%\cores\dists"
 POPD
 
-SET "CORES_LIST=dolphin citra ppsspp tic80 play pcsx2 swanstation"
+SET "CORES_LIST=dolphin citra ppsspp tic80 play lrps2 swanstation"
 
 SET "NO_CLEAN="
 SET "NO_REGEN="
@@ -103,10 +103,11 @@ CALL build_use_cmake.cmd "Play!" "play" "." "vc_build\Source\ui_libretro"
 ENDLOCAL
 EXIT /B %ERRORLEVEL%
 
-:build_pcsx2
+:build_lrps2
 SETLOCAL
-SET "cmake_params=-DLIBRETRO=ON -DCMAKE_C_FLAGS_RELEASE="/utf-8" -DCMAKE_CXX_FLAGS_RELEASE="/utf-8""
-CALL build_use_cmake.cmd "PCSX2" "pcsx2" "." "vc_build\pcsx2\Release"
+SET "cmake_params=-DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DLIBRETRO=ON"
+REM -DLIBRETRO=ON -DCMAKE_C_FLAGS_RELEASE="/utf-8" -DCMAKE_CXX_FLAGS_RELEASE="/utf-8""
+CALL build_use_cmake.cmd "LRPS2" "lrps2" "." "vc_build\pcsx2"
 ENDLOCAL
 EXIT /B %ERRORLEVEL%
 

@@ -394,6 +394,14 @@ done
    strip -s ${core}_libretro.dll # 裁剪，去除调试符号信息，msys2 环境编译执行此步骤
    ```
 
+   > [!NOTE]
+   >
+   > msys2环境下也可以生成msys makefiles或者mingw makefiles进行编译；
+   >
+   > VC环境下也可以生成NMake makefiles调用nmake进行编译，或者生成Visual Studio 项目文件调用msbuild进行编译（需要安装Visual Studio）。
+   >
+   > 为方便起见，统一都生成ninja文件进行编译。
+
    使用CMake编译的内核列表：
 
    | 内核名称                                         | MSys2/MinGW CMake编译             | Visual C++ CMake编译           | 个人推荐的编译器 |
@@ -934,7 +942,8 @@ done
 | [Beetle PSX](https://docs.libretro.com/library/beetle_psx/)<br />[Beetle PSX HW](https://docs.libretro.com/library/beetle_psx_hw/) | [libretro-mednafen_psx](https://github.com/crazyqk2019/libretro-mednafen_psx) | PS1模拟器。<br />Mednafen多机种模拟器的单独PS1内核。         |                |
 | [PCSX ReARMed](https://docs.libretro.com/library/pcsx_rearmed/) | [libretro-pcsx_rearmed](https://github.com/crazyqk2019/libretro-pcsx_rearmed) | PS1模拟器。<br />PCSX Reloaded的分支版本。<br />专门为ARM处理器优化。 |                |
 | <span id="swanstation"> </span>SwanStation                   | [libretro-swanstation](https://github.com/crazyqk2019/libretro-swanstation) | PS1模拟器。                                                  |                |
-| <span id="pcsx2"> </span>[PCSX2](https://docs.libretro.com/library/pcsx2/) | [libretro-pcsx2](https://github.com/crazyqk2019/libretro-pcsx2) | PS2模拟器。<br />基于PCSX2移植到libretro的版本，<br />很久没有和上游版本同步了。 |                |
+| <span id="pcsx2"> </span>~~[PCSX2](https://docs.libretro.com/library/pcsx2/)~~ | ~~[libretro-pcsx2](https://github.com/crazyqk2019/libretro-pcsx2)~~ | ~~PS2模拟器。<br />基于PCSX2移植到libretro的版本，<br />很久没有和上游版本同步了。~~ |                |
+| [LRPS2](https://docs.libretro.com/library/lrps2/)            | [libretro-lrps2](https://github.com/crazyqk2019/libretro-lrps2)<br />（分支`libretroization`） | PCSX2移植到libretro的重度修改硬分支。                        |                |
 | <span id="play"> </span>[Play!](https://docs.libretro.com/library/play/) | [libretro-play](https://github.com/crazyqk2019/libretro-play) | PS2模拟器。                                                  |                |
 
 | 内核名称（官网说明链接）                                     | 汉化仓库地址                                                 | 简要说明                                                     | 汉化时间和版本 |

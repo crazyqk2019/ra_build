@@ -369,8 +369,12 @@ clone_oberon() {
     common_clone_core "Oberon" "oberon" "oberon-risc-emu"
 }
 
-clone_pcsx2() {
-    common_clone_core "PCSX2" "pcsx2" "LRPS2"
+#clone_pcsx2() {
+#    common_clone_core "PCSX2" "pcsx2" "LRPS2"
+#}
+
+clone_lrps2() {
+    common_clone_core "LRPS2" "lrps2" "ps2" "libretroization"
 }
 
 clone_play() {

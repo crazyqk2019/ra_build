@@ -412,7 +412,7 @@ done
    | [Flycast（DC/Naomi/Atomiswave模拟器）](#flycast) | ✅[支持](#flycast_msys2_cmake)     | ❎不支持                        | MSys2/MinGW      |
    | [PPSSPP（PSP模拟器）](#ppsspp)                   | ✅[支持](#ppsspp_msys2_cmake)      | ✅[支持](#ppsspp_vc_cmake)      | MSys2/MinGW      |
    | [Play!（PS2模拟器）](#play)                      | ❎不支持                           | ✅[支持](#play_vc_cmake)        | Visual C++       |
-   | [PCSX2（PS2模拟器）](#pcsx2)                     | ❎不支持                           | ✅[支持](#pcsx2_vc_cmake)       | Visual C++       |
+   | [PCSX2(LRPS2)（PS2模拟器）](#lrps2)              | ❎不支持                           | ✅[支持](#lrps2_vc_cmake)       | Visual C++       |
    | [SwanStation（PS1模拟器）](#swanstation)         | ❎不支持                           | ✅[支持](#swanstation_vc_cmake) | Visual C++       |
    | [DOSBox Pure（DOS模拟器）](#dosboxpure)          | ❎不支持（使用make编译）           | ✅[支持](#dosboxpure_vc_cmake)  | Visual C++       |
    | [TIC-80（TIC-80模拟器）](#tic80)                 | ✅[支持](#tic80_msys2_cmake)       | ✅[支持](#tic80_vc_cmake)       | MSys2/MinGW      |
@@ -450,7 +450,7 @@ done
 | [Beetle PSX HW（PS1模拟器）](#beetlepsxhw_msys2_make)        | make                | ❎不支持            |
 | [SwanStation（PS1模拟器）](#swanstation_vc_cmake)            | ❎不支持             | CMake              |
 | [Play!（PS2模拟器）](#play_vc_cmake)                         | ❎不支持             | CMake              |
-| [PCSX2（PS2模拟器）](#pcsx2_vc_cmake)                        | ❎不支持             | CMake              |
+| [PCSX2（PS2模拟器）](#lrps2_vc_cmake)                        | ❎不支持             | CMake              |
 | [PPSSPP（PSP模拟器）](#ppsspp_build)                         | CMake               | CMake              |
 | [DOSBox Core（DOS模拟器）](#dosboxcore_msys2_make)           | make                | ❎不支持            |
 | [DOSBox Pure（DOS模拟器）](#dosboxpure_build)                | make                | CMake              |
@@ -725,11 +725,17 @@ done
 
   生成Ninja编译文件须添加额外参数：`-DBUILD_PLAY=OFF -DBUILD_LIBRETRO_CORE=ON -DBUILD_TESTS=OFF`
 
-* <span id="pcsx2_vc_cmake"> </span>**PCSX2 (LRPS2)**
+* <span id="lrps2_vc_cmake"> </span>**PCSX2 (LRPS2)**
 
   在Visual C++环境下使用通用CMake参数编译，不支持MSys/MinGW下编译。
 
-  生成Ninja编译文件须添加额外参数：`-DLIBRETRO=ON`
+  生成Ninja编译文件须添加额外参数：`-DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DLIBRETRO=ON`
+
+  以及：` -DCMAKE_C_FLAGS_RELEASE="/utf-8" -DCMAKE_CXX_FLAGS_RELEASE="/utf-8"`强制以UTF-8编码打开源码文件，以避免编译时抛出以下警告：
+
+  ```
+  warning C4819: The file contains a character that cannot be represented in the current code page (936). Save the file in Unicode format to prevent data loss
+  ```
 
 * <span id="dosboxcore_msys2_make"> </span>**DOSBox Core**
 
@@ -942,8 +948,8 @@ done
 | [Beetle PSX](https://docs.libretro.com/library/beetle_psx/)<br />[Beetle PSX HW](https://docs.libretro.com/library/beetle_psx_hw/) | [libretro-mednafen_psx](https://github.com/crazyqk2019/libretro-mednafen_psx) | PS1模拟器。<br />Mednafen多机种模拟器的单独PS1内核。         |                |
 | [PCSX ReARMed](https://docs.libretro.com/library/pcsx_rearmed/) | [libretro-pcsx_rearmed](https://github.com/crazyqk2019/libretro-pcsx_rearmed) | PS1模拟器。<br />PCSX Reloaded的分支版本。<br />专门为ARM处理器优化。 |                |
 | <span id="swanstation"> </span>SwanStation                   | [libretro-swanstation](https://github.com/crazyqk2019/libretro-swanstation) | PS1模拟器。                                                  |                |
-| <span id="pcsx2"> </span>~~[PCSX2](https://docs.libretro.com/library/pcsx2/)~~ | ~~[libretro-pcsx2](https://github.com/crazyqk2019/libretro-pcsx2)~~ | ~~PS2模拟器。<br />基于PCSX2移植到libretro的版本，<br />很久没有和上游版本同步了。~~ |                |
-| [LRPS2](https://docs.libretro.com/library/lrps2/)            | [libretro-lrps2](https://github.com/crazyqk2019/libretro-lrps2)<br />（分支`libretroization`） | PCSX2移植到libretro的重度修改硬分支。                        |                |
+| <span id="pcsx2"> </span>~~[PCSX2](https://docs.libretro.com/library/pcsx2/)~~ | ~~[libretro-pcsx2_old](https://github.com/crazyqk2019/libretro-pcsx2_old)~~ | ~~PS2模拟器。<br />基于PCSX2移植到libretro的版本，<br />很久没有和上游版本同步了。~~ |                |
+| <span id="lrps2"> </span>[PCSX2(LRPS2)](https://docs.libretro.com/library/lrps2/) | [libretro-pcsx2](https://github.com/crazyqk2019/libretro-pcsx2)<br />（分支`libretroization`） | PCSX2移植到libretro的重度修改硬分支。                        |                |
 | <span id="play"> </span>[Play!](https://docs.libretro.com/library/play/) | [libretro-play](https://github.com/crazyqk2019/libretro-play) | PS2模拟器。                                                  |                |
 
 | 内核名称（官网说明链接）                                     | 汉化仓库地址                                                 | 简要说明                                                     | 汉化时间和版本 |

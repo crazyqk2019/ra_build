@@ -741,17 +741,17 @@ done
 
   MSys2/MinGW环境使下使用make编译。
 
-  **不能使用ccache**，否则编译会出错。
+  需要修改Makefile.libretro，静态链接sdl和SDL_net库。
 
-  使用自带audio codec库和libsndfile库；静态链接c++库；静态链接系统库
-
-  编译命令：
+  编译参数：
 
   ```bash
-  # 首先编译依赖库，然后编译自身
-  make BUNDLED_AUDIO_CODECS=1 BUNDLED_LIBSNDFILE=1 STATIC_LIBCXX=1 STATIC_PACKAGES=1 deps
-  make BUNDLED_AUDIO_CODECS=1 BUNDLED_LIBSNDFILE=1 STATIC_LIBCXX=1 STATIC_PACKAGES=1
+  make CMAKE_POLICY_VERSION_MINIMUM=3.5 BUNDLED_AUDIO_CODECS=0 BUNDLED_LIBSNDFILE=0 STATIC_PACKAGES=1 WITH_DYNAREC=x86_64
   ```
+
+  > [!WARNING]
+  >
+  > **不能使用ccache**，使用ccache会出有奇怪的编译错误，原因不明。
 
 * <span id="dosboxpure_build"> </span>**DOSBox Pure**
 

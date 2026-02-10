@@ -420,22 +420,23 @@ build_x1() {
 }
 
 build_dosbox_core() {
-    local make_params="BUNDLED_AUDIO_CODECS=1 BUNDLED_LIBSNDFILE=1 STATIC_LIBCXX=1 STATIC_PACKAGES=1"
-    (
-        cd "$cores_dir/libretro-dosbox_core/libretro"
-        if [[ -z $no_clean ]]; then
-            message "清理 \"DOSBox Core\" (make $make_params -j`nproc` clean)..."
-            make $make_params -j`nproc` clean
-            message "清理 \"DOSBox Core\" 完成。"
-            echo
-        fi
-        message "编译依赖库 (make -f $make_params -j`nproc` deps)..."
-        make $make_params -j`nproc` deps || return $?
-        return 0
-    )
-    if [ $? -ne 0 ]; then error_message "编译依赖库出错！"; return 1; fi
+    local make_params="CMAKE_POLICY_VERSION_MINIMUM=3.5 BUNDLED_AUDIO_CODECS=0 BUNDLED_LIBSNDFILE=0 STATIC_PACKAGES=1 WITH_DYNAREC=x86_64"
+
+#    (
+#        cd "$cores_dir/libretro-dosbox_core/libretro"
+#        if [[ -z $no_clean ]]; then
+#            message "清理 \"DOSBox Core\" (make $make_params -j`nproc` clean)..."
+#            make $make_params -j`nproc` clean
+#            message "清理 \"DOSBox Core\" 完成。"
+#            echo
+#        fi
+#        message "编译依赖库 (make -f $make_params -j`nproc` deps)..."
+#        make $make_params -j`nproc` deps || return $?
+#        return 0
+#    )
+#    if [ $? -ne 0 ]; then error_message "编译依赖库出错！"; return 1; fi
     
-    no_clean=1 no_ccache=1 make_params=$make_params ./build_use_make.sh "DOSBox Core" "dosbox_core" "libretro"
+    no_ccache=1 make_params=$make_params ./build_use_make.sh "DOSBox Core" "dosbox_core" "libretro"
 }
 
 build_dosbox_pure() {

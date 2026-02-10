@@ -1,0 +1,3 @@
+[submodule "scripts/env_setup/msys2_dev_env"]
+	path = scripts/env_setup/msys2_dev_env
+	url = https://gitee.com/crazyq2023/msys2_dev_env.git

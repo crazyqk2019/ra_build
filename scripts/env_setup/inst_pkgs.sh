@@ -88,9 +88,9 @@ pacman -S --needed --noconfirm \
     mingw-w64-$compiler_var-pulseaudio
 
 git config --system core.autocrlf false
-git config --system core.safecrlf true
+git config --system core.safecrlf warn
 git config --global core.autocrlf false
-git config --global core.safecrlf true
+git config --global core.safecrlf warn
     
 # 安装旧版cmake，以避免新版cmake引起的一些问题
 # pacman -U https://mirrors.tuna.tsinghua.edu.cn/msys2/mingw/ucrt64/mingw-w64-$compiler_var-cmake-4.1.2-1-any.pkg.tar.zst

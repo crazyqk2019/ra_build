@@ -24,7 +24,7 @@ common_clone_core() {
     cd "$cores_dir/libretro-$core" >/dev/null
 
     git config --local core.autocrlf false
-    git config --local core.safecrlf true
+    git config --local core.safecrlf warn
     
     message "添加上游仓库 \"$core_name\" ($core_upstream)..."
     git remote add upstream $core_upstream || { error_message "添加上游仓库出错！\"$core_name\""; return 1; }

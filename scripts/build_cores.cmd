@@ -8,7 +8,7 @@ SET "CORES_DIR=%CD%\cores"
 SET "DISTS_DIR=%CD%\cores\dists"
 POPD
 
-SET "CORES_LIST=dolphin citra ppsspp tic80 play pcsx2 swanstation"
+SET "CORES_LIST=dolphin citra ppsspp tic80 play pcsx2 swanstation dosbox_pure"
 
 SET "NO_CLEAN="
 SET "NO_REGEN="
@@ -117,16 +117,10 @@ ENDLOCAL
 EXIT /B %ERRORLEVEL%
 
 :build_dosbox_pure
-PUSHD "%CORES_DIR%\libretro-dosbox_pure"
-IF NOT DEFINED NO_CLEAN (
-    ECHO 清理 "DOSBox Pure"...
-    IF EXIST build RD /S /Q build
-    ECHO.
-)
-msbuild dosbox_pure_libretro.vcxproj -maxCpuCount -p:Platform=x64;Configuration=Release
-IF %ERRORLEVEL% == 0 (COPY /Y "build\Release_64bit\dosbox_pure_libretro.dll" "%DISTS_DIR%\dosbox_pure_libretro.dll")
-IF NOT %ERRORLEVEL% == 0 (ECHO "DOSBox Pure" 编译出错！)
-POPD
+SETLOCAL
+vcxproj2cmake --projects "%CORES_DIR%\libretro-dosbox_pure\dosbox_pure_libretro.vcxproj" || (ECHO 转换vcxproj到CMake出错！& EXIT /B 1)
+CALL build_use_cmake.cmd "DOSBox Pure" "dosbox_pure" "." "vc_build"
+ENDLOCAL
 EXIT /B %ERRORLEVEL%
 
 :buildCores

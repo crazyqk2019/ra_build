@@ -10,7 +10,7 @@ POPD
 CALL msys2_dev_env\scripts\setup_msys2.cmd "%INST_DEST%" || GOTO :err
 CALL msys2_dev_env\scripts\setup_toolchain.cmd "%INST_DEST%\msys64" ucrt64 || GOTO :err
 
-SET "msys2_shell_cmd=%INST_DEST%\msys64\msys2_shell.cmd -no-start -defterm -ucrt64 -where "%CD%"" 
+SET "msys2_shell_cmd=%INST_DEST%\msys64\msys2_shell.cmd -no-start -defterm -ucrt64 -where "%CD%""
 
 ECHO 安装工具和库...
 CALL %msys2_shell_cmd% inst_pkgs.sh ucrt64

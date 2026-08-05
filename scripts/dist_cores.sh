@@ -6,7 +6,7 @@ error_message() { $SETCOLOR_RED; echo "$@"; $SETCOLOR_NORMAL; }
 die() { if [ $# -gt 0 ]; then error_message "$@"; fi; exit 1; }
 
 dist_core() {
-    if [[ "$1" =~ .*_libretro\.dll$ ]]; then 
+    if [[ "$1" =~ .*_libretro\.dll$ ]]; then
         core_file=$1
     else
         core_file=$1_libretro.dll
@@ -15,7 +15,7 @@ dist_core() {
     
     message "拷贝内核 \"$core_file\"..."
     cp -v "$cores_dists_dir/$core_file" "$ra_cores_dists_dir/"
-    
+
     pushd . >/dev/null
     cd "$ra_dists_dir"
     message "拷贝内核 \"$1\" 依赖的运行库..."
@@ -39,7 +39,7 @@ cd "$cores_dists_dir"
 if [[ ${1,,} = "all" ]]; then
     for file in *.dll; do dist_core "$file" || die "分发内核 \"$file\" 出错！"; done
 else
-    while [ $# -gt 0 ]; do 
+    while [ $# -gt 0 ]; do
        dist_core "$1" || die "分发内核 \"$1\" 出错！"
        shift
    done

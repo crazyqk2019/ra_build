@@ -33,7 +33,7 @@ cores_dists_dir="$PWD/cores/dists"
 ra_dists_dir="$PWD/retroarch_dist"
 ra_cores_dists_dir="$PWD/retroarch_dist/cores"
 if [ ! -d "$cores_dists_dir" ]; then die "内核输出目录不存在！请先编译内核。"; fi
-if [ ! -d "$ra_cores_dists_dir" ]; then mkdir -p "$ra_cores_dists_dir" >dev/nul; fi
+if [ ! -d "$ra_cores_dists_dir" ]; then mkdir -p "$ra_cores_dists_dir" >/dev/null; fi
 cd "$cores_dists_dir"
 
 if [[ ${1,,} = "all" ]]; then

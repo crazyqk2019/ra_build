@@ -11,11 +11,13 @@ REM FOR /F "tokens=* delims=" %%# IN ('.\tools\vswhere.exe -latest -property ins
 REM IF NOT EXIST "%VCVARS64_BAT%" (ECHO 未找到可用的VC安装！&& GOTO :err)
 REM CMD /K "%VCVARS64_BAT%"
 
+IF NOT EXIST "%VC_ENV_PATH%\vc_build_tools\devcmd.bat" GOTO :err
+
 IF "%~1" == "" (
     CMD /K "%VC_ENV_PATH%\vc_build_tools\devcmd.bat"
 ) ELSE (
     CALL "%VC_ENV_PATH%\vc_build_tools\devcmd.bat"
-    CALL "%~1"
+    CALL %*
 )
 
 :end

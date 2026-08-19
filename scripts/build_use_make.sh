@@ -7,13 +7,13 @@ die() { if [ $# -gt 0 ]; then error_message "$@"; fi; exit 1; }
 
 if [[ $# -lt 2 ]]; then die "参数错误！"; fi
 
-pushd "$(dirname "$0")" >/dev/null
+pushd "$(dirname "$0")" >/dev/null || die "变更目录失败！"
 
 pushd .. >/dev/null
 cores_dir="$PWD/cores"
 dists_dir="$PWD/cores/dists"
-if [[ ! -d $dists_dir ]]; then mkdir -p $dists_dir >/dev/null; die "创建分发目录出错！"; fi
-popd >/dev/null
+if [[ ! -d "$dists_dir" ]]; then mkdir -p "$dists_dir" >/dev/null; die "创建分发目录出错！"; fi
+popd >/dev/null || die "变更目录失败！"
 
 c_disabled_warnings="-Wno-misleading-indentation -Wno-multichar -Wno-attributes"
 cxx_disabled_warnings="-Wno-misleading-indentation -Wno-template-id-cdtor -Wno-class-memaccess -Wno-narrowing -Wno-cast-user-defined"
@@ -29,7 +29,7 @@ core_name=$1
 core=$2
 core_src=${3:-"."}
 core_dest=${4:-"."}
-core_output=${5:-$core"_libretro.dll"}
+core_output=${5:-"${core}_libretro.dll"}
 
 cd "$cores_dir/libretro-$core/$core_src" >/dev/null || die "进入内核 \"$core_name\" 源代码目录失败！"
     
@@ -40,25 +40,27 @@ elif [ -f "GNUmakefile" ]; then
     make_file="GNUmakefile"
 fi
     
-if [ -z "$CXXFLAGS" ]; then CXXFLAGS="$cxx_disable_warnings"; else CXXFLAGS+=" $cxx_disable_warnings"; fi
+if [ -z "$CXXFLAGS" ]; then CXXFLAGS="$cxx_disabled_warnings"; else CXXFLAGS+=" $cxx_disabled_warnings"; fi
 if [ -z "$CFLAGS" ]; then CFLAGS="$c_disabled_warnings"; else CFLAGS+=" $c_disabled_warnings"; fi
 if [ -z "$CPPFLAGS" ]; then CPPFLAGS="$cpp_disabled_warnings"; else CPPFLAGS+=" $cpp_disabled_warnings"; fi
 export CFLAGS
 export CXXFLAGS
 export CPPFLAGS
 
-make_clean="make -f $make_file $make_params clean -j"
-make_build="make -f $make_file $make_params -j"
-if [[ $build_mt -gt 0 ]]; then make_build+="$build_mt"; fi
+make_clean="make -f $make_file ${make_params-} clean -j"
+make_build="make -f $make_file ${make_params-} -j"
+if [[ ${build_mt-} =~ ^[0-9]+$ ]] && (( 10#$build_mt > 0 )); then
+    make_build+="$build_mt"
+fi
 
-if [[ -z $no_clean ]]; then
+if [[ ${no_clean-} =~ ^[0-9]+$ ]] && (( 10#$no_clean == 0 )); then
     message "清理内核 \"$core_name\" ($make_clean)..."
     $make_clean
     echo
 fi
 
 SECONDS=0
-if [[ -z no_ccache ]]; then
+if [[ ${no_ccache-} =~ ^[0-9]+$ ]] && (( 10#$no_ccache == 0 )); then
     message "编译内核 \"$core_name\" (ccache $make_build)..."
     ccache $make_build || die "编译 \"$core_name\" 出错！"
 else
@@ -68,7 +70,7 @@ fi
 total_time=$SECONDS
 echo
 
-cd "$cores_dir/libretro-$core/$core_src"
+cd "$cores_dir/libretro-$core/$core_src" || die "变更目录失败！"
 strip -s "$core_dest/$core_output" || die "裁剪内核 \"$core_name\" dll文件出错！"
 cp -v "$core_dest/$core_output" "$dists_dir/" || die "拷贝内核 \"$core_name\" dll文件到分发目录出错！"
 echo

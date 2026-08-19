@@ -21,18 +21,18 @@ common_clone_core() {
     git clone --recursive "$core_url" "$cores_dir/libretro-$core" || { error_message "克隆内核 \"$core_name\" 出错！"; return 1; }
     echo
 
-    cd "$cores_dir/libretro-$core" >/dev/null
+    cd "$cores_dir/libretro-$core" >/dev/null || die "变更目录失败！"
 
     git config --local core.autocrlf false
     git config --local core.safecrlf warn
     
     message "添加上游仓库 \"$core_name\" ($core_upstream)..."
-    git remote add upstream $core_upstream || { error_message "添加上游仓库出错！\"$core_name\""; return 1; }
+    git remote add upstream "$core_upstream " || { error_message "添加上游仓库出错！\"$core_name\""; return 1; }
     echo
 
     if [[ -n "$core_branch" ]]; then
         message "切换到分支 \"$core_branch\"..."
-        git checkout $core_branch || { error_message "切换到分支 \"$core_branch\" 出错！"; return 1; }
+        git checkout "$core_branch" || { error_message "切换到分支 \"$core_branch\" 出错！"; return 1; }
         echo
     fi
 
@@ -470,17 +470,17 @@ function_exist() { declare -F "$1" > /dev/null; return $?; }
 cloneCores() {
     for core in "${clone_cores_list[@]}"; do
         if [[ -d "$cores_dir/libretro-$core" ]]; then message "内核 \"$core\" 目录 \"$cores_dir/libretro-$core\" 已存在，跳过。"; continue; fi
-        cd "$(dirname "$0")" >/dev/null
-        clone_$core || return 1
+        cd "$(dirname "$0")" >/dev/null || die "变更目录失败！"
+        clone_"$core" || return 1
     done
     return 0
 }
 
-cd "$(dirname "$0")" >/dev/null
+cd "$(dirname "$0")" >/dev/null || die "变更目录失败！"
 
 pushd .. >/dev/null
 cores_dir="$PWD/cores"
-popd >/dev/null
+popd >/dev/null || die "变更目录失败！"
 
 unset build_all
 clone_cores_list=()
@@ -490,7 +490,7 @@ while [[ $# -gt 0 ]]; do
     #if [[ ! -d "$cores_dir/libretro-${1,,}" ]]; then 
     #    die "内核 \"${1,,}\" 目录 \"$cores_dir/libretro-${1,,}\" 已存在，跳过。"; 
     #else
-    clone_cores_list+=(${1,,})
+    clone_cores_list+=("${1,,}")
     #fi
     shift
 done
@@ -498,7 +498,7 @@ done
 if [[ -v build_all ]]; then
     clone_cores_list=()
     for core in $(declare -F | grep -i "\-f clone_" | cut -d" " -f3 | cut -d"_" -f2-); do
-        clone_cores_list+=($core)
+        clone_cores_list+=("$core")
     done
 fi
 

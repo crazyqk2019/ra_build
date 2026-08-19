@@ -7,13 +7,13 @@ die() { if [ $# -gt 0 ]; then error_message "$@"; fi; exit 1; }
 
 if [[ $# -lt 2 ]]; then die "参数错误！"; fi
 
-pushd "$(dirname "$0")" >/dev/null
+pushd "$(dirname "$0")" >/dev/null || die "变更目录失败！"
 
 pushd .. >/dev/null
 cores_dir="$PWD/cores"
 dists_dir="$PWD/cores/dists"
-if [[ ! -d $dists_dir ]]; then mkdir -p $dists_dir >/dev/null; die "创建分发目录出错！"; fi
-popd >/dev/null
+if [[ ! -d "$dists_dir" ]]; then mkdir -p "$dists_dir" >/dev/null; die "创建分发目录出错！"; fi
+popd >/dev/null || die "变更目录失败！"
 
 # 使用cmake编译通用方法，参数说明：
 # $1 - 内核显示名称
@@ -29,42 +29,72 @@ core_dest=${4:-"."}
 core_output=${5:-${core}_libretro.dll}
 build_dir=${6:-${MSYSTEM,,}_build}
 
-cmake_clean="cmake --build $build_dir --target clean -j"
-cmake_gen="cmake -Wno-dev -DCMAKE_BUILD_TYPE=Release $cmake_params -G Ninja -B $build_dir" # -DCMAKE_POLICY_DEFAULT_CMP0198=NEW -DCMAKE_POLICY_VERSION_MINIMUM=3.5
-cmake_build="cmake --build $build_dir --target ${core}_libretro --config Release -j"
-if [[ $build_mt -gt 0 ]]; then cmake_build+=" $build_mt"; fi
-
-if [[ ! -d "$cores_dir/libretro-$core/$core_src" ]]; then die "内核 \"$core_name\" 目录 \"$cores_dir/libretro-$core/$core_src\" 不存在，请先拉取内核源代码！"; fi
-cd "$cores_dir/libretro-$core/$core_src" >/dev/null
-
-if [[ -z $no_regen && -d "$build_dir" ]]; then
-   message "删除内核 \"$core_name\" 编译目录 (rm -r -f \"$build_dir\")..."
-   rm -r -f "$build_dir" || die "删除 \"$core_name\" 编译目录出错！"
-   echo
+cmake_clean=(
+    cmake
+    --build "${build_dir}"
+    --target clean
+    -j
+)
+cmake_gen=(
+    cmake
+    -Wno-dev
+    -DCMAKE_BUILD_TYPE=Release
+    -G Ninja
+    -B "${build_dir}"
+ )
+ if [[ ! -z ${cmake_params} ]]; then
+    cmake_gen+=(${cmake_params})  # -DCMAKE_POLICY_DEFAULT_CMP0198=NEW -DCMAKE_POLICY_VERSION_MINIMUM=3.5
 fi
-    
-if [[ -z $no_clean && -f "$build_dir/build.ninja" ]]; then
-    message "清理内核 \"$core_name\" ($cmake_clean)..."            
-    $cmake_clean
-    echo
+cmake_build=(
+    cmake
+     --build "${build_dir}"
+     --target "${core}"_libretro
+     --config Release
+     -j
+)
+if [[ ${build_mt-} =~ ^[0-9]+$ ]] && (( 10#$build_mt > 0 )); then
+    cmake_build+=("${build_mt}")
+fi
+
+if [[ ! -d "${cores_dir}/libretro-${core}/${core_src}" ]]; then
+    die "内核 \"$core_name\" 目录 \"$cores_dir/libretro-$core/$core_src\" 不存在，请先拉取内核源代码！"
+fi
+cd "${cores_dir}/libretro-${core}/${core_src}" >/dev/null || die "变更目录失败！"
+
+# 执行清理编译配置文件
+if [[ ${no_regen-} =~ ^[0-9]+$ ]] && (( 10#$no_regen == 0 )); then
+    if [[ -d "$build_dir" ]]; then
+        message "删除内核 \"$core_name\" 编译目录 (rm -r -f \"$build_dir\")..."
+        rm -r -f "$build_dir" || die "删除 \"$core_name\" 编译目录出错！"
+        echo
+    fi
+fi
+
+# 执行清理编译文件
+if [[ ${no_clean-} =~ ^[0-9]+$ ]] && (( 10#$no_clean == 0 )); then
+    if [[ -f "$build_dir/build.ninja" ]]; then
+        message "清理内核 \"$core_name\" (${cmake_clean[*]})..."            
+        "${cmake_clean[@]}"
+        echo
+    fi
 fi
 
 unset phase1_time
 SECONDS=0
 if [[ ! -f "$build_dir/build.ninja" ]]; then
-    message "生成内核 \"$core_name\" 编译配置文件 ($cmake_gen)..."
-    $cmake_gen || die "生成内核 \"$core_name\" 编译配置文件出错！"
+    message "生成内核 \"$core_name\" 编译配置文件 (${cmake_gen[*]})..."
+    "${cmake_gen[@]}" || die "生成内核 \"$core_name\" 编译配置文件出错！"
     phase1_time=$SECONDS
     echo
 fi
 
-message "编译内核 \"$core_name\" ($cmake_build)..."
-$cmake_build || die "编译内核 \"$core_name\" 出错！"
+message "编译内核 \"$core_name\" (${cmake_build[*]})..."
+"${cmake_build[@]}" || die "编译内核 \"$core_name\" 出错！"
 total_time=$SECONDS
 phase2_time=$total_time
 echo
 
-cd "$cores_dir/libretro-$core/$core_src"
+cd "$cores_dir/libretro-$core/$core_src" || die "变更目录失败！"
 strip -s "$core_dest/$core_output" || die "裁剪内核 \"$core_name\" dll文件出错！"
 cp -v "$core_dest/$core_output" "$dists_dir/$core_output" || die "拷贝内核 \"$core_name\" dll文件到分发目录出错！"
 echo

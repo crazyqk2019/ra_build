@@ -17,24 +17,24 @@ dist_core() {
     cp -v "$cores_dists_dir/$core_file" "$ra_cores_dists_dir/"
 
     pushd . >/dev/null
-    cd "$ra_dists_dir"
+    cd "$ra_dists_dir" || die "变更目录失败！"
     message "拷贝内核 \"$1\" 依赖的运行库..."
-    for i in $(seq 3); do for dll in $(ntldd -R cores/$core_file | grep -i msys64 | cut -d">" -f2 | cut -d" " -f2); do cp -v "$dll" . ; done; done
-    popd >/dev/null
+    for i in $(seq 3); do for dll in $(ntldd -R "cores/$core_file" | grep -i msys64 | cut -d">" -f2 | cut -d" " -f2); do cp -v "$dll" . ; done; done
+    popd >/dev/null || die "变更目录失败！"
     message "完成"
     echo
 }
 
 if [ $# -lt 1 ]; then die "需要指定内核！all - 指定全部可用内核。"; fi
 
-cd "$(dirname "$0")"
+cd "$(dirname "$0")" || die "变更目录失败！"
 cd ..
 cores_dists_dir="$PWD/cores/dists"
 ra_dists_dir="$PWD/retroarch_dist"
 ra_cores_dists_dir="$PWD/retroarch_dist/cores"
 if [ ! -d "$cores_dists_dir" ]; then die "内核输出目录不存在！请先编译内核。"; fi
 if [ ! -d "$ra_cores_dists_dir" ]; then mkdir -p "$ra_cores_dists_dir" >/dev/null; fi
-cd "$cores_dists_dir"
+cd "$cores_dists_dir" || die "变更目录失败！"
 
 if [[ ${1,,} = "all" ]]; then
     for file in *.dll; do dist_core "$file" || die "分发内核 \"$file\" 出错！"; done

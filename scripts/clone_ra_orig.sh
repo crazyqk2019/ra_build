@@ -6,7 +6,7 @@ error_message() { $SETCOLOR_RED; echo "$@"; $SETCOLOR_NORMAL; }
 die() { if [ $# -gt 0 ]; then error_message "$@"; fi; exit 1; }
 
 
-pushd $(dirname "$0") >/dev/null
+pushd "$(dirname "$0")" >/dev/null || die "变更目录失败！"
 
 message "克隆原版 RetroArch ……"
 git clone --recursive https://github.com/libretro/RetroArch ../retroarch_orig || die "克隆出错！"
@@ -19,6 +19,6 @@ echo
 
 message "克隆原版 RetroArch 完成。"
 
-popd >/dev/null
+popd >/dev/null || die "变更目录失败！"
 
 exit 0

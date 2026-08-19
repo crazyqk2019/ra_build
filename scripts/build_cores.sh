@@ -24,21 +24,21 @@ build_mame2010() {
 
 build_mame2015() {
     local make_params="CC=g++"
-    make_params=$make_params ./build_use_make.sh "MAME 2015" "mame2015"
+    make_params="$make_params" ./build_use_make.sh "MAME 2015" "mame2015"
 }
 
 build_mame2016() {
     local make_params="PYTHON_EXECUTABLE=python3"
-    make_params=$make_params ./build_use_make.sh "MAME 2016" "mame2016"
+    make_params="$make_params" ./build_use_make.sh "MAME 2016" "mame2016"
 }
 
 build_fbalpha2012() {
     if [[ -z $CFLAGS ]]; then
         local MY_CFLAGS="-Wno-incompatible-pointer-types"
     else
-        local MY_CFLAGS=$CFLAGS + " -Wno-incompatible-pointer-types"
+        local MY_CFLAGS=$CFLAGS+" -Wno-incompatible-pointer-types"
     fi
-    CFLAGS=$MY_CFLAGS ./build_use_make.sh "Final Burn Alpha 2012" "fbalpha2012" "svn-current/trunk"
+    CFLAGS="$MY_CFLAGS" ./build_use_make.sh "Final Burn Alpha 2012" "fbalpha2012" "svn-current/trunk"
 }
 
 build_fbalpha2012_cps1() {
@@ -57,9 +57,9 @@ build_fbalpha2012_neogeo() {
     if [[ -z $CFLAGS ]]; then
         local MY_CFLAGS="-Wno-incompatible-pointer-types"
     else
-        local MY_CFLAGS=$CFLAGS + " -Wno-incompatible-pointer-types"
+        local MY_CFLAGS=$CFLAGS+" -Wno-incompatible-pointer-types"
     fi    
-    CFLAGS=$MY_CFLAGS ./build_use_make.sh "Final Burn Alpha 2012 Neo Geo" "fbalpha2012_neogeo"
+    CFLAGS="$MY_CFLAGS" ./build_use_make.sh "Final Burn Alpha 2012 Neo Geo" "fbalpha2012_neogeo"
 }
 
 build_fbneo() {
@@ -92,14 +92,14 @@ build_nestopia() {
 
 build_bsnes() {
     local make_params="target=libretro binary=library local=false"
-    make_params=$make_params ./build_use_make.sh "bsnes" "bsnes" "bsnes" "out"
+    make_params="$make_params" ./build_use_make.sh "bsnes" "bsnes" "bsnes" "out"
 }
 
 build_bsnes_mercury() {
     local profiles_list=("accuracy" "balanced" "performance")
     for f in "${profiles_list[@]}"; do
         local make_params="PROFILE=$f"
-        make_params=$make_params ./build_use_make.sh "bsnes mercury $f" "bsnes_mercury" "." "." "bsnes_mercury_"$f"_libretro.dll" || return 1
+        make_params="$make_params" ./build_use_make.sh "bsnes mercury ${f}" "bsnes_mercury" "." "." "bsnes_mercury_${f}_libretro.dll" || return 1
     done
 }
 
@@ -107,13 +107,13 @@ build_bsnes2014() {
     local profiles_list=("accuracy" "balanced" "performance")
     for f in "${profiles_list[@]}"; do
         local make_params="PROFILE=$f"
-        make_params=$make_params ./build_use_make.sh "bsnes 2014 $f" "bsnes2014" "." "." "bsnes2014_"$f"_libretro.dll" || return 1
+        make_params="$make_params" ./build_use_make.sh "bsnes 2014 ${f}" "bsnes2014" "." "." "bsnes2014_${f}_libretro.dll" || return 1
     done
 }
 
 build_bsnes_hd() {
     local make_params="target=libretro binary=library"
-    make_params=$make_params ./build_use_make.sh "bsnes hd" "bsnes_hd" "bsnes" "out" "bsnes_hd_beta_libretro.dll"
+    make_params="$make_params" ./build_use_make.sh "bsnes hd" "bsnes_hd" "bsnes" "out" "bsnes_hd_beta_libretro.dll"
 }
 
 build_bsnes_jg() {
@@ -130,7 +130,7 @@ build_mupen64plus_next() {
 
 build_parallel_n64() {
     local make_params="HAVE_PARALLEL=1 HAVE_PARALLEL_RSP=1 WITH_DYNAREC=x86_64"
-    make_params=$make_params ./build_use_make.sh "ParaLLEl N64" "parallel_n64"
+    make_params="$make_params" ./build_use_make.sh "ParaLLEl N64" "parallel_n64"
 }
 
 build_desmume() {
@@ -162,9 +162,9 @@ build_flycast() {
 }
 
 build_mednafen_psx() {
-   no_ccache=$no_ccache ./build_use_make.sh "Beetle PSX" "mednafen_psx" || return $?
+   no_ccache="$no_ccache" ./build_use_make.sh "Beetle PSX" "mednafen_psx" || return $?
    local make_params="HAVE_HW=1"
-   no_ccache=$no_ccache make_params=$make_params ./build_use_make.sh "Beetle PSX HW" "mednafen_psx" "." "." "mednafen_psx_hw_libretro.dll"
+   no_ccache="$no_ccache" make_params="$make_params" ./build_use_make.sh "Beetle PSX HW" "mednafen_psx" "." "." "mednafen_psx_hw_libretro.dll"
 }
 
 build_pcsx_rearmed() {
@@ -261,7 +261,7 @@ build_jaxe() {
 
 build_ep128emu_core() {
     local make_params="platform=win64"
-    make_params=$make_params ./build_use_make.sh "ep128emu" "ep128emu_core"
+    make_params="$make_params" ./build_use_make.sh "ep128emu" "ep128emu_core"
 }
 
 build_freeintv() {
@@ -293,7 +293,7 @@ build_hbmame() {
     make_params+=" NO_USE_MIDI=0 NO_USE_PORTAUDIO=0" 
     make_params+=" USE_SYSTEM_LIB_EXPAT=1 USE_SYSTEM_LIB_ZLIB=1 USE_SYSTEM_LIB_JPEG=1 USE_SYSTEM_LIB_FLAC=1 USE_SYSTEM_LIB_SQLITE3=1 USE_SYSTEM_LIB_PORTMIDI=1 USE_SYSTEM_LIB_PORTAUDIO=1 USE_SYSTEM_LIB_UTF8PROC=1 USE_SYSTEM_LIB_GLM=1 USE_SYSTEM_LIB_RAPIDJSON=1 USE_SYSTEM_LIB_PUGIXML=1"
     make_params+=" USE_BUNDLED_LIB_SDL2=0"
-    make_params=$make_params ./build_use_make.sh "HBMAME" "hbmame"
+    make_params="$make_params" ./build_use_make.sh "HBMAME" "hbmame"
 }
 
 build_mednafen_gba() {
@@ -324,9 +324,9 @@ build_np2kai() {
     if [[ -z $CFLAGS ]]; then
         local MY_CFLAGS="-Wno-incompatible-pointer-types"
     else
-        local MY_CFLAGS=$CFLAGS + " -Wno-incompatible-pointer-types"
+        local MY_CFLAGS=$CFLAGS+" -Wno-incompatible-pointer-types"
     fi
-    CFLAGS=$MY_CFLAGS ./build_use_make.sh "Neko Project II Kai" "np2kai" "sdl"
+    CFLAGS="$MY_CFLAGS" ./build_use_make.sh "Neko Project II Kai" "np2kai" "sdl"
 }
 
 build_numero() {
@@ -350,11 +350,13 @@ build_potator() {
 }
 
 build_vice() {
-    pushd "$cores_dir/libretro-vice" >/dev/null
-    local emutype_list=( $(ls Makefile.* | cut -d"." -f2 | grep -v -i "common") )
-    popd
+    pushd "${cores_dir}/libretro-vice" >/dev/null || return 1
+    local emutype_list=()
+    # shellcheck disable=SC2012
+    mapfile -t emutype_list < <(ls Makefile.* | cut -d'.' -f2 | grep -v -i 'common')
+    popd || return 1
     for t in "${emutype_list[@]}"; do
-         make_params="EMUTYPE=$t" ./build_use_make.sh "VICE $t" "vice" "." "." "vice_"$t"_libretro.dll" || return 1
+         make_params="EMUTYPE=$t" ./build_use_make.sh "VICE ${t}" "vice" "." "." "vice_${t}_libretro.dll" || return 1
     done
 }
 
@@ -384,7 +386,7 @@ build_sameduck() {
 
 build_scummvm() {
     local make_params="USE_SYSTEM_fluidsynth=1 USE_SYSTEM_FLAC=1 USE_SYSTEM_vorbis=1 USE_SYSTEM_z=1 USE_SYSTEM_mad=1 USE_SYSTEM_faad=1 USE_SYSTEM_png=1 USE_SYSTEM_jpeg=1 USE_SYSTEM_theora=1 USE_SYSTEM_freetype=1 USE_SYSTEM_fribidi=1"
-    make_params=$make_params ./build_use_make.sh "ScummVM" "scummvm" "backends\platform\libretro"
+    make_params="$make_params" ./build_use_make.sh "ScummVM" "scummvm" "backends\platform\libretro"
 }
 
 build_smsplus() {
@@ -436,12 +438,12 @@ build_dosbox_core() {
 #    )
 #    if [ $? -ne 0 ]; then error_message "编译依赖库出错！"; return 1; fi
     
-    no_ccache=1 make_params=$make_params ./build_use_make.sh "DOSBox Core" "dosbox_core" "libretro"
+    no_ccache=1 make_params="$make_params" ./build_use_make.sh "DOSBox Core" "dosbox_core" "libretro"
 }
 
 build_dosbox_pure() {
     local make_params="platform=windows"
-    make_params=$make_params ./build_use_make.sh "DOSBox Pure" "dosbox_pure"
+    make_params="$make_params" ./build_use_make.sh "DOSBox Pure" "dosbox_pure"
 }
 
 # Cores built using cmake
@@ -462,12 +464,12 @@ build_dolphin() {
 #    if [[ $? -ne 0 ]]; then error_message "编译 \"dxsdk\" 出错！"; return 1; fi
     
     local cmake_params="-DLIBRETRO=ON"
-    cmake_params=$cmake_params ./build_use_cmake.sh "Dolphin" "dolphin" "." "Binary/x64"
+    cmake_params="$cmake_params" ./build_use_cmake.sh "Dolphin" "dolphin" "." "Binary/x64"
 }
 
 build_citra() {
     local cmake_params="-DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DENABLE_LIBRETRO=ON -DENABLE_SDL2=OFF -DENABLE_QT=OFF -DENABLE_WEB_SERVICE=OFF -DCITRA_WARNINGS_AS_ERRORS=OFF -DDISABLE_CLANG_TARGET=ON -DENABLE_LTO=OFF -DENABLE_TESTS=OFF -DENABLE_DEDICATED_ROOM=OFF -DENABLE_SCRIPTING=OFF -DENABLE_OPENAL=OFF -DENABLE_LIBUSB=OFF -DCITRA_ENABLE_BUNDLE_TARGET=OFF -DENABLE_CUBEB=OFF -DUSE_SYSTEM_GLSLANG=ON"
-    cmake_params=$cmake_params ./build_use_cmake.sh "Citra" "citra" "." "${MSYSTEM,,}_build/bin/Release"
+    cmake_params="$cmake_params" ./build_use_cmake.sh "Citra" "citra" "." "${MSYSTEM,,}_build/bin/Release"
 }
 
 build_ppsspp() {
@@ -490,37 +492,39 @@ build_ppsspp() {
     
     # local cmake_params="-DLIBRETRO=ON -DUSE_SYSTEM_SNAPPY=ON -DUSE_SYSTEM_FFMPEG=ON -DUSE_SYSTEM_LIBZIP=ON -DUSE_SYSTEM_LIBSDL2=ON -DUSE_SYSTEM_LIBPNG=ON -DUSE_SYSTEM_ZSTD=ON -DUSE_SYSTEM_MINIUPNPC=ON"
     local cmake_params="-DLIBRETRO=ON -DCMAKE_C_FLAGS=-Wno-incompatible-pointer-types"
-    cmake_params=$cmake_params ./build_use_cmake.sh "PPSSPP" "ppsspp" "." "${MSYSTEM,,}_build"
+    cmake_params="$cmake_params" ./build_use_cmake.sh "PPSSPP" "ppsspp" "." "${MSYSTEM,,}_build"
 }
 
 build_tic80() {
     local cmake_params="-DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DBUILD_LIBRETRO=ON -DBUILD_PRO=ON -DBUILD_EDITORS=OFF -DBUILD_PLAYER=OFF -DBUILD_TOUCH_INPUT=ON -DBUILD_SDLGPU=ON -DBUILD_WITH_ALL=ON"
-    cmake_params=$cmake_params ./build_use_cmake.sh "TIC-80" "tic80" "." "${MSYSTEM,,}_build/lib"
+    cmake_params="$cmake_params" ./build_use_cmake.sh "TIC-80" "tic80" "." "${MSYSTEM,,}_build/lib"
 }
 
 build_melondsds() {
-     cmake_params=-DENABLE_LTO_RELEASE=OFF ./build_use_cmake.sh "melonDS DS" "melondsds" "." "${MSYSTEM,,}_build/src/libretro"
+     cmake_params="-DENABLE_LTO_RELEASE=OFF" ./build_use_cmake.sh "melonDS DS" "melondsds" "." "${MSYSTEM,,}_build/src/libretro"
 }
 
 build_flycast() {
     local cmake_params="-DLIBRETRO=ON"
-    cmake_params=$cmake_params ./build_use_cmake.sh "Flycast" "flycast" "." "${MSYSTEM,,}_build"
+    cmake_params="$cmake_params" ./build_use_cmake.sh "Flycast" "flycast" "." "${MSYSTEM,,}_build"
 }
 
 build_squirreljme() {
     local cmake_params="-DRETROARCH=ON -DSQUIRRELJME_ENABLE_TESTING=OFF"
-    cmake_params=$cmake_params ./build_use_cmake.sh "SquirrelJME" "squirreljme" "nanocoat" "${MSYSTEM,,}_build"
+    cmake_params="$cmake_params" ./build_use_cmake.sh "SquirrelJME" "squirreljme" "nanocoat" "${MSYSTEM,,}_build"
 }
 
 # Cores built using other tools
 build_holani() {
-    (
-        cd "$cores_dir/libretro-holani"
+    if ! (
+        cd "${cores_dir}/libretro-holani" || return 1
         cargo build --release || return $?
         strip -s target/release/holani.dll || return $?
         cp -v target/release/holani.dll "$dists_dir/holani_libretro.dll" || return $?
     )
-    if [ $? -ne 0 ]; then "编译 \"Holani\" 出错！"; return 1; fi
+    then 
+        "编译 \"Holani\" 出错！"; return 1; 
+    fi
     message "\"Holani\" 编译完成。";echo
 }
 
@@ -528,23 +532,23 @@ function_exist() { declare -F "$1" > /dev/null; return $?; }
 
 buildCores() {
      for core in "${build_cores_list[@]}"; do
-        build_$core || return 1
+        build_"${core}" || return 1
     done
     return 0
 }
 
-cd "$(dirname "$0")" >/dev/null
+cd "$(dirname "$0")" >/dev/null || die "变更目录失败！"
 
-pushd .. >/dev/null
+pushd .. >/dev/null || die "变更目录失败！"
 cores_dir="$PWD/cores"
 dists_dir="$PWD/cores/dists"
-popd >/dev/null
+popd >/dev/null || die "变更目录失败！"
 
-unset no_clean
-unset no_ccache
-unset no_regen
-unset build_all
-unset build_mt=0
+no_clean=0
+no_ccache=0
+no_regen=0
+build_all=0
+build_mt=0
 build_cores_list=()
 while [[ $# -gt 0 ]]; do
     if [[ ${1,,} = "-noclean" || ${1,,} = "/noclean" ]]; then no_clean=1;
@@ -558,15 +562,15 @@ while [[ $# -gt 0 ]]; do
     else
         if ! function_exist "build_${1,,}"; then die "参数错误，内核 \"${1,,}\" 不存在！"; fi
         if [[ ! -d "$cores_dir/libretro-${1,,}" ]]; then die "内核 \"${1,,}\" 源代码目录不存在！"; fi
-        build_cores_list+=(${1,,});
+        build_cores_list+=("${1,,}");
     fi
     shift
 done
 export no_clean no_ccache no_regen build_mt
-if [[ -v build_all ]]; then
+if [[ ${build_all} -eq 1 ]]; then
     build_cores_list=()
     for core in $(declare -F | grep -i "\-f build_" | cut -d" " -f3 | cut -d"_" -f2-); do
-        build_cores_list+=($core)
+        build_cores_list+=("${core}")
     done
 fi
 
@@ -575,11 +579,13 @@ if [[ ${#build_cores_list[@]} -eq 0 ]]; then
     declare -F | grep -i "\-f build_" | cut -d" " -f3 | cut -d"_" -f2-
     echo
     echo "示例："
-    echo "编译指定内核：./build_cores.sh [-noclean] [-noregen] [-noccache] core1 core2"
-    echo "编译所有内核：./build_cores.sh [-noclean] [-noregen] [-noccache] all"
+    echo "编译指定内核：./build_cores.sh [-noclean] [-noregen] [-noccache] [-j <num>] core1 core2"
+    echo "编译所有内核：./build_cores.sh [-noclean] [-noregen] [-noccache] [-j <num>] all"
+    echo "可选参数说明："
     echo "-noclean: 编译前不要执行清理操作"
     echo "-noregen: 对于使用CMake编译的内核，不要重新创建编译配置文件"
     echo "-noccache: 对于使用make编译的内核，不要使用ccache加速编译"
+    echo "-j <num>": 指定并行编译使用的最大线程数，默认使用自动线程数
     exit 0
 fi
 

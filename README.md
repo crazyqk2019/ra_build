@@ -98,15 +98,15 @@ RA自身使用msys2/mingw编译，但是某些内核只能在Visual C++下编译
 
 1. 安装Visual C++编译工具
 
-- （不使用此方法）安装Visual Studio完整版，Community版本即可，安装时注意选中VC开发和Windows SDK。
+   - （不使用此方法）安装Visual Studio完整版，Community版本即可，安装时注意选中VC开发和Windows SDK。
 
-  下载地址：<https://visualstudio.microsoft.com/zh-hans/vs/>
+     下载地址：<https://visualstudio.microsoft.com/zh-hans/vs/>
 
-  Visual Studio 最新Community版本安装文件下载地址：https://aka.ms/vs/stable/vs_community.exe
+     Visual Studio 最新Community版本安装文件下载地址：<https://aka.ms/vs/stable/vs_community.exe>
 
-  Visual Studio 2022 版本Community安装文件下载地址：https://aka.ms/vs/17/release/vs_community.exe
+     Visual Studio 2022 版本Community安装文件下载地址：<https://aka.ms/vs/17/release/vs_community.exe>
 
-- 使用[PortableBuildTools](https://github.com/Data-Oriented-House/PortableBuildTools)创建绿色版VC编译器。由于绿色版VC不包含msbuild工具，无法直接编译.vcxproj文件和.sln文件，需要使用另一个工具[vcxproj2cmake](https://github.com/chausner/vcxproj2cmake)转换vcxproj文件或.sln为CMake文件（CMakeLists.txt），然后再用CMake编译。
+   - 使用[PortableBuildTools](https://github.com/Data-Oriented-House/PortableBuildTools)创建绿色版VC编译器。由于绿色版VC不包含msbuild工具，无法直接编译.vcxproj文件和.sln文件，需要使用另一个工具[vcxproj2cmake](https://github.com/chausner/vcxproj2cmake)转换vcxproj文件或.sln为CMake文件（CMakeLists.txt），然后再用CMake编译。
 
 2. git，绿色busybox最小版即可。
 
@@ -202,7 +202,7 @@ RA的可选依赖库，目前该库Windows下只能在Visual C++环境编译。�
 
 ## 二、编译和分发 RetroArch
 
-###  1. 拉取汉化版 RA 源代码
+### 1. 拉取汉化版 RA 源代码
 
 1. 进入msys2环境，执行：
 
@@ -239,7 +239,7 @@ RA的可选依赖库，目前该库Windows下只能在Visual C++环境编译。�
    ```bash
    make -j"$(nproc)"
    ```
-   
+
 4. 裁剪优化，减小可执行文件大小：
 
    ```bash
@@ -280,7 +280,7 @@ RA的可选依赖库，目前该库Windows下只能在Visual C++环境编译。�
 
    ```bash
    for bin in $(ntldd -R retroarch.exe | grep -i ucrt64 | cut -d">" -f2 | cut -d" " -f2);
-   	do cp -v "$bin" .
+       do cp -v "$bin" .
    done
    ```
 
@@ -311,7 +311,6 @@ RA的可选依赖库，目前该库Windows下只能在Visual C++环境编译。�
    copy_runtime_deps "拷贝依赖运行库失败！" retroarch.exe
    ```
 
-
 3. 拷贝依赖的Qt的dll:
 
    如果路径不存在空格，可以使用简单方法：
@@ -319,7 +318,7 @@ RA的可选依赖库，目前该库Windows下只能在Visual C++环境编译。�
    ```bash
    windeployqt6 retroarch.exe
    for bin in $(ntldd -R imageformats/*dll | grep -i ucrt64 | cut -d">" -f2 | cut -d" " -f2);
-   	do cp -v "$bin" .
+       do cp -v "$bin" .
    done
    ```
 
@@ -350,7 +349,6 @@ RA的可选依赖库，目前该库Windows下只能在Visual C++环境编译。�
    windeployqt6 retroarch.exe
    copy_runtime_deps "拷贝Qt图形插件依赖运行库失败！" imageformats/*.dll
    ```
-
 
 4. 拷贝音视频滤镜：
 
@@ -405,8 +403,6 @@ RA的可选依赖库，目前该库Windows下只能在Visual C++环境编译。�
    rm shaders_slang.zip
    ```
 
-
-
 ### 5. 中文字体问题
 
 目前 RA 的 assets 资源里自带一个中文字体`chinese-fallback-font.ttf`（在assets/pkg目录下），但是该字体仍然不完善，会有显示方块的问题。
@@ -425,9 +421,9 @@ RA的可选依赖库，目前该库Windows下只能在Visual C++环境编译。�
 
 ```bash
 for i in $(seq 3); do 
-	for dll in $(ntldd -R cores/$core_file | grep -i msys64 | cut -d">" -f2 | cut -d" " -f2); do
-		cp -v "$dll" .
-	done
+    for dll in $(ntldd -R cores/$core_file | grep -i msys64 | cut -d">" -f2 | cut -d" " -f2); do
+        cp -v "$dll" .
+    done
 done
 ```
 
@@ -457,8 +453,6 @@ copy_runtime_deps() {
 }
 copy_runtime_deps "拷贝依赖库失败！" "cores/$core_file"
 ```
-
-
 
 ## 三、模拟器内核的编译方法
 
@@ -562,7 +556,7 @@ copy_runtime_deps "拷贝依赖库失败！" "cores/$core_file"
 | [Hatari（Atari ST/STE/TT/Falcon模拟器）](#hatari_msys2_make) | make                | ❎不支持            |
 | [Holani（Atari Lynx模拟器）](#holani_msys2_cargo)            | Cargo               | ❎不支持            |
 
-* <span id="mame_msys2_make"> </span>**MAME**
+- <span id="mame_msys2_make">**MAME**</span>
 
   MSys2/MinGW环境使下使用make编译。
 
@@ -588,7 +582,7 @@ copy_runtime_deps "拷贝依赖库失败！" "cores/$core_file"
     make PYTHON_EXECUTABLE=python3
     ```
 
-* <span id="mame2015_msys2_make"> </span>**MAME 2015**
+- <span id="mame2015_msys2_make">**MAME 2015**</span>
 
   MSys2/MinGW环境使下使用make编译。
 
@@ -598,7 +592,7 @@ copy_runtime_deps "拷贝依赖库失败！" "cores/$core_file"
   make CC=g++
   ```
 
-* <span id="mame2016_msys2_make"> </span>**MAME 2016**
+- <span id="mame2016_msys2_make">**MAME 2016**</span>
 
   MSys2/MinGW环境使下使用make编译。
 
@@ -608,7 +602,7 @@ copy_runtime_deps "拷贝依赖库失败！" "cores/$core_file"
   make PYTHON_EXECUTABLE=python3
   ```
 
-* <span id="hbmame_msys2_make"> </span>**HBMAME**
+- <span id="hbmame_msys2_make">**HBMAME**</span>
 
   MSys2/MinGW环境使下使用make编译。
 
@@ -625,7 +619,7 @@ copy_runtime_deps "拷贝依赖库失败！" "cores/$core_file"
   make PYTHON_EXECUTABLE=python3 NO_USE_MIDI=0 NO_USE_PORTAUDIO=0 USE_SYSTEM_LIB_EXPAT=1 USE_SYSTEM_LIB_ZLIB=1 USE_SYSTEM_LIB_JPEG=1 USE_SYSTEM_LIB_FLAC=1 USE_SYSTEM_LIB_SQLITE3=1 USE_SYSTEM_LIB_PORTMIDI=1 USE_SYSTEM_LIB_PORTAUDIO=1 USE_SYSTEM_LIB_UTF8PROC=1 USE_SYSTEM_LIB_GLM=1 USE_SYSTEM_LIB_RAPIDJSON=1 USE_SYSTEM_LIB_PUGIXML=1 USE_BUNDLED_LIB_SDL2=0
   ```
 
-* <span id="fba2012_msys2_make"> </span>**Final Burn Alpha 2012**
+- <span id="fba2012_msys2_make">**Final Burn Alpha 2012**</span>
 
   MSys2/MinGW环境使下使用make编译。
 
@@ -636,7 +630,7 @@ copy_runtime_deps "拷贝依赖库失败！" "cores/$core_file"
   make
   ```
 
-* <span id="fba2012neogeo_msys2_make"> </span>**Final Burn Alpha 2012 NeoGeo**
+- <span id="fba2012neogeo_msys2_make">**Final Burn Alpha 2012 NeoGeo**</span>
 
   MSys2/MinGW环境使下使用make编译。
 
@@ -647,7 +641,7 @@ copy_runtime_deps "拷贝依赖库失败！" "cores/$core_file"
   make
   ```
 
-* <span id="nekoprojectiikai_msys2_make"> </span>**Neko Project II Kai**
+- <span id="nekoprojectiikai_msys2_make">**Neko Project II Kai**</span>
 
   MSys2/MinGW环境使下使用make编译。
 
@@ -658,7 +652,7 @@ copy_runtime_deps "拷贝依赖库失败！" "cores/$core_file"
   make
   ```
 
-* <span id="bsnes_msys2_make"> </span>**bsnes**
+- <span id="bsnes_msys2_make">**bsnes**</span>
 
   MSys2/MinGW环境使下使用make编译。
 
@@ -669,7 +663,7 @@ copy_runtime_deps "拷贝依赖库失败！" "cores/$core_file"
   make -f GNUmakefile target="libretro" binary="library" local="false"
   ```
 
-* <span id="bsnesmercury2014_msys2_make"> </span>**bsnes mercury & 2014**
+- <span id="bsnesmercury2014_msys2_make">**bsnes mercury & 2014**</span>
 
   MSys2/MinGW环境使下使用make编译。
 
@@ -681,7 +675,7 @@ copy_runtime_deps "拷贝依赖库失败！" "cores/$core_file"
   make PROFILE=performance
   ```
 
-* <span id="bsneshd_msys2_make"> </span>**bsnes hd**
+- <span id="bsneshd_msys2_make">**bsnes hd**</span>
 
   MSys2/MinGW环境使下使用make编译。
 
@@ -692,7 +686,7 @@ copy_runtime_deps "拷贝依赖库失败！" "cores/$core_file"
   make -f GNUmakefile target="libretro" binary="library"
   ```
 
-* <span id="paralleln64_msys2_make"> </span>**ParaLLEl N64**
+- <span id="paralleln64_msys2_make">**ParaLLEl N64**</span>
 
   MSys2/MinGW环境使下使用make编译。
 
@@ -702,20 +696,20 @@ copy_runtime_deps "拷贝依赖库失败！" "cores/$core_file"
   make HAVE_PARALLEL=1 HAVE_PARALLEL_RSP=1 WITH_DYNAREC=x86_64
   ```
 
-* <span id="dolphin_build"> </span>**Dolphin**
+- <span id="dolphin_build">**Dolphin**</span>
   
   同时支持使用MSys/MinGW和Visual C++编译。
   
-  + <span id="dolphin_msys2_cmake"> </span>MSys2/MinGW环境使下使用CMake编译
+  - <span id="dolphin_msys2_cmake">MSys2/MinGW环境使下使用CMake编译</span>
   
     目前官方库已修复以下编译问题，无需再修正，只需添加参数`-DLIBRETRO=ON`即可。
   
     - ~~至当前（20250313）为止，MinGW自带的DirectX 11的头文件版本较老，缺少某些辅助结构的定义。要使用从[dxsdk](https://github.com/apitrace/dxsdk)获得的DirectX 11头文件进行编译。此处的头文件包中还包含DirectX 12的头文件，但是和当前MinGW不兼容，因此要删除其中DirectX 12的头文件。DirectX 11的头文件也需要一些修改，增加部分UUID的声明，否则链接时会出现错误：~~
   
-      ```
+      ```bash
       undefined reference to '_GUID const& __mingw_uuidof()'
       ```
-      
+
       ~~该头文件包已添加至Dolphin源代码Externals/dxsdk下，并做好了需要的修改：删除其中DX12头文件，添加了需要的UUID声明。~~
   
       ~~通过修改Dolphin的CMakeLists.txt文件，添加dxsdk的包含路径和库路径。~~
@@ -726,7 +720,7 @@ copy_runtime_deps "拷贝依赖库失败！" "cores/$core_file"
       cd Externals/dxsdk/Lib
       make DLLTOOL=dlltool
       ```
-      
+
     - ~~MinGW的fmt库太新，编译无法通过。通过修改Dolphin的CMakeLists.txt文件，使用Dolphin自带的fmt库。~~
   
     - ~~Dolphin自带的curl库和MinGW不兼容，编译无法通过。通过修改Dolphin的CMakeLists.txt文件，使用MinGW的curl库。~~
@@ -744,15 +738,15 @@ copy_runtime_deps "拷贝依赖库失败！" "cores/$core_file"
     cmake --build Build --config Release --target dolphin_libretro
     ```
   
-   + <span id="dolphin_vc_cmake"> </span>Visual C++环境使下使用CMake编译
+  - <span id="dolphin_vc_cmake">Visual C++环境使下使用CMake编译</span>
   
      使用通用CMake编译命令进行编译。
   
-* <span id="flycast_msys2_cmake"> </span>**Flycast**
+- <span id="flycast_msys2_cmake">**Flycast**</span>
 
   MSys2/MinGW环境使下使用CMake编译，添加额外参数`-DLIBRETRO=ON`
 
-* <span id="melondsds_msys2_cmake"> </span>**melonDS DS**
+- <span id="melondsds_msys2_cmake">**melonDS DS**</span>
 
   MSys2/MinGW环境使下使用CMake编译。
   
@@ -768,42 +762,41 @@ copy_runtime_deps "拷贝依赖库失败！" "cores/$core_file"
   >
   > 该bug已经修复，等待 gcc 5.3 版本发布应该就可以解决这个问题，而不用添加以上参数了。
 
-* <span id="citra_build"> </span>**Citra**
+- <span id="citra_build">**Citra**</span>
 
   同时支持使用MSys/MinGW和Visual C++编译。
 
-  + <span id="citra_msys2_cmake"> </span>MSys2/MinGW环境使下使用CMake编译，生成Ninja编译文件须添加额外参数：
+  - <span id="citra_msys2_cmake">MSys2/MinGW环境使下使用CMake编译，生成Ninja编译文件须添加额外参数：</span>
 
     `-DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DENABLE_LIBRETRO=ON -DENABLE_SDL2=OFF -DENABLE_QT=OFF -DENABLE_WEB_SERVICE=OFF -DCITRA_WARNINGS_AS_ERRORS=OFF -DDISABLE_CLANG_TARGET=ON -DENABLE_LTO=OFF -DENABLE_TESTS=OFF -DENABLE_DEDICATED_ROOM=OFF -DENABLE_SCRIPTING=OFF -DENABLE_OPENAL=OFF -DENABLE_LIBUSB=OFF -DCITRA_ENABLE_BUNDLE_TARGET=OFF -DENABLE_CUBEB=OFF -DUSE_SYSTEM_GLSLANG=ON`
-
-  
 
    > [!Caution]
    >
    > 2026/02/03 修正了一个编译错误 ，修改文件为`src\common\file_util.cpp`，该错误可能是由于新版gcc自身的bug导致，后续升级gcc时可尝试还原此更改。
 
-  + <span id="citra_vc_cmake"> </span>Visual C++环境下使用CMake编译，生成Ninja编译文件须添加额外参数：
+  - <span id="citra_vc_cmake">Visual C++环境下使用CMake编译，生成Ninja编译文件须添加额外参数：</span>
 
     `-DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DENABLE_LIBRETRO=ON -DENABLE_SDL2=OFF -DENABLE_QT=OFF -DENABLE_WEB_SERVICE=OFF -DCITRA_WARNINGS_AS_ERRORS=OFF -DDISABLE_CLANG_TARGET=ON -DENABLE_LTO=OFF -DENABLE_TESTS=OFF -DENABLE_DEDICATED_ROOM=OFF -DENABLE_SCRIPTING=OFF -DENABLE_OPENAL=OFF -DENABLE_LIBUSB=OFF -DCITRA_ENABLE_BUNDLE_TARGET=OFF -DENABLE_CUBEB=OFF`
 
-* <span id="beetlepsxhw_msys2_make"> </span>**Beetle PSX HW**
+- <span id="beetlepsxhw_msys2_make">**Beetle PSX HW**</span>
 
   MSys2/MinGW环境使下使用make编译。
 
   和Beetle PSX同一源代码仓库，添加HAVE_HW=1参数编译硬件加速版本：
+
   ```bash
   make HAVE_HW=1
   ```
 
-* <span id="swanstation_vc_cmake"> </span>**SwanStation**
+- <span id="swanstation_vc_cmake">**SwanStation**</span>
 
   在Visual C++环境下使用通用CMake参数编译，不支持MSys/MinGW下编译。
 
-* <span id="ppsspp_build"> </span>**PPSSPP**
+- <span id="ppsspp_build">**PPSSPP**</span>
 
   同时支持使用MSys/MinGW和Visual C++编译。
 
-  + <span id="ppsspp_msys2_cmake"> </span>MSys2/MinGW环境使下使用CMake编译，生成Ninja编译文件须添加额外参数：
+  - <span id="ppsspp_msys2_cmake">MSys2/MinGW环境使下使用CMake编译，生成Ninja编译文件须添加额外参数：</span>
 
     `-DLIBRETRO=ON -DCMAKE_C_FLAGS=-Wno-incompatible-pointer-types`
 
@@ -816,29 +809,29 @@ copy_runtime_deps "拷贝依赖库失败！" "cores/$core_file"
     sed -i '0,/#include/{s/#include/#include <cstdint>\n#include/}' ext/glslang/glslang/MachineIndependent/SymbolTable.h
     ```
 
-  + <span id="ppsspp_vc_cmake"> </span>Visual C++环境下使用CMake编译，生成Ninja编译文件须添加额外参数：
+  - <span id="ppsspp_vc_cmake">Visual C++环境下使用CMake编译，生成Ninja编译文件须添加额外参数：</span>
 
     `-DLIBRETRO=ON -DCMAKE_C_FLAGS_RELEASE="/DNOMINMAX" -DCMAKE_CXX_FLAGS_RELEASE="/DNOMINMAX"`
 
-* <span id="play_vc_cmake"> </span>**Play!**
+- <span id="play_vc_cmake">**Play!**</span>
 
   在Visual C++环境下使用通用CMake参数编译，不支持MSys/MinGW下编译。
 
   生成Ninja编译文件须添加额外参数：`-DBUILD_PLAY=OFF -DBUILD_LIBRETRO_CORE=ON -DBUILD_TESTS=OFF`
 
-* <span id="pcsx2_vc_cmake"> </span>**PCSX2 (LRPS2)**
+- <span id="pcsx2_vc_cmake">**PCSX2 (LRPS2)**</span>
 
   在Visual C++环境下使用通用CMake参数编译，不支持MSys/MinGW下编译。
 
   生成Ninja编译文件须添加额外参数：`-DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DLIBRETRO=ON`
 
-  以及：` -DCMAKE_C_FLAGS_RELEASE="/utf-8" -DCMAKE_CXX_FLAGS_RELEASE="/utf-8"`强制以UTF-8编码打开源码文件，以避免编译时抛出以下警告：
+  以及：`-DCMAKE_C_FLAGS_RELEASE="/utf-8" -DCMAKE_CXX_FLAGS_RELEASE="/utf-8"`强制以UTF-8编码打开源码文件，以避免编译时抛出以下警告：
 
-  ```
+  ```cmd
   warning C4819: The file contains a character that cannot be represented in the current code page (936). Save the file in Unicode format to prevent data loss
   ```
 
-* <span id="dosboxcore_msys2_make"> </span>**DOSBox Core**
+- <span id="dosboxcore_msys2_make">**DOSBox Core**</span>
 
   MSys2/MinGW环境使下使用make编译。
 
@@ -854,30 +847,30 @@ copy_runtime_deps "拷贝依赖库失败！" "cores/$core_file"
   >
   > **不能使用ccache**，使用ccache会出有奇怪的编译错误，原因不明。
 
-* <span id="dosboxpure_build"> </span>**DOSBox Pure**
+- <span id="dosboxpure_build">**DOSBox Pure**</span>
 
   同时支持使用MSys/MinGW和Visual C++编译。
 
-  + <span id="dosboxpure_msys2_make"> </span>MSys2/MinGW环境使下使用make编译
+  - <span id="dosboxpure_msys2_make">MSys2/MinGW环境使下使用make编译</span>
 
     ```bash
     # 添加参数 platform=windows
     make platform=windows
     ```
 
-  + <span id="dosboxpure_vc_cmake"> </span>Visual C++环境下先用vcxproj2cmake把dosbox_pure_libretro.vcxproj转换为CMake项目，再用CMake编译。
+  - <span id="dosboxpure_vc_cmake">Visual C++环境下先用vcxproj2cmake把dosbox_pure_libretro.vcxproj转换为CMake项目，再用CMake编译。</span>
 
     ```cmd
     vcxproj2cmake --projects dosbox_pure_libretro.vcxproj
     ```
 
-* <span id="hatari_msys2_make"> </span>**Hatari**
+- <span id="hatari_msys2_make">**Hatari**</span>
 
   MSys2/MinGW环境使下使用make编译。
 
   支持IPF格式需要[安装capsimage库](#capsimage)；`Makefile.libretro`已为编译做适当修改。
 
-* <span id="ep128emu_msys2_make"> </span>**ep128emu**
+- <span id="ep128emu_msys2_make">**ep128emu**</span>
 
   MSys2/MinGW环境使下使用make编译。
 
@@ -887,7 +880,7 @@ copy_runtime_deps "拷贝依赖库失败！" "cores/$core_file"
   make platform=win64
   ```
 
-* <span id="scummvm_msys2_make"> </span>**ScummVM**
+- <span id="scummvm_msys2_make">**ScummVM**</span>
 
   MSys2/MinGW环境使下使用make编译。
 
@@ -896,38 +889,42 @@ copy_runtime_deps "拷贝依赖库失败！" "cores/$core_file"
   ```bash
   make USE_SYSTEM_fluidsynth=1 USE_SYSTEM_FLAC=1 USE_SYSTEM_vorbis=1 USE_SYSTEM_z=1 USE_SYSTEM_mad=1 USE_SYSTEM_faad=1 USE_SYSTEM_png=1 USE_SYSTEM_jpeg=1 USE_SYSTEM_theora=1 USE_SYSTEM_freetype=1 USE_SYSTEM_fribidi=1
   ```
+
   编译 coreinfo：
+
   ```bash
   make coreinfo
   ```
+
   编译 datafiles/themes (`scummvm.zip`)：
+
   ```bash
   make datafiles
   ```
 
-* <span id="squirreljme_msys2_cmake"> </span>**SquirrelJME**
+- <span id="squirreljme_msys2_cmake">**SquirrelJME**</span>
 
   MSys2/MinGW环境使下使用CMake编译。
 
   生成Ninja编译文件须添加额外参数：`-DRETROARCH=ON -DSQUIRRELJME_ENABLE_TESTING=OFF`
 
-* <span id="tic80_build"> </span>**TIC-80**
+- <span id="tic80_build">**TIC-80**</span>
 
   同时支持使用MSys/MinGW和Visual C++编译。
 
-  + <span id="tic80_msys2_cmake"> </span>MSys2/MinGW环境使下使用CMake编译。
+  - <span id="tic80_msys2_cmake">MSys2/MinGW环境使下使用CMake编译。</span>
 
     生成Ninja编译文件须添加额外参数：
 
     `-DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DBUILD_LIBRETRO=ON -DBUILD_PRO=ON -DBUILD_EDITORS=OFF -DBUILD_PLAYER=OFF -DBUILD_TOUCH_INPUT=ON -DBUILD_SDLGPU=ON -DBUILD_WITH_ALL=ON`
 
-  + <span id="tic80_vc_cmake"> </span>Visual C++环境下使用CMake编译。
+  - <span id="tic80_vc_cmake">Visual C++环境下使用CMake编译。</span>
 
     生成Ninja编译文件须添加额外参数：
 
     `-DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DBUILD_LIBRETRO=ON -DBUILD_PRO=ON -DBUILD_EDITORS=OFF -DBUILD_PLAYER=OFF -DBUILD_TOUCH_INPUT=ON -DBUILD_SDLGPU=ON -DBUILD_WITH_ALL=ON`
 
-- <span id="holani_msys2_cargo"> </span>**Holani**
+- <span id="holani_msys2_cargo">**Holani**</span>
 
   使用rust语言编写，在MSys2环境下使用cargo编译。
 
@@ -939,7 +936,7 @@ copy_runtime_deps "拷贝依赖库失败！" "cores/$core_file"
 
   > [!NOTE]
   >
-  > librero-holani仓库下只是编译脚本，实际源代码是在https://github.com/LLeny/holani中，编译时会自动下载。编译输出结果在`target/release`目录下，文件名为`halani.dll`
+  > librero-holani仓库下只是编译脚本，实际源代码是在<https://github.com/LLeny/holani>中，编译时会自动下载。编译输出结果在`target/release`目录下，文件名为`halani.dll`
   >
 
 ## 四、个人汉化模拟器内核列表
@@ -1012,15 +1009,15 @@ copy_runtime_deps "拷贝依赖库失败！" "cores/$core_file"
 
 | 内核名称（官网说明链接）                                     | 汉化仓库地址                                                 | 简要说明         | 汉化时间和版本 |
 | ------------------------------------------------------------ | ------------------------------------------------------------ | ---------------- | -------------- |
-| <span id="dolphin"> </span>[Dolphin](https://docs.libretro.com/library/dolphin/) | [libretro-dolphin](https://github.com/crazyqk2019/libretro-dolphin) | NGC/Wii 模拟器。 |                |
+| <span id="dolphin">[Dolphin](https://docs.libretro.com/library/dolphin/)</span> | [libretro-dolphin](https://github.com/crazyqk2019/libretro-dolphin) | NGC/Wii 模拟器。 |                |
 
 **DS 系列**
 
 | 内核名称（官网说明链接）                                     | 汉化仓库地址                                                 | 简要说明                    | 汉化时间和版本 |
 | ------------------------------------------------------------ | ------------------------------------------------------------ | --------------------------- | -------------- |
 | [DeSmuME](https://docs.libretro.com/library/desmume/)        | [libretro-desmume](https://github.com/crazyqk2019/libretro-desmume) | NDS模拟器。                 |                |
-| <span id="melondsds"> </span>[melonDS DS](https://docs.libretro.com/library/melonds_ds/) | [libretro-melondsds](https://github.com/crazyqk2019/libretro-melondsds)（分支为`main`） | NDS模拟器。<br />支持NDSi。 |                |
-| <span id="citra"> </span>[Citra](https://docs.libretro.com/library/citra/) | [libretro-citra](https://github.com/crazyqk2019/libretro-citra) | 3DS模拟器。                 |                |
+| <span id="melondsds">[melonDS DS](https://docs.libretro.com/library/melonds_ds/)</span> | [libretro-melondsds](https://github.com/crazyqk2019/libretro-melondsds)（分支为`main`） | NDS模拟器。<br />支持NDSi。 |                |
+| <span id="citra">[Citra](https://docs.libretro.com/library/citra/)</span> | [libretro-citra](https://github.com/crazyqk2019/libretro-citra) | 3DS模拟器。                 |                |
 
 ### Sega 系列机型内核
 
@@ -1040,7 +1037,7 @@ copy_runtime_deps "拷贝依赖库失败！" "cores/$core_file"
 
 | 内核名称（官网说明链接）                                     | 汉化仓库地址                                                 | 简要说明                             | 汉化时间和版本 |
 | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------ | -------------- |
-| <span id="flycast"> </span>[Flycast](https://docs.libretro.com/library/flycast/) | [libretro-flycast](https://github.com/crazyqk2019/libretro-flycast) | DC/Naomi/Naomi 2/Atomiswave 模拟器。 |                |
+| <span id="flycast">[Flycast](https://docs.libretro.com/library/flycast/)</span> | [libretro-flycast](https://github.com/crazyqk2019/libretro-flycast) | DC/Naomi/Naomi 2/Atomiswave 模拟器。 |                |
 
 ### Sony 系列机型内核
 
@@ -1048,14 +1045,14 @@ copy_runtime_deps "拷贝依赖库失败！" "cores/$core_file"
 | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | -------------- |
 | [Beetle PSX](https://docs.libretro.com/library/beetle_psx/)<br />[Beetle PSX HW](https://docs.libretro.com/library/beetle_psx_hw/) | [libretro-mednafen_psx](https://github.com/crazyqk2019/libretro-mednafen_psx) | PS1模拟器。<br />Mednafen多机种模拟器的单独PS1内核。         |                |
 | [PCSX ReARMed](https://docs.libretro.com/library/pcsx_rearmed/) | [libretro-pcsx_rearmed](https://github.com/crazyqk2019/libretro-pcsx_rearmed) | PS1模拟器。<br />PCSX Reloaded的分支版本。<br />专门为ARM处理器优化。 |                |
-| <span id="swanstation"> </span>SwanStation                   | [libretro-swanstation](https://github.com/crazyqk2019/libretro-swanstation) | PS1模拟器。                                                  |                |
-| <span id="pcsx2_old"> </span>~~[PCSX2](https://docs.libretro.com/library/pcsx2/)~~ | ~~[libretro-pcsx2_old](https://github.com/crazyqk2019/libretro-pcsx2_old)~~ | ~~PS2模拟器。<br />基于PCSX2移植到libretro的版本，<br />很久没有和上游版本同步了。~~ |                |
-| <span id="pcsx2"> </span>[PCSX2(LRPS2)](https://docs.libretro.com/library/lrps2/) | [libretro-pcsx2](https://github.com/crazyqk2019/libretro-pcsx2)<br />（分支`libretroization`） | PCSX2移植到libretro的重度修改硬分支。                        |                |
-| <span id="play"> </span>[Play!](https://docs.libretro.com/library/play/) | [libretro-play](https://github.com/crazyqk2019/libretro-play) | PS2模拟器。                                                  |                |
+| <span id="swanstation">SwanStation</span>                   | [libretro-swanstation](https://github.com/crazyqk2019/libretro-swanstation) | PS1模拟器。                                                  |                |
+| <span id="pcsx2_old">~~[PCSX2](https://docs.libretro.com/library/pcsx2/)~~</span> | ~~[libretro-pcsx2_old](https://github.com/crazyqk2019/libretro-pcsx2_old)~~ | ~~PS2模拟器。<br />基于PCSX2移植到libretro的版本，<br />很久没有和上游版本同步了。~~ |                |
+| <span id="pcsx2">[PCSX2(LRPS2)](https://docs.libretro.com/library/lrps2/)</span> | [libretro-pcsx2](https://github.com/crazyqk2019/libretro-pcsx2)<br />（分支`libretroization`） | PCSX2移植到libretro的重度修改硬分支。                        |                |
+| <span id="play">[Play!](https://docs.libretro.com/library/play/)</span> | [libretro-play](https://github.com/crazyqk2019/libretro-play) | PS2模拟器。                                                  |                |
 
 | 内核名称（官网说明链接）                                     | 汉化仓库地址                                                 | 简要说明                                                     | 汉化时间和版本 |
 | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | -------------- |
-| <span id="ppsspp"> </span>[PPSSPP](https://docs.libretro.com/library/ppsspp/) | [libretro-ppsspp](https://github.com/crazyqk2019/libretro-ppsspp) | PSP模拟器。<br />支持[OpenGL](https://docs.libretro.com/library/ppsspp/#opengl), [Vulkan](https://docs.libretro.com/library/ppsspp/#vulkan), 和 [Direct3D 11](https://docs.libretro.com/library/ppsspp/#d3d11)。 |                |
+| <span id="ppsspp">[PPSSPP](https://docs.libretro.com/library/ppsspp/)</span> | [libretro-ppsspp](https://github.com/crazyqk2019/libretro-ppsspp) | PSP模拟器。<br />支持[OpenGL](https://docs.libretro.com/library/ppsspp/#opengl), [Vulkan](https://docs.libretro.com/library/ppsspp/#vulkan), 和 [Direct3D 11](https://docs.libretro.com/library/ppsspp/#d3d11)。 |                |
 
 ### SNK 系列机型内核
 
@@ -1088,9 +1085,9 @@ copy_runtime_deps "拷贝依赖库失败！" "cores/$core_file"
 | 内核名称（官网说明链接）                                     | 汉化仓库地址                                                 | 简要说明                                                     | 汉化时间和版本 |
 | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | -------------- |
 | DOSBox Core                                                  | [libretro-dosbox_core](https://github.com/crazyqk2019/libretro-dosbox_core)<br />（分支`libretro`） | DOS模拟器。<br />DOSBox的libretro内核，和最新的DOSBox SVN主线版本保持同步。 |                |
-| <span id="dosboxpure"> </span>[DOSBox Pure](https://docs.libretro.com/library/dosbox_pure/) | [libretro-dosbox_pure](https://github.com/crazyqk2019/libretro-dosbox_pure)<br />（分支`main`） | DOS模拟器。<br />新的基于DOSBox的libretro内核，目标是简化和易用性。<br />实现了一些高级功能，例如存档、屏幕键盘、<br />高可定制性的控制器设置以及倒带功能。 |                |
+| <span id="dosboxpure">[DOSBox Pure](https://docs.libretro.com/library/dosbox_pure/)</span> | [libretro-dosbox_pure](https://github.com/crazyqk2019/libretro-dosbox_pure)<br />（分支`main`） | DOS模拟器。<br />新的基于DOSBox的libretro内核，目标是简化和易用性。<br />实现了一些高级功能，例如存档、屏幕键盘、<br />高可定制性的控制器设置以及倒带功能。 |                |
 
-###  3DO 机型内核
+### 3DO 机型内核
 
 | 内核名称（官网说明链接）                          | 汉化仓库地址                                                 | 简要说明                                                     | 汉化时间和版本 |
 | ------------------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ | -------------- |
@@ -1160,9 +1157,9 @@ copy_runtime_deps "拷贝依赖库失败！" "cores/$core_file"
 | [O2EM](https://docs.libretro.com/library/o2em/)              | [libretro-o2em](https://github.com/crazyqk2019/libretro-o2em) | Magnavox Odyssey2/Philips Videopac+模拟器。<br />Odyssey2（欧版叫Videopac/Jopac）是上世纪70年代末推出的一款游戏机。 |                |
 | Oberon                                                       | [libretro-oberon](https://github.com/crazyqk2019/libretro-oberon) | Oberon RISC系统模拟器。<br />Oberon RISC系统由瑞士苏黎世联邦理工学院的<br />Niklaus Wirth（Pascal语言之父）与Jürg Gutknecht教授<br />于1980年代设计。 |                |
 | [ScummVM](https://docs.libretro.com/library/scummvm/)        | [libretro-scummvm](https://github.com/crazyqk2019/libretro-scummvm) | ScummVM是一款开源的跨平台游戏引擎，<br />专门用于运行经典的点击式冒险游戏（Point-and-Click Adventure Games）。<br />它支持众多老游戏，<br />特别是基于SCUMM（Script Creation Utility for Maniac Mansion）<br />引擎开发的经典作品。<br />它通过读取老游戏的数据包，替换原有可执行文件来运行。 |                |
-| <span id="squirreljme"> </span>SquirrelJME                   | [libretro-squirreljme](https://github.com/crazyqk2019/libretro-squirreljme)<br />（分为`trunk`） | Java ME 8虚拟机。<br />它的最终目标是达到和Java ME标准99.9%的兼容性。 |                |
+| <span id="squirreljme">SquirrelJME</span>                    | [libretro-squirreljme](https://github.com/crazyqk2019/libretro-squirreljme)<br />（分为`trunk`） | Java ME 8虚拟机。<br />它的最终目标是达到和Java ME标准99.9%的兼容性。 |                |
 | [Theodore](https://docs.libretro.com/library/theodore/)      | [libretro-theodore](https://github.com/crazyqk2019/libretro-theodore) | Thomson MO/TO系统模拟器。<br />MO/TO是20世纪80年代法国Thomson-Brandt公司推出的系列计算机。 |                |
-| <span id="tic80"> </span>[TIC-80](https://docs.libretro.com/library/tic80/) | [libretro-tic80](https://github.com/crazyqk2019/libretro-tic80)<br />（分支为`main`） | TIC-80模拟器。<br />TIC-80是一款免费开源的幻想计算机（Fantasy Computer），<br />专为制作、运行和分享复古风格的小游戏而设计。<br />它提供了一套完整的开发工具，适合独立开发者、教育用途或复古游戏爱好者。 |                |
+| <span id="tic80">[TIC-80](https://docs.libretro.com/library/tic80/)</span> | [libretro-tic80](https://github.com/crazyqk2019/libretro-tic80)<br />（分支为`main`） | TIC-80模拟器。<br />TIC-80是一款免费开源的幻想计算机（Fantasy Computer），<br />专为制作、运行和分享复古风格的小游戏而设计。<br />它提供了一套完整的开发工具，适合独立开发者、教育用途或复古游戏爱好者。 |                |
 | [MicroW8](https://docs.libretro.com/library/microw8/)        | [libretro-uw8](https://github.com/crazyqk2019/libretro-uw8)<br />（分支为`main`） | MicroW8模拟器。<br />MicroW8是一款基于WebAssembly的轻量级、模块化的8位计算机模拟器，<br />专为复古计算爱好者和开发者设计。<br />它允许用户模拟经典的8位计算机架构（如 6502、Z80 等），<br />并支持自定义硬件扩展和编程实验。 |                |
 | [Uzem](https://docs.libretro.com/library/uzem/)              | [libretro-uzem](https://github.com/crazyqk2019/libretro-uzem) | Uzebox模拟器。<br />Uzem是Uzebox的官方模拟器。<br />Uzebox是一款开源复古游戏主机，基于AVR单片机设计，<br />以极简硬件实现完整的游戏机功能。 |                |
 | [vecx](https://docs.libretro.com/library/vecx/)              | [libretro-vecx](https://github.com/crazyqk2019/libretro-vecx) | GCE Vectrex模拟器。<br />Vectrex是20世纪80年代初期推出的一款自带矢量显示器的家用机，<br />采用黑白矢量图形（非传统光栅图形），通过彩色滤镜增强画面。 |                |
@@ -1261,13 +1258,8 @@ git config --system http.sslBackend schannel
 
 和上游仓库合并时子模块地址发生变更，需要执行`git submodule sync --recursive`命令来同步变更本地仓库配置。
 
-
-
 ---
 
-[官方Windows编译指导]: https://docs.libretro.com/development/retroarch/compilation/windows/
+官方Windows编译指导: <https://docs.libretro.com/development/retroarch/compilation/windows/>
 
-[官方最新编译和资源下载]: https://buildbot.libretro.com/
-
-
-
+官方最新编译和资源下载: <https://buildbot.libretro.com/>

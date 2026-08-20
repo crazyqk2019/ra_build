@@ -12,7 +12,7 @@ pushd "$(dirname "$0")" >/dev/null || die "变更目录失败！"
 pushd .. >/dev/null
 cores_dir="$PWD/cores"
 dists_dir="$PWD/cores/dists"
-if [[ ! -d "$dists_dir" ]]; then mkdir -p "$dists_dir" >/dev/null; die "创建分发目录出错！"; fi
+mkdir -p "$dists_dir" >/dev/null || die "创建分发目录出错！"
 popd >/dev/null || die "变更目录失败！"
 
 # 使用cmake编译通用方法，参数说明：

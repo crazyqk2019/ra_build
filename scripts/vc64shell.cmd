@@ -16,7 +16,7 @@ IF NOT EXIST "%VC_ENV_PATH%\vc_build_tools\devcmd.bat" GOTO :err
 IF "%~1" == "" (
     CMD /K "%VC_ENV_PATH%\vc_build_tools\devcmd.bat"
 ) ELSE (
-    CALL "%VC_ENV_PATH%\vc_build_tools\devcmd.bat"
+    CALL "%VC_ENV_PATH%\vc_build_tools\devcmd.bat" || (ECHO VC编译环境初始化失败！& GOTO :err)
     CALL %*
 )
 

@@ -33,11 +33,7 @@ build_mame2016() {
 }
 
 build_fbalpha2012() {
-    if [[ -z $CFLAGS ]]; then
-        local MY_CFLAGS="-Wno-incompatible-pointer-types"
-    else
-        local MY_CFLAGS=$CFLAGS+" -Wno-incompatible-pointer-types"
-    fi
+    local MY_CFLAGS="${CFLAGS:+${CFLAGS} }-Wno-incompatible-pointer-types"
     CFLAGS="$MY_CFLAGS" ./build_use_make.sh "Final Burn Alpha 2012" "fbalpha2012" "svn-current/trunk"
 }
 
@@ -54,11 +50,7 @@ build_fbalpha2012_cps3() {
 }
 
 build_fbalpha2012_neogeo() {
-    if [[ -z $CFLAGS ]]; then
-        local MY_CFLAGS="-Wno-incompatible-pointer-types"
-    else
-        local MY_CFLAGS=$CFLAGS+" -Wno-incompatible-pointer-types"
-    fi    
+    local MY_CFLAGS="${CFLAGS:+${CFLAGS} }-Wno-incompatible-pointer-types"
     CFLAGS="$MY_CFLAGS" ./build_use_make.sh "Final Burn Alpha 2012 Neo Geo" "fbalpha2012_neogeo"
 }
 
@@ -154,10 +146,6 @@ build_mednafen_saturn() {
 }
 
 build_kronos() {
-    ./build_use_make.sh "Kronos" "kronos" "yabause/src/libretro"
-}
-
-build_flycast() {
     ./build_use_make.sh "Kronos" "kronos" "yabause/src/libretro"
 }
 
@@ -321,11 +309,7 @@ build_meteor() {
 }
 
 build_np2kai() {
-    if [[ -z $CFLAGS ]]; then
-        local MY_CFLAGS="-Wno-incompatible-pointer-types"
-    else
-        local MY_CFLAGS=$CFLAGS+" -Wno-incompatible-pointer-types"
-    fi
+    local MY_CFLAGS="${CFLAGS:+${CFLAGS} }-Wno-incompatible-pointer-types"
     CFLAGS="$MY_CFLAGS" ./build_use_make.sh "Neko Project II Kai" "np2kai" "sdl"
 }
 
@@ -355,9 +339,20 @@ build_vice() {
     # shellcheck disable=SC2012
     mapfile -t emutype_list < <(ls Makefile.* | cut -d'.' -f2 | grep -v -i 'common')
     popd || return 1
+    vice_cores=()
     for t in "${emutype_list[@]}"; do
          make_params="EMUTYPE=$t" ./build_use_make.sh "VICE ${t}" "vice" "." "." "vice_${t}_libretro.dll" || return 1
+         vice_cores+=("vice_${t}_libretro.dll")
     done
+    if (( ${#vice_cores[@]} == 0 )); then
+        error_message "没有可编译的vice内核make文件！"
+        return 1
+    else
+        (
+            IFS=$'\n'; vicecores=$'\n'"${vice_cores[*]}"
+            IFS=$' '; message "成功编译VICE内核：${vicecores[*]}"
+        )
+    fi
 }
 
 build_puae() {
@@ -386,7 +381,7 @@ build_sameduck() {
 
 build_scummvm() {
     local make_params="USE_SYSTEM_fluidsynth=1 USE_SYSTEM_FLAC=1 USE_SYSTEM_vorbis=1 USE_SYSTEM_z=1 USE_SYSTEM_mad=1 USE_SYSTEM_faad=1 USE_SYSTEM_png=1 USE_SYSTEM_jpeg=1 USE_SYSTEM_theora=1 USE_SYSTEM_freetype=1 USE_SYSTEM_fribidi=1"
-    make_params="$make_params" ./build_use_make.sh "ScummVM" "scummvm" "backends\platform\libretro"
+    make_params="$make_params" ./build_use_make.sh "ScummVM" "scummvm" "backends/platform/libretro"
 }
 
 build_smsplus() {
@@ -516,14 +511,18 @@ build_squirreljme() {
 
 # Cores built using other tools
 build_holani() {
+    local -a cargo_args=(build --release)
+    if [[ $build_mt -gt 0 ]]; then
+        cargo_args+=(--jobs "$build_mt")
+    fi
     if ! (
         cd "${cores_dir}/libretro-holani" || return 1
-        cargo build --release || return $?
+        cargo "${cargo_args[@]}" || return $?
         strip -s target/release/holani.dll || return $?
         cp -v target/release/holani.dll "$dists_dir/holani_libretro.dll" || return $?
     )
     then 
-        "编译 \"Holani\" 出错！"; return 1; 
+        error_message "编译 \"Holani\" 出错！"; return 1;
     fi
     message "\"Holani\" 编译完成。";echo
 }
@@ -556,7 +555,7 @@ while [[ $# -gt 0 ]]; do
     elif [[ ${1,,} = "-noregen" || ${1,,} = "/noregen" ]]; then no_regen=1;
     elif [[ ${1,,} = "-j" || ${1,,} = "/j" ]]; then
         shift; build_mt=$1
-        if [[ ! $build_mt =~ ^[0-9]+$ ]]; then die "无效的 -j 参数：\"$build_mt\"！"; fi
+        if [[ ! $build_mt =~ ^[1-9][0-9]*$ ]]; then die "无效的 -j 参数：\"$build_mt\"！"; fi
         if [[ $build_mt -lt 1 ]]; then die "无效的 -j 参数：\"$build_mt\"！"; fi
     elif [[ ${1,,} = "all" ]]; then build_all=1;
     else
@@ -585,7 +584,7 @@ if [[ ${#build_cores_list[@]} -eq 0 ]]; then
     echo "-noclean: 编译前不要执行清理操作"
     echo "-noregen: 对于使用CMake编译的内核，不要重新创建编译配置文件"
     echo "-noccache: 对于使用make编译的内核，不要使用ccache加速编译"
-    echo "-j <num>": 指定并行编译使用的最大线程数，默认使用自动线程数
+    echo "-j <num>: 指定并行编译使用的最大线程数，默认使用自动线程数"
     exit 0
 fi
 

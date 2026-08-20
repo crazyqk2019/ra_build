@@ -6,19 +6,19 @@ error_message() { $SETCOLOR_RED; echo "$@"; $SETCOLOR_NORMAL; }
 die() { if [ $# -gt 0 ]; then error_message "$@"; fi; exit 1; }
 
 
-pushd "$(dirname "$0")" >/dev/null || die "±ä¸üÄ¿Â¼Ê§°Ü£¡"
+pushd "$(dirname "$0")" >/dev/null || die "å˜æ›´ç›®å½•å¤±è´¥ï¼"
 
-message "¿ËÂ¡Ô­°æ RetroArch ¡­¡­"
-git clone --recursive https://github.com/libretro/RetroArch ../retroarch_orig || die "¿ËÂ¡³ö´í£¡"
-message "Íê³É¡£"
+message "å…‹éš†åŸç‰ˆ RetroArch â€¦â€¦"
+git clone --recursive https://github.com/libretro/RetroArch ../retroarch_orig || die "å…‹éš†å‡ºé”™ï¼"
+message "å®Œæˆã€‚"
 echo
 
 # $SETCOLOR_GREEN && echo "Fetching submodules..." && $SETCOLOR_NORMAL
 # pushd ../retroarch_orig >/dev/null
 # ./fetch-submodules.sh
 
-message "¿ËÂ¡Ô­°æ RetroArch Íê³É¡£"
+message "å…‹éš†åŸç‰ˆ RetroArch å®Œæˆã€‚"
 
-popd >/dev/null || die "±ä¸üÄ¿Â¼Ê§°Ü£¡"
+popd >/dev/null || die "å˜æ›´ç›®å½•å¤±è´¥ï¼"
 
 exit 0

@@ -18,7 +18,7 @@ REM %2 - 内核名称
 REM %3 - 编译源代码路径（CMakeLists.txt文件路径），默认为内核源代码根目录
 REM %4 - 编译输出路径（相对于上一个参数指定的源代码路径），默认为和编译源代码路径相同
 REM %5 - 编译输出内核dll文件名，默认为 "内核名称_libretro.dll"
-REM %6 - 指定编译临时目录，默认为Build
+REM %6 - 指定编译临时目录，默认为vc_build
 SET core_name=%~1
 SET core=%~2
 IF "%~3" == "" (SET "core_src=.") ELSE (SET "core_src=%~3")
@@ -26,10 +26,10 @@ IF "%~4" == "" (SET "core_dest=.") ELSE (SET "core_dest=%~4")
 IF "%~5" == "" (SET "core_output=%core%_libretro.dll") ELSE (SET "core_output=%~5")
 IF "%~6" == "" (SET "build_dir=vc_build") ELSE (SET "build_dir=%~6")
 
-SET "cmake_clean=cmake --build %build_dir% --target clean -j"
+SET "cmake_clean=cmake --build "%build_dir%" --target clean -j"
 SET "cmake_gen=cmake -Wno-dev -DCMAKE_BUILD_TYPE=Release -G Ninja"
 IF DEFINED cmake_params (SET "cmake_gen=%cmake_gen% %cmake_params%")
-SET "cmake_gen=%cmake_gen% -B %build_dir%"
+SET "cmake_gen=%cmake_gen% -B "%build_dir%""
 SET "cmake_build=cmake --build "%build_dir%" --target %core%_libretro --config Release -j"
 IF DEFINED BUILD_MT SET "cmake_build=%cmake_build% %BUILD_MT%"
 

@@ -2,6 +2,18 @@
 
 ## 快速使用
 
+- 确保系统已经安装有wget，如果没有，使用以下命令安装：
+
+  ```cmd
+  winget install wget
+  ```
+
+- 进入项目根目录，确认子模块已经正确初始化：
+
+  ```cmd
+  git submodule update --init --recursive
+  ```
+
 - 进入项目的`scripts`目录，按序执行以下脚本。
 
 - 安装Msys2/MinGW编译环境和Visual C++编译环境：
@@ -54,7 +66,7 @@
 - 分发所有编译结果，下载其他资源文件。最终结果将在`retroarch_dist`目录中：
 
   ```bash
-  ./dist_ra.sh ../retrorach
+  ./dist_ra.sh ../retroarch
   ./dist_cores.sh all
   ```
 
@@ -152,7 +164,7 @@ RA自身使用msys2/mingw编译，但是某些内核只能在Visual C++下编译
 
    ```bash
    # 进入源码目录
-   cd capsimg_source_linux_macosx\CAPSImg
+   cd capsimg_source_linux_macosx/CAPSImg
    # 重新生成configure
    autoconf
    # 运行configure
@@ -164,7 +176,7 @@ RA自身使用msys2/mingw编译，但是某些内核只能在Visual C++下编译
    install -v capsimg.dll.a "$MINGW_PREFIX/lib"
    # 安装头文件
    install -v -D ../LibIPF/*.h "$MINGW_PREFIX/include/caps5/"
-   install -v -D ../Core/CommonTypes.h "$MINGW_PREFIX/usr/include/caps5/CommonTypes.h"
+   install -v -D ../Core/CommonTypes.h "$MINGW_PREFIX/include/caps5/CommonTypes.h"
    ```
 
    下载4.2版本：<http://www.softpres.org/_media/files:ipflib42_linux-x86_64.tar.gz>
@@ -188,17 +200,17 @@ RA的可选依赖库，目前该库Windows下只能在Visual C++环境编译。�
 
 具体编译安装步骤见脚本`scripts\env_setup\inst_libsmb2.cmd`
 
-## 二、编译和分发 RetraoArach
+## 二、编译和分发 RetroArch
 
-###  1. 拉取 RA 源代码
+###  1. 拉取汉化版 RA 源代码
 
 1. 进入msys2环境，执行：
 
    ```bash
-   git clone https://github.com/libretro/RetroArch retroarch
+   git clone --recursive https://github.com/crazyqk2019/RetroArch ../retroarch
    ```
 
-2. ~~完成后进入retroarch源代码目录，执行拉取子模块脚本：~~（子模块为资源，可以直接在<https://buildbot.libretro.com/assets/frontend/>下载打包好的资源）
+2. ~~完成后进入retroarch源代码目录，执行拉取子模块脚本：~~（子模块为资源，可以直接在<https://buildbot.libretro.com/assets/frontend/>下载打包好的资源，不再需要此步骤。）
 
    ```bash
    ./fetch-submodules.sh
@@ -213,7 +225,7 @@ RA的可选依赖库，目前该库Windows下只能在Visual C++环境编译。�
 1. 进入msys2编译环境：
 
    ```cmd
-   msys2_shell.cmd -ucrt64 -defterm -no-start
+   msys2shell.cmd /e ucrt64
    ```
 
 2. 进入RA源代码目录，运行配置程序：
@@ -225,7 +237,7 @@ RA的可选依赖库，目前该库Windows下只能在Visual C++环境编译。�
 3. 编译：
 
    ```bash
-   make -j
+   make -j"$(nproc)"
    ```
    
 4. 裁剪优化，减小可执行文件大小：
@@ -244,14 +256,14 @@ RA的可选依赖库，目前该库Windows下只能在Visual C++环境编译。�
 
    ```bash
    cd gfx/video_filters
-   make -j
+   make -j"$(nproc)"
    ```
 
 2. 编译音频滤镜(DSP)：
 
    ```bash
    cd libretro-common/audio/dsp_filters
-   make -j
+   make -j"$(nproc)"
    ```
 
 > [!Note]
@@ -260,9 +272,11 @@ RA的可选依赖库，目前该库Windows下只能在Visual C++环境编译。�
 
 ### 4. 建立完整 RA 发行目录
 
-1. 拷贝retroarch.exe到分发目录。
+1. 拷贝retroarch.exe到分发目录，拷贝retroarch.cfg到分发目录重命名为retroarch.default.cfg，作为缺省配置。
 
 2. 拷贝依赖的msys和mingw的dll:
+
+   如果路径不存在空格，可以使用简单方法：
 
    ```bash
    for bin in $(ntldd -R retroarch.exe | grep -i ucrt64 | cut -d">" -f2 | cut -d" " -f2);
@@ -270,7 +284,37 @@ RA的可选依赖库，目前该库Windows下只能在Visual C++环境编译。�
    done
    ```
 
+   如果路径有空格，可以使用更严谨的方法：
+
+   ```bash
+   SETCOLOR_GREEN="echo -en \\E[1;32m"; SETCOLOR_RED="echo -en \\E[1;31m"; SETCOLOR_NORMAL="echo -en \\E[0;39m"
+   message(){ $SETCOLOR_GREEN; echo "$@"; $SETCOLOR_NORMAL; }
+   error_message() { $SETCOLOR_RED; echo "$@"; $SETCOLOR_NORMAL; }
+   die() { if [ $# -gt 0 ]; then error_message "$@"; fi; exit 1; }
+   
+   copy_runtime_deps() {
+       local copy_error=$1
+       shift
+   
+       local dll
+       local i
+       for ((i = 0; i < 3; i++)); do
+           while IFS= read -r dll; do
+               cp -v -- "$dll" . || die "$copy_error"
+           done < <(
+               ntldd -R "$@" |
+                   grep -i 'msys64' |
+                   sed -nE 's/^[^>]*>[[:space:]]*(.*)[[:space:]]+\(0x[[:xdigit:]]+\)[[:space:]]*$/\1/p'
+           )
+       done
+   }
+   copy_runtime_deps "拷贝依赖运行库失败！" retroarch.exe
+   ```
+
+
 3. 拷贝依赖的Qt的dll:
+
+   如果路径不存在空格，可以使用简单方法：
 
    ```bash
    windeployqt6 retroarch.exe
@@ -278,6 +322,35 @@ RA的可选依赖库，目前该库Windows下只能在Visual C++环境编译。�
    	do cp -v "$bin" .
    done
    ```
+
+   如果路径有空格，可以使用更严谨的方法：
+
+   ```bash
+   SETCOLOR_GREEN="echo -en \\E[1;32m"; SETCOLOR_RED="echo -en \\E[1;31m"; SETCOLOR_NORMAL="echo -en \\E[0;39m"
+   message(){ $SETCOLOR_GREEN; echo "$@"; $SETCOLOR_NORMAL; }
+   error_message() { $SETCOLOR_RED; echo "$@"; $SETCOLOR_NORMAL; }
+   die() { if [ $# -gt 0 ]; then error_message "$@"; fi; exit 1; }
+   
+   copy_runtime_deps() {
+       local copy_error=$1
+       shift
+   
+       local dll
+       local i
+       for ((i = 0; i < 3; i++)); do
+           while IFS= read -r dll; do
+               cp -v -- "$dll" . || die "$copy_error"
+           done < <(
+               ntldd -R "$@" |
+                   grep -i 'msys64' |
+                   sed -nE 's/^[^>]*>[[:space:]]*(.*)[[:space:]]+\(0x[[:xdigit:]]+\)[[:space:]]*$/\1/p'
+           )
+       done
+   }
+   windeployqt6 retroarch.exe
+   copy_runtime_deps "拷贝Qt图形插件依赖运行库失败！" imageformats/*.dll
+   ```
+
 
 4. 拷贝音视频滤镜：
 
@@ -307,6 +380,7 @@ RA的可选依赖库，目前该库Windows下只能在Visual C++环境编译。�
    7z x database-cursors.zip -odatabase/cursors
    rm database-cursors.zip
    
+   wget https://buildbot.libretro.com/assets/frontend/database-rdb.zip
    7z x database-rdb.zip -odatabase/rdb
    rm database-rdb.zip
    
@@ -331,9 +405,7 @@ RA的可选依赖库，目前该库Windows下只能在Visual C++环境编译。�
    rm shaders_slang.zip
    ```
 
-> [!Note]
->
-> 可使用`scripts\dist_ra_filters.sh`脚本自动执行以上步骤。
+
 
 ### 5. 中文字体问题
 
@@ -349,12 +421,41 @@ RA的可选依赖库，目前该库Windows下只能在Visual C++环境编译。�
 
 分发内核时除了要拷贝内核本身的dll文件外，还要拷贝所有依赖的dll文件。
 
+如果路径不含空格，可以使用简单方法：
+
 ```bash
 for i in $(seq 3); do 
 	for dll in $(ntldd -R cores/$core_file | grep -i msys64 | cut -d">" -f2 | cut -d" " -f2); do
 		cp -v "$dll" .
 	done
 done
+```
+
+如果路径有空格，可以使用更严谨的方法：
+
+```bash
+SETCOLOR_GREEN="echo -en \\E[1;32m"; SETCOLOR_RED="echo -en \\E[1;31m"; SETCOLOR_NORMAL="echo -en \\E[0;39m"
+message(){ $SETCOLOR_GREEN; echo "$@"; $SETCOLOR_NORMAL; }
+error_message() { $SETCOLOR_RED; echo "$@"; $SETCOLOR_NORMAL; }
+die() { if [ $# -gt 0 ]; then error_message "$@"; fi; exit 1; }
+
+copy_runtime_deps() {
+    local copy_error=$1
+    shift
+
+    local dll
+    local i
+    for ((i = 0; i < 3; i++)); do
+        while IFS= read -r dll; do
+            cp -v -- "$dll" . || die "$copy_error"
+        done < <(
+            ntldd -R "$@" |
+                grep -i 'msys64' |
+                sed -nE 's/^[^>]*>[[:space:]]*(.*)[[:space:]]+\(0x[[:xdigit:]]+\)[[:space:]]*$/\1/p'
+        )
+    done
+}
+copy_runtime_deps "拷贝依赖库失败！" "cores/$core_file"
 ```
 
 
@@ -378,9 +479,9 @@ done
    进入内核源代码目录，如果存在Makefile.libretro文件则使用，否则使用默认Makefile文件。
 
    ```bash
-   make -f Makefile.libretro -j
+   make -f Makefile.libretro -j"$(nproc)"
    # 或者
-   make -j
+   make -j"$(nproc)"
    strip -s core_name_libretro.dll # 裁剪，去除调试符号信息
    ```
 
@@ -412,7 +513,7 @@ done
    | [Flycast（DC/Naomi/Atomiswave模拟器）](#flycast) | ✅[支持](#flycast_msys2_cmake)     | ❎不支持                        | MSys2/MinGW      |
    | [PPSSPP（PSP模拟器）](#ppsspp)                   | ✅[支持](#ppsspp_msys2_cmake)      | ✅[支持](#ppsspp_vc_cmake)      | MSys2/MinGW      |
    | [Play!（PS2模拟器）](#play)                      | ❎不支持                           | ✅[支持](#play_vc_cmake)        | Visual C++       |
-   | [PCSX2(LRPS2)（PS2模拟器）](#lrps2)              | ❎不支持                           | ✅[支持](#lrps2_vc_cmake)       | Visual C++       |
+   | [PCSX2(LRPS2)（PS2模拟器）](#pcsx2)              | ❎不支持                           | ✅[支持](#pcsx2_vc_cmake)       | Visual C++       |
    | [SwanStation（PS1模拟器）](#swanstation)         | ❎不支持                           | ✅[支持](#swanstation_vc_cmake) | Visual C++       |
    | [DOSBox Pure（DOS模拟器）](#dosboxpure)          | ❎不支持（使用make编译）           | ✅[支持](#dosboxpure_vc_cmake)  | Visual C++       |
    | [TIC-80（TIC-80模拟器）](#tic80)                 | ✅[支持](#tic80_msys2_cmake)       | ✅[支持](#tic80_vc_cmake)       | MSys2/MinGW      |
@@ -450,7 +551,7 @@ done
 | [Beetle PSX HW（PS1模拟器）](#beetlepsxhw_msys2_make)        | make                | ❎不支持            |
 | [SwanStation（PS1模拟器）](#swanstation_vc_cmake)            | ❎不支持             | CMake              |
 | [Play!（PS2模拟器）](#play_vc_cmake)                         | ❎不支持             | CMake              |
-| [PCSX2（PS2模拟器）](#lrps2_vc_cmake)                        | ❎不支持             | CMake              |
+| [PCSX2（PS2模拟器）](#pcsx2_vc_cmake)                        | ❎不支持             | CMake              |
 | [PPSSPP（PSP模拟器）](#ppsspp_build)                         | CMake               | CMake              |
 | [DOSBox Core（DOS模拟器）](#dosboxcore_msys2_make)           | make                | ❎不支持            |
 | [DOSBox Pure（DOS模拟器）](#dosboxpure_build)                | make                | CMake              |
@@ -469,11 +570,11 @@ done
 
   > [!WARNING]
   >
-  > MAME编译非常消耗内存，内存不够很容造成编译出错。
+  > MAME编译非常消耗内存，内存不够很容易造成编译出错。
   >
   > 实测32GB内存机器，8线程CPU，默认8线程编译会内存耗尽而出错。
   >
-  > 如果机器内存小于64GB，建议添加参数-j ，限制并行编译线程数。
+  > 如果机器内存小于64GB，建议添加参数`-j <num>` ，限制并行编译线程数。例如：`./build_cores.sh -j 4 mame`
 
   - ~~修正第三方库sol2在高版本gcc下的编译错误。参考来源：[Fix SOL2 build on GCC 10.2 by working around overload resolution problem](https://github.com/ajrhacker/mame/commit/dcbee7cda6faea688605ed24c2548187cb55f60a)~~
 
@@ -611,8 +712,8 @@ done
   
     - ~~至当前（20250313）为止，MinGW自带的DirectX 11的头文件版本较老，缺少某些辅助结构的定义。要使用从[dxsdk](https://github.com/apitrace/dxsdk)获得的DirectX 11头文件进行编译。此处的头文件包中还包含DirectX 12的头文件，但是和当前MinGW不兼容，因此要删除其中DirectX 12的头文件。DirectX 11的头文件也需要一些修改，增加部分UUID的声明，否则链接时会出现错误：~~
   
-      ```bash
-      undefined reference to `_GUID const& __mingw_uuidof()
+      ```
+      undefined reference to '_GUID const& __mingw_uuidof()'
       ```
       
       ~~该头文件包已添加至Dolphin源代码Externals/dxsdk下，并做好了需要的修改：删除其中DX12头文件，添加了需要的UUID声明。~~
@@ -725,7 +826,7 @@ done
 
   生成Ninja编译文件须添加额外参数：`-DBUILD_PLAY=OFF -DBUILD_LIBRETRO_CORE=ON -DBUILD_TESTS=OFF`
 
-* <span id="lrps2_vc_cmake"> </span>**PCSX2 (LRPS2)**
+* <span id="pcsx2_vc_cmake"> </span>**PCSX2 (LRPS2)**
 
   在Visual C++环境下使用通用CMake参数编译，不支持MSys/MinGW下编译。
 
@@ -948,8 +1049,8 @@ done
 | [Beetle PSX](https://docs.libretro.com/library/beetle_psx/)<br />[Beetle PSX HW](https://docs.libretro.com/library/beetle_psx_hw/) | [libretro-mednafen_psx](https://github.com/crazyqk2019/libretro-mednafen_psx) | PS1模拟器。<br />Mednafen多机种模拟器的单独PS1内核。         |                |
 | [PCSX ReARMed](https://docs.libretro.com/library/pcsx_rearmed/) | [libretro-pcsx_rearmed](https://github.com/crazyqk2019/libretro-pcsx_rearmed) | PS1模拟器。<br />PCSX Reloaded的分支版本。<br />专门为ARM处理器优化。 |                |
 | <span id="swanstation"> </span>SwanStation                   | [libretro-swanstation](https://github.com/crazyqk2019/libretro-swanstation) | PS1模拟器。                                                  |                |
-| <span id="pcsx2"> </span>~~[PCSX2](https://docs.libretro.com/library/pcsx2/)~~ | ~~[libretro-pcsx2_old](https://github.com/crazyqk2019/libretro-pcsx2_old)~~ | ~~PS2模拟器。<br />基于PCSX2移植到libretro的版本，<br />很久没有和上游版本同步了。~~ |                |
-| <span id="lrps2"> </span>[PCSX2(LRPS2)](https://docs.libretro.com/library/lrps2/) | [libretro-pcsx2](https://github.com/crazyqk2019/libretro-pcsx2)<br />（分支`libretroization`） | PCSX2移植到libretro的重度修改硬分支。                        |                |
+| <span id="pcsx2_old"> </span>~~[PCSX2](https://docs.libretro.com/library/pcsx2/)~~ | ~~[libretro-pcsx2_old](https://github.com/crazyqk2019/libretro-pcsx2_old)~~ | ~~PS2模拟器。<br />基于PCSX2移植到libretro的版本，<br />很久没有和上游版本同步了。~~ |                |
+| <span id="pcsx2"> </span>[PCSX2(LRPS2)](https://docs.libretro.com/library/lrps2/) | [libretro-pcsx2](https://github.com/crazyqk2019/libretro-pcsx2)<br />（分支`libretroization`） | PCSX2移植到libretro的重度修改硬分支。                        |                |
 | <span id="play"> </span>[Play!](https://docs.libretro.com/library/play/) | [libretro-play](https://github.com/crazyqk2019/libretro-play) | PS2模拟器。                                                  |                |
 
 | 内核名称（官网说明链接）                                     | 汉化仓库地址                                                 | 简要说明                                                     | 汉化时间和版本 |
@@ -1070,24 +1171,23 @@ done
 
 ### scripts下目录主要工具脚本说明
 
-| 文件名                       | 说明                                                         |
-| ---------------------------- | ------------------------------------------------------------ |
-| setup_msys2_from_scratch.cmd | 从零开始自动安装和设置msys2，默认安装ucrt64编译环境。        |
-| msys2shell.cmd               | 进入不同的msys2 shell环境，运行参数：<br />`msys2shell.cmd [/m msys2_home_dir] [/e msys2|mingw64|ucrt64|clang64] [script] [script params]` |
-| msys2shell.ini               | msys2shell.cmd的配置文件，可以把msys2目录和要启动的编译环境写入配置文件，<br />运行msys2shell.cmd时可以不用输入参数。 |
-| vc64shell.cmd                | 进入VC2022 64位编译环境，无参数直接运行。                    |
-| inst_pkgs.sh                 | 安装msys2开发环境所需的包和库。运行参数：<br />`./inst_pkgs.sh <mingw64|ucrt64|clang64>` |
-| inst_capsimage.sh            | MingGW下自动编译安装capsimage的脚本。                        |
-| update_pkgs.sh               | 更新msys2。                                                  |
-| clone_ra.sh                  | 克隆RetroArch汉化库源代码到retrorch目录，并把原始RA仓库添加为上游仓库。 |
-| clone_ra_orig.sh             | 克隆原始RetroArch源代码到retroarch_orig目录。                |
-| clone_cores.sh               | 克隆汉化RA模拟器内核源码到cores目录下，并把原始内核仓库添加为上游仓库。 |
-| build_ra.sh                  | 编译RetroArch，请在retroarch_orig或者retrorch源代码根目录下运行。 |
-| build_ra_filters.sh          | 编译RetroAch的音视频滤镜，请在retroarch_orig或者retrorch源代码根目录下运行。 |
-| build_cores.sh               | 编译RA模拟器内核。运行参数：`./build_cores.sh [-noclean] all|core1 [core2]...`<br />-noclean：编译前不要进行清理。<br />all: 编译所有内核。<br />core1 core2: 编译指定内核，不带参数运行脚本可以查看可用内核。<br />编译完成的内核文件为拷贝到`cores\dists`目录下 |
-| build_cores.cmd              | 编译需要在VS2022下编译的RA模拟器内核，运行参数：<br />`build_cores.cmd [/noclean] all | core1 [core2]...` |
-| dist_ra.sh                   | 创建RetroArch分发目录retroarch_dist，请在retroarch_orig或者retrorch源代码根目录下运行。 |
-| dist_cores.sh                | 分发RA模拟器内核到retroarch_dist目录，运行参数：`./dist_cores.sh [all|core1.dll core2.dll...]`<br />此脚本在默认内核编译输出目录`cores\dists`下寻找内核。 |
+| 文件名              | 说明                                                         |
+| ------------------- | ------------------------------------------------------------ |
+| setup_msys2.cmd     | 从零开始自动安装和设置msys2，默认安装ucrt64编译环境。        |
+| msys2shell.cmd      | 进入不同的msys2 shell环境，运行参数：<br />`msys2shell.cmd [/m msys2_home_dir] [/e msys2|mingw64|ucrt64|clang64] [script] [script params]` |
+| msys2shell.ini      | msys2shell.cmd的配置文件，可以把msys2目录和要启动的编译环境写入配置文件，<br />运行msys2shell.cmd时可以不用输入参数。 |
+| vc64shell.cmd       | 进入VC2022 64位编译环境，无参数直接运行。                    |
+| inst_pkgs.sh        | 安装msys2开发环境所需的包和库。运行参数：<br />`./inst_pkgs.sh <mingw64|ucrt64|clang64>` |
+| inst_capsimage.sh   | MinGW下自动编译安装capsimage的脚本。                         |
+| clone_ra.sh         | 克隆RetroArch汉化库源代码到retroarch目录，并把原始RA仓库添加为上游仓库。 |
+| clone_ra_orig.sh    | 克隆原始RetroArch源代码到retroarch_orig目录。                |
+| clone_cores.sh      | 克隆汉化RA模拟器内核源码到cores目录下，并把原始内核仓库添加为上游仓库。 |
+| build_ra.sh         | 编译RetroArch：`./build_ra.sh <retroarch_dir>`               |
+| build_ra_filters.sh | 编译RetroArch的音视频滤镜：`./build_ra_filters.sh <retroarch_dir>` |
+| build_cores.sh      | 编译RA模拟器内核。运行参数：<br />编译指定内核：`./build_cores.sh [-noclean] [-noregen] [-noccache] [-j <num>] core1 core2`<br />编译所有内核：`./build_cores.sh [-noclean] [-noregen] [-noccache] [-j <num>] all`<br />可选参数说明：<br />`-noclean`: 编译前不要执行清理操作<br />`-noregen`: 对于使用CMake编译的内核，不要重新创建编译配置文件<br />`-noccache`: 对于使用make编译的内核，不要使用ccache加速编译<br />`-j <num>`: 指定并行编译使用的最大线程数，默认使用自动线程数<br />all: 编译所有内核。<br />core1 core2: 编译指定内核，不带参数运行脚本可以查看可用内核。<br />编译完成的内核文件会被拷贝到`cores\dists`目录下 |
+| build_cores.cmd     | 编译需要在VS2022下编译的RA模拟器内核，运行参数：<br />编译指定内核：`build_cores.cmd [-noclean] [-noregen] [-j <num>] core1 core2`<br />编译所有内核：`build_cores.cmd [-noclean] [-noregen] [-j <num>] all`<br />可选参数说明：<br />`-noclean`: 编译前不要执行清理操作<br />`-noregen`: 对于使用CMake编译的内核，不要重新创建编译配置文件<br />`-j <num>`: 指定并行编译使用的最大线程数，默认使用自动线程数<br />`all`: 编译所有内核。<br />`core1 core2`: 编译指定内核，不带参数运行脚本可以查看可用内核。<br />编译完成的内核文件会被拷贝到`cores\dists`目录下 |
+| dist_ra.sh          | 创建RetroArch分发目录retroarch_dist：`./dist_ra.sh <retroarch_dir>` |
+| dist_cores.sh       | 分发RA模拟器内核到retroarch_dist目录，运行参数：`./dist_cores.sh <all|core core...>`<br />all: 分发所有内核<br />core1 core2: 分发指定内核core1和core2，可以是内核名称比如`mame`，或者是完整内核dll名称`mame_libretro.dll`<br />此脚本在默认内核编译输出目录`cores\dists`下寻找内核。 |
 
 ### libs 目录 - 编译需要的一些第三方库
 

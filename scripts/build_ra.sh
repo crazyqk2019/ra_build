@@ -21,8 +21,8 @@ message "清理完成。"
 echo
 
 message "编译 RetroArch……"
-make -j"$(nproc)" || message "编译出错！"
-strip -s retroarch.exe
+make -j"$(nproc)" || die "编译出错！"
+strip -s retroarch.exe || die "strip出错！"
 echo
 
 message "编译完成。"

@@ -12,14 +12,14 @@ cd "$1" >/dev/null || exit $?
 
 message "编译视频滤镜……"
 pushd gfx/video_filters >/dev/null || exit $?
-make clean && make -j || die "编译视频滤镜出错！"
+make clean && make -j"$(nproc)" || die "编译视频滤镜出错！"
 popd >/dev/null || die "变更目录失败！"
 message "编译视频滤镜完成。"
 echo
 
 message "编译音频滤镜……"
 pushd libretro-common/audio/dsp_filters >/dev/null || die "变更目录失败！"
-make clean && make -j || die "编译音频滤镜出错！"
+make clean && make -j"$(nproc)" || die "编译音频滤镜出错！"
 popd >/dev/null || die "变更目录失败！"
 message "编译音频滤镜完成。"
 echo

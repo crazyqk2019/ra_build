@@ -29,7 +29,7 @@ inst_5.1() {
         7z x capsimg_source_linux_macosx.7z || return $?
         echo
     fi
-    cd capsimg_source_linux_macosx/CAPSImg
+    cd capsimg_source_linux_macosx/CAPSImg || die "变更目录失败！"
     message "运行autoconf..."
     autoconf || return $?
     echo
@@ -40,7 +40,7 @@ inst_5.1() {
     make clean || return $?
     echo
     message "编译..."
-    make -j`nproc` || return $?
+    make -j"$(nproc)" || return $?
     echo
     message "安装运行库和链接库..."
     install -v capsimg.dll "$MINGW_PREFIX/bin" || return $?
@@ -61,7 +61,7 @@ inst_4.2() {
     if [ ! -d x86_64-linux-gnu-capsimage ]; then
         7z x x86_64-linux-gnu-capsimage.7z  || return $?
     fi
-    cd x86_64-linux-gnu-capsimage
+    cd x86_64-linux-gnu-capsimage || die "变更目录失败！"
     if [ ! -d "$MINGW_PREFIX/include/caps" ]; then mkdir "$MINGW_PREFIX/include/caps"; fi
     install -v -D include/caps/*.h "$MINGW_PREFIX/include/caps/"  || return $?
     cd ..
@@ -70,10 +70,10 @@ inst_4.2() {
     echo
 }
 
-cd "$(dirname "$0")"
-cd ./libs
+cd "$(dirname "$0")" || die "变更目录失败！"
+cd ./libs || die "变更目录失败！"
 pushd . >/dev/null
 inst_5.1 || die "安装出错！"
-popd >/dev/null
+popd >/dev/null || die "变更目录失败！"
 inst_4.2 || die "安装出错！"
 exit 0

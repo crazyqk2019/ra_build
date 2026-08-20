@@ -5,6 +5,8 @@ message(){ $SETCOLOR_GREEN; echo "$@"; $SETCOLOR_NORMAL; }
 error_message() { $SETCOLOR_RED; echo "$@"; $SETCOLOR_NORMAL; }
 die() { if [ $# -gt 0 ]; then error_message "$@"; fi; exit 1; }
 
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
+
 common_clone_core() {
     if [[ $# -lt 3 ]]; then error_message "参数错误！"; return 1; fi
     local core_name=$1;
@@ -12,22 +14,28 @@ common_clone_core() {
     local core_upstream=$3;
     local core_branch=$4;
 
-    core_url=https://github.com/crazyqk2019/libretro-$core
+    core_url=https://github.com/crazyqk2019/libretro-${core}
     if [[ ! "${core_upstream,,}" =~ ^https?:// ]]; then
-        core_upstream=https://github.com/libretro/$core_upstream
+        core_upstream="https://github.com/libretro/${core_upstream}"
     fi
 
-    message "克隆内核 \"$core_name\" ($core_url)..."
-    git clone --recursive "$core_url" "$cores_dir/libretro-$core" || { error_message "克隆内核 \"$core_name\" 出错！"; return 1; }
+    message "克隆内核 \"${core_name}\" (${core_url})..."
+    if ! git clone --recursive "${core_url}" "${cores_dir}/libretro-${core}"; then
+        error_message "克隆内核 \"$core_name\" 出错！";
+        if [[ -d "${cores_dir}/libretro-${core}" ]]; then
+            rm -r -f "${cores_dir}/libretro-${core}" || error_message "删除未完成目录${cores_dir}/libretro-${core}失败！"
+        fi
+        return 1;
+    fi
     echo
 
-    cd "$cores_dir/libretro-$core" >/dev/null || die "变更目录失败！"
+    cd "${cores_dir}/libretro-$core" >/dev/null || die "变更目录失败！"
 
     git config --local core.autocrlf false
     git config --local core.safecrlf warn
     
-    message "添加上游仓库 \"$core_name\" ($core_upstream)..."
-    git remote add upstream "$core_upstream " || { error_message "添加上游仓库出错！\"$core_name\""; return 1; }
+    message "添加上游仓库 \"$core_name\" (${core_upstream})..."
+    git remote add upstream "${core_upstream}" || { error_message "添加上游仓库出错！\"$core_name\""; return 1; }
     echo
 
     if [[ -n "$core_branch" ]]; then
@@ -98,7 +106,7 @@ clone_gearboy() {
 }
 
 clone_tgbdual() {
-    common_clone_core "TGB Dual" "tgbdual" "tgbdual-librero"
+    common_clone_core "TGB Dual" "tgbdual" "tgbdual-libretro"
 }
 
 clone_mgba() {
@@ -373,8 +381,8 @@ clone_oberon() {
 #    common_clone_core "PCSX2" "pcsx2" "LRPS2"
 #}
 
-clone_lrps2() {
-    common_clone_core "LRPS2" "lrps2" "ps2" "libretroization"
+clone_pcsx2() {
+    common_clone_core "PCSX2" "pcsx2" "ps2" "libretroization"
 }
 
 clone_play() {
@@ -470,13 +478,13 @@ function_exist() { declare -F "$1" > /dev/null; return $?; }
 cloneCores() {
     for core in "${clone_cores_list[@]}"; do
         if [[ -d "$cores_dir/libretro-$core" ]]; then message "内核 \"$core\" 目录 \"$cores_dir/libretro-$core\" 已存在，跳过。"; continue; fi
-        cd "$(dirname "$0")" >/dev/null || die "变更目录失败！"
+        cd "${SCRIPT_DIR}" >/dev/null || die "变更目录失败！"
         clone_"$core" || return 1
     done
     return 0
 }
 
-cd "$(dirname "$0")" >/dev/null || die "变更目录失败！"
+cd "${SCRIPT_DIR}" >/dev/null || die "变更目录失败！"
 
 pushd .. >/dev/null
 cores_dir="$PWD/cores"

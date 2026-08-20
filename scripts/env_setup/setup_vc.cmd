@@ -36,6 +36,9 @@ ECHO 安装 VC 编译工具完成。
 ECHO.
 
 REM 安装CMake
+IF EXIST "%INST_DEST%\cmake" (
+    RD /S /Q "%INST_DEST%\cmake" || (ECHO 删除旧CMake目录出错！& GOTO :err)
+)
 IF NOT EXIST "temp\%cmake_file%" (
     ECHO 下载 CMake ……
     wget -O "temp\%cmake_file%" "%cmake_download_url%/%cmake_file%" || (ECHO 下载 CMake 出错！& GOTO :err)
@@ -43,8 +46,7 @@ IF NOT EXIST "temp\%cmake_file%" (
 )
 ECHO 解压 CMake ……
 %_7za_exe_% x -y -bso0 -o"%INST_DEST%" temp\%cmake_file% || (ECHO 解压 CMake 出错！& GOTO :err)
-IF EXIST "%INST_DEST%\cmake" (RD /S /Q "%INST_DEST%\cmake")
-MOVE /Y "%INST_DEST%\%cmake_file:~0,-4%" "%INST_DEST%\cmake" >NUL
+MOVE /Y "%INST_DEST%\%cmake_file:~0,-4%" "%INST_DEST%\cmake" >NUL || (ECHO 更改CMake目录名出错！& GOTO :err)
 ECHO 解压 CMake 完成。
 ECHO.
 

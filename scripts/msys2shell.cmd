@@ -1,7 +1,7 @@
 @ECHO OFF
 SETLOCAL
 
-FOR /F "eol=# usebackq tokens=1,* delims== " %%A IN ("%~dn0.ini") do (SET "%%A=%%~B")
+FOR /F "eol=# usebackq tokens=1,* delims== " %%A IN ("%~dpn0.ini") do (SET "%%A=%%~B")
 
 SET "SCRIPT_FILE=" & SET "SCRIPT_PARAMS="
 :parseParamsBegin
@@ -35,11 +35,12 @@ IF NOT DEFINED COMPILER_ENV SET "COMPILER_ENV=msys2"
 ECHO msys2 mingw64 ucrt64 clang64 | findstr /i "\<%COMPILER_ENV%\>" >NUL
 IF NOT %ERRORLEVEL% == 0 GOTO :showUsage
 
-SET "msys2_shell_cmd=%MSYS2_HOME%\msys2_shell.cmd -no-start -defterm -%COMPILER_ENV% -where "%CD%""
+SET "msys2_shell_cmd="%MSYS2_HOME%\msys2_shell.cmd""
+SET "msys2_shell_cmd=%msys2_shell_cmd% -no-start -defterm -%COMPILER_ENV% -where "%CD%""
 IF DEFINED SCRIPT_FILE (SET "msys2_shell_cmd=%msys2_shell_cmd% "%SCRIPT_FILE%"")
 IF DEFINED SCRIPT_PARAMS (SET "msys2_shell_cmd=%msys2_shell_cmd% %SCRIPT_PARAMS%")
 REM ECHO msys2_shell_cmd=[%msys2_shell_cmd%]
-CMD /C %msys2_shell_cmd%
+CMD /C "%msys2_shell_cmd%"
 ECHO ERRORLEVEL=%ERRORLEVEL%
 EXIT /B %ERRORLEVEL%
 

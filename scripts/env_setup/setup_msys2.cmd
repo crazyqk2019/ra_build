@@ -7,18 +7,29 @@ PUSHD ..
 SET "INST_DEST=%CD%\msys2_env"
 POPD
 
+IF NOT EXIST "msys2_dev_env\scripts\setup_msys2.cmd" (
+    ECHO MSYS2 环境子模块尚未初始化。
+    ECHO 请在仓库根目录执行：
+    ECHO git submodule update --init --recursive
+    GOTO :err
+)
+
 CALL msys2_dev_env\scripts\setup_msys2.cmd "%INST_DEST%" || GOTO :err
 CALL msys2_dev_env\scripts\setup_toolchain.cmd "%INST_DEST%\msys64" ucrt64 || GOTO :err
 
-SET "msys2_shell_cmd=%INST_DEST%\msys64\msys2_shell.cmd -no-start -defterm -ucrt64 -where "%CD%""
+SET "msys2_shell_cmd=%INST_DEST%\msys64\msys2_shell.cmd"
 
 ECHO 安装工具和库...
-CALL %msys2_shell_cmd% inst_pkgs.sh ucrt64
+CALL "%msys2_shell_cmd%" ^
+    -no-start -defterm -ucrt64 -where "%CD%" ^
+    inst_pkgs.sh ucrt64
 IF NOT %ERRORLEVEL% == 0 (ECHO 程序和库安装出错！& GOTO :err)
 ECHO 工具和库安装完成。& ECHO.
 
 ECHO 编译安装capsimage库...
-CALL %msys2_shell_cmd% inst_capsimage.sh
+CALL "%msys2_shell_cmd%" ^
+    -no-start -defterm -ucrt64 -where "%CD%" ^
+    inst_capsimage.sh
 IF NOT %ERRORLEVEL% == 0 (ECHO capsimage安装出错！& GOTO :err)
 ECHO capsimage安装完成。& ECHO.
 

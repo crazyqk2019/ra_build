@@ -5,6 +5,23 @@ message(){ $SETCOLOR_GREEN; echo "$@"; $SETCOLOR_NORMAL; }
 error_message() { $SETCOLOR_RED; echo "$@"; $SETCOLOR_NORMAL; }
 die() { if [ $# -gt 0 ]; then error_message "$@"; fi; exit 1; }
 
+copy_runtime_deps() {
+    local copy_error=$1
+    shift
+
+    local dll
+    local i
+    for ((i = 0; i < 3; i++)); do
+        while IFS= read -r dll; do
+            cp -v -- "$dll" . || die "$copy_error"
+        done < <(
+            ntldd -R "$@" |
+                grep -i 'msys64' |
+                sed -nE 's/^[^>]*>[[:space:]]*(.*)[[:space:]]+\(0x[[:xdigit:]]+\)[[:space:]]*$/\1/p'
+        )
+    done
+}
+
 dist_core() {
     if [[ "$1" =~ .*_libretro\.dll$ ]]; then
         core_file=$1
@@ -14,12 +31,16 @@ dist_core() {
     if [[ ! -f "$cores_dists_dir/$core_file" ]]; then error_message "内核文件 \"$core_file\" 不存在！"; return 1; fi
     
     message "拷贝内核 \"$core_file\"..."
-    cp -v "$cores_dists_dir/$core_file" "$ra_cores_dists_dir/"
+    cp -v "$cores_dists_dir/$core_file" "$ra_cores_dists_dir/" || die "拷贝内核失败：$cores_dists_dir/$core_file"
 
     pushd . >/dev/null
     cd "$ra_dists_dir" || die "变更目录失败！"
     message "拷贝内核 \"$1\" 依赖的运行库..."
-    for i in $(seq 3); do for dll in $(ntldd -R "cores/$core_file" | grep -i msys64 | cut -d">" -f2 | cut -d" " -f2); do cp -v "$dll" . ; done; done
+    # shellcheck disable=SC2034
+    #for i in $(seq 3); do for dll in $(ntldd -R "cores/$core_file" | grep -i msys64 | cut -d">" -f2 | cut -d" " -f2); do
+    #    cp -v "$dll" . || die "拷贝依赖库失败！"
+    #done; done
+    copy_runtime_deps "拷贝依赖库失败！" "cores/$core_file"
     popd >/dev/null || die "变更目录失败！"
     message "完成"
     echo
@@ -27,13 +48,16 @@ dist_core() {
 
 if [ $# -lt 1 ]; then die "需要指定内核！all - 指定全部可用内核。"; fi
 
-cd "$(dirname "$0")" || die "变更目录失败！"
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
+cd "${SCRIPT_DIR}" || die "变更目录失败！"
 cd ..
 cores_dists_dir="$PWD/cores/dists"
 ra_dists_dir="$PWD/retroarch_dist"
 ra_cores_dists_dir="$PWD/retroarch_dist/cores"
 if [ ! -d "$cores_dists_dir" ]; then die "内核输出目录不存在！请先编译内核。"; fi
-if [ ! -d "$ra_cores_dists_dir" ]; then mkdir -p "$ra_cores_dists_dir" >/dev/null; fi
+if [ ! -d "$ra_cores_dists_dir" ]; then
+    mkdir -p "$ra_cores_dists_dir" >/dev/null || die "创建内核分发目录失败！"
+fi
 cd "$cores_dists_dir" || die "变更目录失败！"
 
 if [[ ${1,,} = "all" ]]; then

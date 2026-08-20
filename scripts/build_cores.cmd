@@ -46,10 +46,11 @@ IF NOT DEFINED BUILD_ALL IF NOT DEFINED BUILD_CORES_LIST (
     FOR %%# IN (%CORES_LIST%) DO ECHO   %%#
     ECHO
     ECHO "示例："
-    ECHO "编译指定内核：build_cores.cmd [-noclean] [-noregen] [-noccache] core1 core2"
-    ECHO "编译所有内核：build_cores.cmd [-noclean] [-noregen] [-noccache] all"
+    ECHO "编译指定内核：build_cores.cmd [-noclean] [-noregen] [-j <num>] core1 core2"
+    ECHO "编译所有内核：build_cores.cmd [-noclean] [-noregen] [-j <num>] all"
     ECHO "-noclean: 编译前不要执行清理操作"
     ECHO "-noregen: 对于使用CMake编译的内核，不要重新创建编译配置文件"
+    ECHO "-j <num>: 指定并行编译使用的最大线程数，默认使用自动线程数"
     GOTO :end
 )
 

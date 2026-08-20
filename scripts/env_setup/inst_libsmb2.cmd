@@ -15,7 +15,7 @@ REM IF NOT EXIST "%VC_BUILD_TOOLS%" (ECHO 请先安装VC编译环境。& GOTO :err)
 REM CALL "%VC_BUILD_TOOLS%"
 
 IF NOT EXIST temp MD temp || (ECHO 创建临时目录出错！& GOTO :err)
-%_7za_exe_% x -y -bso0 -o"temp" "%LIBSMB2_SRC_PKG%" || (ECHO 解压 libsmb2 源代码出错！& GOTO :err)
+"%_7za_exe_%" x -y -bso0 -o"temp" "%LIBSMB2_SRC_PKG%" || (ECHO 解压 libsmb2 源代码出错！& GOTO :err)
 FOR /F "tokens=* delims=" %%# IN ("%LIBSMB2_SRC_PKG%") DO (SET "LIBSMB2_SRC_DIR=%%~n#")
 
 ECHO 编译 libsmb2 ……
@@ -29,7 +29,8 @@ cmake --install vc_build || (ECHO 安装 libsmb2 出错！& GOTO :err)
 ECHO.
 ECHO 修正 libsmb2.pc ……
 SET "libsmb2.pc=%INSTALL_PREFIX%\lib\pkgconfig\libsmb2.pc"
-PowerShell -Command "& {((Get-Content -LiteralPath '%libsmb2.pc%' -Raw) -replace '(?i)%INSTALL_PREFIX:\=/%','/ucrt64') | Set-Content -LiteralPath '%libsmb2.pc%' -NoNewline}"
+PowerShell -Command "& {$ErrorActionPreference='Stop';((Get-Content -LiteralPath '%libsmb2.pc%' -Raw) -replace '(?i)%INSTALL_PREFIX:\=/%','/ucrt64') | Set-Content -LiteralPath '%libsmb2.pc%' -NoNewline}"
+IF %ERRORLEVEL% NEQ 0 (ECHO 更改libsmb2.pc出错！& GOTO :err)
 ECHO 安装 libsmb2 完成。
 GOTO :end
 

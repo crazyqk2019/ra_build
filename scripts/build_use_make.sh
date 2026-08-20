@@ -12,7 +12,7 @@ pushd "$(dirname "$0")" >/dev/null || die "变更目录失败！"
 pushd .. >/dev/null
 cores_dir="$PWD/cores"
 dists_dir="$PWD/cores/dists"
-if [[ ! -d "$dists_dir" ]]; then mkdir -p "$dists_dir" >/dev/null; die "创建分发目录出错！"; fi
+mkdir -p "$dists_dir" >/dev/null || die "创建分发目录出错！"
 popd >/dev/null || die "变更目录失败！"
 
 c_disabled_warnings="-Wno-misleading-indentation -Wno-multichar -Wno-attributes"
@@ -47,10 +47,12 @@ export CFLAGS
 export CXXFLAGS
 export CPPFLAGS
 
-make_clean="make -f $make_file ${make_params-} clean -j"
+make_clean="make -f $make_file ${make_params-} clean -j$(nproc)"
 make_build="make -f $make_file ${make_params-} -j"
 if [[ ${build_mt-} =~ ^[0-9]+$ ]] && (( 10#$build_mt > 0 )); then
     make_build+="$build_mt"
+else
+    make_build+="$(nproc)"
 fi
 
 if [[ ${no_clean-} =~ ^[0-9]+$ ]] && (( 10#$no_clean == 0 )); then
@@ -62,7 +64,7 @@ fi
 SECONDS=0
 if [[ ${no_ccache-} =~ ^[0-9]+$ ]] && (( 10#$no_ccache == 0 )); then
     message "编译内核 \"$core_name\" (ccache $make_build)..."
-    ccache $make_build || die "编译 \"$core_name\" 出错！"
+    PATH="${MINGW_PREFIX}/lib/ccache/bin/:$PATH" ccache $make_build || die "编译 \"$core_name\" 出错！"
 else
     message "编译内核 \"$core_name\" ($make_build)..."
     $make_build || die "编译 \"$core_name\" 出错！"
